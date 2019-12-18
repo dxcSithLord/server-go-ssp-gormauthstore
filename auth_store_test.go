@@ -6,7 +6,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	ssp "github.com/smw1218/sqrl-ssp"
+	ssp "github.com/sqrldev/server-go-ssp"
 )
 
 func TestSave(t *testing.T) {

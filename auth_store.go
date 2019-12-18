@@ -2,7 +2,7 @@ package gormauthstore
 
 import (
 	"github.com/jinzhu/gorm"
-	ssp "github.com/smw1218/sqrl-ssp"
+	ssp "github.com/sqrldev/server-go-ssp"
 )
 
 // AuthStore is an ssp.AuthStore implementation using the gorm ORM
