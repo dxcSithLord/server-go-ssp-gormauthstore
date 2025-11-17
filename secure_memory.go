@@ -185,7 +185,7 @@ func (w *SecureIdentityWrapper) GetIdentity() *ssp.SqrlIdentity {
 // Validation rules:
 // - Cannot be empty
 // - Maximum length: 256 characters (reasonable upper bound)
-// - Should contain only URL-safe characters (alphanumeric, +, /, =, -, _)
+// - Should contain only URL-safe characters (alphanumeric, +, /, =, -, _, .)
 func ValidateIdk(idk string) error {
 	if idk == "" {
 		return ErrEmptyIdentityKey
@@ -206,7 +206,7 @@ func ValidateIdk(idk string) error {
 }
 
 // isValidIdkChar checks if a character is valid for an Identity Key.
-// Valid characters are alphanumeric plus common URL-safe characters.
+// Valid characters are alphanumeric plus common URL-safe characters: +, /, =, -, _, .
 func isValidIdkChar(c rune) bool {
 	return (c >= 'a' && c <= 'z') ||
 		(c >= 'A' && c <= 'Z') ||
