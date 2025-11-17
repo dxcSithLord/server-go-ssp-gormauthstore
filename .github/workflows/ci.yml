@@ -103,8 +103,8 @@ jobs:
       - name: Check for hardcoded credentials
         run: |
           # Simple pattern check for common credential patterns
-          ! grep -r "password\s*=\s*['\"][^'\"]*['\"]" --include="*.go" . | grep -v "_test.go" | grep -v "example" || true
-          ! grep -r "api[_-]?key\s*=\s*['\"][^'\"]*['\"]" --include="*.go" . | grep -v "_test.go" || true
+          ! grep -r "password\s*=\s*['\"][^'\"]*['\"]" --include="*.go" . | grep -v "_test.go" | grep -v "example"
+          ! grep -r "api[_-]?key\s*=\s*['\"][^'\"]*['\"]" --include="*.go" . | grep -v "_test.go"
 
   # Unit and Integration Tests
   test:
