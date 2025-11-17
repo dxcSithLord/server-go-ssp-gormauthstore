@@ -3,7 +3,6 @@
 package gormauthstore
 
 import (
-	"reflect"
 	"runtime"
 	"syscall"
 	"unsafe"
@@ -57,36 +56,29 @@ func ScrambleBytes(b []byte) {
 	runtime.KeepAlive(b)
 }
 
-// WipeString attempts to securely clear a string by accessing its underlying bytes.
-// See secure_memory.go for full documentation and warnings.
-// This function will skip wiping if the string is in read-only memory (will only clear reference)
+// WipeString clears a string reference and wipes a copy of its contents.
+// See secure_memory.go for full documentation and security considerations.
+//
+// This implementation avoids writing to the original string's backing memory,
+// which may reside in read-only segments and cause crashes.
 func WipeString(s *string) {
-	if s == nil || *s == "" {
+	if s == nil {
+		return
+	}
+	if *s == "" {
 		return
 	}
 
-	sh := (*reflect.StringHeader)(unsafe.Pointer(s))
-	if sh.Len == 0 || sh.Data == 0 {
-		*s = ""
-		return
-	}
+	// Copy string contents to a mutable byte slice
+	dataCopy := []byte(*s)
 
-	sl := reflect.SliceHeader{
-		Data: sh.Data,
-		Len:  sh.Len,
-		Cap:  sh.Len,
-	}
+	// Wipe the copy
+	WipeBytes(dataCopy)
 
-	// Attempt to wipe - recover from panic if memory is read-only
-	b := *(*[]byte)(unsafe.Pointer(&sl))
-	func() {
-		defer func() {
-			_ = recover()
-		}()
-		WipeBytes(b)
-	}()
-
+	// Clear the string reference
 	*s = ""
+
+	runtime.KeepAlive(dataCopy)
 }
 
 // ClearIdentity securely wipes all sensitive fields from a SqrlIdentity struct.

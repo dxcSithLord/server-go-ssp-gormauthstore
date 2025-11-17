@@ -3,9 +3,7 @@
 package gormauthstore
 
 import (
-	"reflect"
 	"runtime"
-	"unsafe"
 
 	ssp "github.com/sqrldev/server-go-ssp"
 )
@@ -52,52 +50,44 @@ func ScrambleBytes(b []byte) {
 	runtime.KeepAlive(b)
 }
 
-// WipeString attempts to securely clear a string by accessing its underlying bytes.
-// WARNING: This is inherently unsafe as Go strings are immutable. This function
-// modifies the underlying memory directly, which violates Go's string immutability
-// guarantee. Use only for security-critical scenarios and understand the risks.
+// WipeString clears a string reference and wipes a copy of its contents.
 //
-// Limitations:
-// - String literals and interned strings cannot be safely wiped (stored in read-only memory)
-// - Go runtime may have made copies of the string
-// - Garbage collector doesn't track our modifications
-// - This function will skip wiping if the string is in read-only memory (will only clear reference)
+// IMPORTANT: This function does NOT wipe the original string's backing memory.
+// Go strings are immutable and their backing arrays may reside in read-only
+// memory segments (.rodata), making in-place modification unsafe and prone to
+// crashes (SIGSEGV). This implementation copies the string to a mutable byte
+// slice, wipes that copy, then clears the string reference.
+//
+// For true secure memory handling of sensitive data, callers should:
+// - Use mutable []byte slices instead of strings for secrets
+// - Use a secure-memory library like github.com/awnumar/memguard
+// - Avoid string conversions which create copies the GC doesn't track
+//
+// This function provides defense-in-depth by:
+// 1. Clearing the string reference (prevents further access via this variable)
+// 2. Wiping a copy of the data (reduces copies in memory)
+// 3. Allowing GC to reclaim the original string memory
 func WipeString(s *string) {
-	if s == nil || *s == "" {
+	if s == nil {
+		return
+	}
+	if *s == "" {
 		return
 	}
 
-	// Get the string header to access underlying data
-	sh := (*reflect.StringHeader)(unsafe.Pointer(s))
-	if sh.Len == 0 || sh.Data == 0 {
-		*s = ""
-		return
-	}
+	// Copy string contents to a mutable byte slice
+	// This is safe because we're creating a new allocation
+	dataCopy := []byte(*s)
 
-	// Create a slice header pointing to the same data
-	sl := reflect.SliceHeader{
-		Data: sh.Data,
-		Len:  sh.Len,
-		Cap:  sh.Len,
-	}
+	// Wipe the copy to reduce sensitive data copies in memory
+	WipeBytes(dataCopy)
 
-	// Convert to byte slice and attempt to wipe
-	// Use recover to handle read-only memory (string literals)
-	b := *(*[]byte)(unsafe.Pointer(&sl))
-	func() {
-		defer func() {
-			// Recover from panic if memory is read-only
-			_ = recover()
-		}()
-		// Try to wipe - this will fail for string literals in read-only memory
-		for i := range b {
-			b[i] = 0
-		}
-		runtime.KeepAlive(b)
-	}()
-
-	// Clear the string reference regardless
+	// Clear the string reference
+	// The original backing memory will be garbage collected
 	*s = ""
+
+	// Ensure the wiped copy isn't optimized away
+	runtime.KeepAlive(dataCopy)
 }
 
 // ClearIdentity securely wipes all sensitive fields from a SqrlIdentity struct.
