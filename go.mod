@@ -1,4 +1,6 @@
-module github.com/sqrldev/server-go-ssp-gormauthstore
+// NOTE: This module path is temporarily set to github.com/dxcSithLord for development.
+// Revert to github.com/sqrldev/server-go-ssp-gormauthstore before pushing to upstream.
+module github.com/dxcSithLord/server-go-ssp-gormauthstore
 
 go 1.24.0
 
@@ -18,3 +20,8 @@ require (
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e // indirect
 	golang.org/x/crypto v0.43.0 // indirect
 )
+
+// NOTE: Replace directives for local development.
+// Uncomment and adjust paths as needed for local builds.
+// Remove or comment out before pushing to upstream.
+// replace github.com/sqrldev/server-go-ssp => ../server-go-ssp
