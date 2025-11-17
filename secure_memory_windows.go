@@ -22,18 +22,11 @@ func WipeBytes(b []byte) {
 		return
 	}
 
-	// Try to use Windows secure memory clearing
-	ret, _, _ := procSecureZero.Call(
+	// RtlSecureZeroMemory is a void function that never fails
+	procSecureZero.Call(
 		uintptr(unsafe.Pointer(&b[0])),
 		uintptr(len(b)),
 	)
-
-	// Fallback if system call fails
-	if ret == 0 {
-		for i := range b {
-			b[i] = 0
-		}
-	}
 
 	runtime.KeepAlive(b)
 }
