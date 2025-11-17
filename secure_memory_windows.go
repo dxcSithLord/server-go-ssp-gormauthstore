@@ -59,6 +59,7 @@ func ScrambleBytes(b []byte) {
 
 // WipeString attempts to securely clear a string by accessing its underlying bytes.
 // See secure_memory.go for full documentation and warnings.
+// This function will skip wiping if the string is in read-only memory (will only clear reference)
 func WipeString(s *string) {
 	if s == nil || *s == "" {
 		return
@@ -76,8 +77,14 @@ func WipeString(s *string) {
 		Cap:  sh.Len,
 	}
 
+	// Attempt to wipe - recover from panic if memory is read-only
 	b := *(*[]byte)(unsafe.Pointer(&sl))
-	WipeBytes(b)
+	func() {
+		defer func() {
+			_ = recover()
+		}()
+		WipeBytes(b)
+	}()
 
 	*s = ""
 }

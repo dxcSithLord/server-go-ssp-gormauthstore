@@ -104,31 +104,36 @@ func TestScrambleBytes_EmptySlice(t *testing.T) {
 }
 
 func TestWipeString(t *testing.T) {
+	// Note: String literals in Go are stored in read-only memory and cannot be wiped.
+	// WipeString only works on heap-allocated strings (e.g., from byte slices).
+	// These tests use heap-allocated strings via byte slice conversion.
+
 	tests := []struct {
 		name  string
-		input string
+		input []byte // Use byte slices to ensure heap allocation
 	}{
 		{
 			name:  "simple string",
-			input: "password123",
+			input: []byte("password123"),
 		},
 		{
 			name:  "cryptographic key",
-			input: "aGVsbG8gd29ybGQ=",
+			input: []byte("aGVsbG8gd29ybGQ="),
 		},
 		{
 			name:  "long string",
-			input: strings.Repeat("secret", 100),
+			input: []byte(strings.Repeat("secret", 100)),
 		},
 		{
 			name:  "special characters",
-			input: "p@$$w0rd!@#$%^&*()",
+			input: []byte("p@$$w0rd!@#$%^&*()"),
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := tt.input
+			// Create heap-allocated string from byte slice
+			s := string(tt.input)
 			WipeString(&s)
 
 			if s != "" {
@@ -152,12 +157,14 @@ func TestWipeString_EmptyString(t *testing.T) {
 }
 
 func TestClearIdentity(t *testing.T) {
+	// Use heap-allocated strings (from byte slices) to avoid read-only memory issues
+	// In real usage, database reads return heap-allocated strings
 	identity := &ssp.SqrlIdentity{
-		Idk:      "sensitive_idk_value",
-		Suk:      "highly_sensitive_server_unlock_key",
-		Vuk:      "verify_unlock_key_data",
-		Pidk:     "previous_identity_key",
-		Rekeyed:  "rekeyed_to_new_id",
+		Idk:      string([]byte("sensitive_idk_value")),
+		Suk:      string([]byte("highly_sensitive_server_unlock_key")),
+		Vuk:      string([]byte("verify_unlock_key_data")),
+		Pidk:     string([]byte("previous_identity_key")),
+		Rekeyed:  string([]byte("rekeyed_to_new_id")),
 		SQRLOnly: true,
 		Hardlock: true,
 		Disabled: true,
@@ -228,8 +235,8 @@ func TestClearIdentity_EmptyFields(t *testing.T) {
 
 func TestSecureIdentityWrapper_Basic(t *testing.T) {
 	identity := &ssp.SqrlIdentity{
-		Idk: "test_idk",
-		Suk: "test_suk",
+		Idk: string([]byte("test_idk")),
+		Suk: string([]byte("test_suk")),
 	}
 
 	wrapper := NewSecureIdentityWrapper(identity)
@@ -255,7 +262,7 @@ func TestSecureIdentityWrapper_Basic(t *testing.T) {
 
 func TestSecureIdentityWrapper_DoubleDestroy(t *testing.T) {
 	identity := &ssp.SqrlIdentity{
-		Idk: "test",
+		Idk: string([]byte("test")),
 	}
 
 	wrapper := NewSecureIdentityWrapper(identity)

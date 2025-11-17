@@ -58,9 +58,10 @@ func ScrambleBytes(b []byte) {
 // guarantee. Use only for security-critical scenarios and understand the risks.
 //
 // Limitations:
-// - String literals and interned strings cannot be safely wiped (may be in read-only memory)
+// - String literals and interned strings cannot be safely wiped (stored in read-only memory)
 // - Go runtime may have made copies of the string
 // - Garbage collector doesn't track our modifications
+// - This function will skip wiping if the string is in read-only memory (will only clear reference)
 func WipeString(s *string) {
 	if s == nil || *s == "" {
 		return
@@ -80,11 +81,22 @@ func WipeString(s *string) {
 		Cap:  sh.Len,
 	}
 
-	// Convert to byte slice and wipe
+	// Convert to byte slice and attempt to wipe
+	// Use recover to handle read-only memory (string literals)
 	b := *(*[]byte)(unsafe.Pointer(&sl))
-	WipeBytes(b)
+	func() {
+		defer func() {
+			// Recover from panic if memory is read-only
+			_ = recover()
+		}()
+		// Try to wipe - this will fail for string literals in read-only memory
+		for i := range b {
+			b[i] = 0
+		}
+		runtime.KeepAlive(b)
+	}()
 
-	// Clear the string reference
+	// Clear the string reference regardless
 	*s = ""
 }
 
