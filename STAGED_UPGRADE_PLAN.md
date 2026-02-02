@@ -1,4 +1,5 @@
 # Staged Dependency Upgrade Plan
+
 ## Incremental Migration Strategy with Branch-Based Testing
 
 **Document Version:** 1.0
@@ -30,7 +31,7 @@
 ### Upgrade Complexity Assessment
 
 | Stage | Complexity | Breaking Changes | Est. Effort | Risk Level |
-|-------|-----------|------------------|-------------|------------|
+| ------- | ----------- | ------------------ | ------------- | ------------ |
 | **Stage 1** | HIGH | YES (GORM API) | 6-8 hours | MEDIUM |
 | **Stage 2** | LOW | NO | 2-3 hours | LOW |
 | **Stage 3** | LOW | NO | 1-2 hours | LOW |
@@ -67,7 +68,8 @@ graph LR
     style S1 fill:#f44336,color:#fff
     style S4 fill:#ff9800
     style END fill:#4CAF50
-```
+
+```text
 
 ---
 
@@ -129,11 +131,13 @@ gitGraph
 
     checkout main
     merge stage-6-production tag: "v1.0.0"
-```
+
+```text
 
 ### Test Gate Requirements
 
 Each stage requires:
+
 1. ✅ All unit tests pass
 2. ✅ Integration tests pass (where applicable)
 3. ✅ No regressions in existing functionality
@@ -150,15 +154,18 @@ Each stage requires:
 ### Prerequisites
 
 - [ ] **Backup Production Database**
+
   ```bash
   # PostgreSQL
   pg_dump -h localhost -U postgres sqrl_db > backup_$(date +%Y%m%d_%H%M%S).sql
 
   # MySQL
   mysqldump -u root -p sqrl_db > backup_$(date +%Y%m%d_%H%M%S).sql
-  ```
+
+```text
 
 - [ ] **Create Development Environment**
+
   ```bash
   # Clone repository
   git clone https://github.com/dxcSithLord/server-go-ssp-gormauthstore.git
@@ -166,43 +173,54 @@ Each stage requires:
 
   # Create development database
   createdb sqrl_test  # PostgreSQL
-  ```
+
+```bash
 
 - [ ] **Verify Current Version**
+
   ```bash
   go version  # Should be 1.23+ or 1.24+
   go mod graph | grep gorm  # Check current GORM version
-  ```
+
+```bash
 
 - [ ] **Install Development Tools**
+
   ```bash
   make tools
   # OR manually:
   go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
   go install github.com/securego/gosec/v2/cmd/gosec@latest
   go install golang.org/x/vuln/cmd/govulncheck@latest
-  ```
+
+```bash
 
 - [ ] **Run Baseline Tests**
+
   ```bash
   go test ./... -v
   # Document current test results as baseline
-  ```
+
+```bash
 
 - [ ] **Tag Current State**
+
   ```bash
   git tag -a v0.1.0-pre-upgrade -m "Pre-upgrade baseline"
   git push origin v0.1.0-pre-upgrade
-  ```
+
+```bash
 
 ---
 
 ## Stage 1: Foundation (CRITICAL)
 
 ### Objective
+
 Migrate from deprecated `github.com/jinzhu/gorm` v1.9.16 to `gorm.io/gorm` v1.31.1
 
 ### Risk Level: MEDIUM
+
 - **Breaking Changes:** YES
 - **Estimated Effort:** 6-8 hours
 - **Testing Required:** Unit + Integration
@@ -213,7 +231,8 @@ Migrate from deprecated `github.com/jinzhu/gorm` v1.9.16 to `gorm.io/gorm` v1.31
 git checkout main
 git pull origin main
 git checkout -b stage-1-gorm-v2
-```
+
+```bash
 
 ---
 
@@ -222,14 +241,17 @@ git checkout -b stage-1-gorm-v2
 **File:** `go.mod`
 
 **Current:**
+
 ```go
 require (
     github.com/jinzhu/gorm v1.9.16
     github.com/sqrldev/server-go-ssp v0.0.0-20241212182118-c8230b16b87d
 )
-```
+
+```bash
 
 **New:**
+
 ```go
 require (
     github.com/sqrldev/server-go-ssp v0.0.0-20241212182118-c8230b16b87d
@@ -239,9 +261,11 @@ require (
     gorm.io/driver/sqlserver v1.5.3
     gorm.io/gorm v1.31.1
 )
-```
+
+```text
 
 **Commands:**
+
 ```bash
 # Remove old GORM
 go get github.com/jinzhu/gorm@none
@@ -255,13 +279,16 @@ go get gorm.io/driver/sqlserver@v1.5.3
 
 # Tidy
 go mod tidy
-```
+
+```text
 
 **Verification:**
+
 ```bash
 go mod graph | grep gorm
 # Should show gorm.io/gorm v1.31.1
-```
+
+```bash
 
 ---
 
@@ -270,24 +297,29 @@ go mod graph | grep gorm
 **File:** `auth_store.go`
 
 **Current (Lines 3-6):**
+
 ```go
 import (
-	"github.com/jinzhu/gorm"
-	ssp "github.com/sqrldev/server-go-ssp"
+    "github.com/jinzhu/gorm"
+    ssp "github.com/sqrldev/server-go-ssp"
 )
-```
+
+```bash
 
 **New:**
+
 ```go
 import (
-	"errors"
+    "errors"
 
-	ssp "github.com/sqrldev/server-go-ssp"
-	"gorm.io/gorm"
+    ssp "github.com/sqrldev/server-go-ssp"
+    "gorm.io/gorm"
 )
-```
+
+```bash
 
 **Changes:**
+
 - Add `"errors"` import for error handling
 - Replace `github.com/jinzhu/gorm` with `gorm.io/gorm`
 
@@ -298,36 +330,41 @@ import (
 **File:** `auth_store.go`
 
 **Current (Lines 24-34):**
+
 ```go
 func (as *AuthStore) FindIdentity(idk string) (*ssp.SqrlIdentity, error) {
-	identity := &ssp.SqrlIdentity{}
-	err := as.db.Where("idk = ?", idk).First(identity).Error
-	if err != nil {
-		if gorm.IsRecordNotFoundError(err) {  // ❌ OLD API
-			return nil, ssp.ErrNotFound
-		}
-		return nil, err
-	}
-	return identity, nil
+    identity := &ssp.SqrlIdentity{}
+    err := as.db.Where("idk = ?", idk).First(identity).Error
+    if err != nil {
+        if gorm.IsRecordNotFoundError(err) {  // ❌ OLD API
+            return nil, ssp.ErrNotFound
+        }
+        return nil, err
+    }
+    return identity, nil
 }
-```
+
+```text
 
 **New:**
+
 ```go
 func (as *AuthStore) FindIdentity(idk string) (*ssp.SqrlIdentity, error) {
-	identity := &ssp.SqrlIdentity{}
-	err := as.db.Where("idk = ?", idk).First(identity).Error
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {  // ✅ NEW API
-			return nil, ssp.ErrNotFound
-		}
-		return nil, err
-	}
-	return identity, nil
+    identity := &ssp.SqrlIdentity{}
+    err := as.db.Where("idk = ?", idk).First(identity).Error
+    if err != nil {
+        if errors.Is(err, gorm.ErrRecordNotFound) {  // ✅ NEW API
+            return nil, ssp.ErrNotFound
+        }
+        return nil, err
+    }
+    return identity, nil
 }
-```
+
+```text
 
 **Breaking Change Details:**
+
 - **Old:** `gorm.IsRecordNotFoundError(err)` (method call)
 - **New:** `errors.Is(err, gorm.ErrRecordNotFound)` (standard errors package)
 
@@ -338,39 +375,48 @@ func (as *AuthStore) FindIdentity(idk string) (*ssp.SqrlIdentity, error) {
 **File:** `auth_store_test.go`
 
 **Current (Lines 8-9):**
+
 ```go
 import (
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
-	ssp "github.com/sqrldev/server-go-ssp"
+    "github.com/jinzhu/gorm"
+    _ "github.com/jinzhu/gorm/dialects/postgres"
+    ssp "github.com/sqrldev/server-go-ssp"
 )
-```
+
+```bash
 
 **New:**
+
 ```go
 import (
-	"testing"
+    "testing"
 
-	ssp "github.com/sqrldev/server-go-ssp"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+    ssp "github.com/sqrldev/server-go-ssp"
+    "gorm.io/driver/postgres"
+    "gorm.io/gorm"
 )
-```
+
+```bash
 
 **Database Connection Update:**
 
 **Current (Line 13):**
+
 ```go
 db, err := gorm.Open("postgres", "dbname=sqrl_test sslmode=disable")
-```
+
+```text
 
 **New:**
+
 ```go
 dsn := "host=localhost user=postgres dbname=sqrl_test sslmode=disable"
 db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-```
+
+```text
 
 **Breaking Change Details:**
+
 - **Old:** `gorm.Open(dialect string, args ...interface{})`
 - **New:** `gorm.Open(dialector Dialector, config *Config)`
 
@@ -379,6 +425,7 @@ db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 ### Step 1.5: Test Migration
 
 **Commands:**
+
 ```bash
 # Run tests
 go test ./... -v
@@ -388,12 +435,13 @@ go test ./... -v
 # PASS: All tests in auth_store_test.go
 
 # If tests fail, review error messages and adjust
-```
+
+```text
 
 **Common Issues:**
 
 | Issue | Solution |
-|-------|----------|
+| ------- | ---------- |
 | Import cycle | Separate driver imports to test files only |
 | Connection failed | Verify PostgreSQL is running: `pg_isready` |
 | Table not found | Run `AutoMigrate()` in test setup |
@@ -410,67 +458,70 @@ go test ./... -v
 package gormauthstore
 
 import (
-	"testing"
+    "testing"
 
-	ssp "github.com/sqrldev/server-go-ssp"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+    ssp "github.com/sqrldev/server-go-ssp"
+    "gorm.io/driver/postgres"
+    "gorm.io/gorm"
 )
 
 func TestGORMv2Integration(t *testing.T) {
-	dsn := "host=localhost user=postgres dbname=sqrl_test sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		t.Fatalf("Failed to connect: %v", err)
-	}
+    dsn := "host=localhost user=postgres dbname=sqrl_test sslmode=disable"
+    db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+    if err != nil {
+        t.Fatalf("Failed to connect: %v", err)
+    }
 
-	store := NewAuthStore(db)
+    store := NewAuthStore(db)
 
-	// Test AutoMigrate
-	if err := store.AutoMigrate(); err != nil {
-		t.Fatalf("AutoMigrate failed: %v", err)
-	}
+    // Test AutoMigrate
+    if err := store.AutoMigrate(); err != nil {
+        t.Fatalf("AutoMigrate failed: %v", err)
+    }
 
-	// Test SaveIdentity
-	identity := &ssp.SqrlIdentity{
-		Idk: string([]byte("test_idk_gorm_v2")),
-		Suk: string([]byte("test_suk")),
-		Vuk: string([]byte("test_vuk")),
-	}
+    // Test SaveIdentity
+    identity := &ssp.SqrlIdentity{
+        Idk: string([]byte("test_idk_gorm_v2")),
+        Suk: string([]byte("test_suk")),
+        Vuk: string([]byte("test_vuk")),
+    }
 
-	if err := store.SaveIdentity(identity); err != nil {
-		t.Fatalf("SaveIdentity failed: %v", err)
-	}
+    if err := store.SaveIdentity(identity); err != nil {
+        t.Fatalf("SaveIdentity failed: %v", err)
+    }
 
-	// Test FindIdentity
-	found, err := store.FindIdentity("test_idk_gorm_v2")
-	if err != nil {
-		t.Fatalf("FindIdentity failed: %v", err)
-	}
+    // Test FindIdentity
+    found, err := store.FindIdentity("test_idk_gorm_v2")
+    if err != nil {
+        t.Fatalf("FindIdentity failed: %v", err)
+    }
 
-	if found.Suk != identity.Suk {
-		t.Errorf("Suk mismatch: got %s, want %s", found.Suk, identity.Suk)
-	}
+    if found.Suk != identity.Suk {
+        t.Errorf("Suk mismatch: got %s, want %s", found.Suk, identity.Suk)
+    }
 
-	// Test DeleteIdentity
-	if err := store.DeleteIdentity("test_idk_gorm_v2"); err != nil {
-		t.Fatalf("DeleteIdentity failed: %v", err)
-	}
+    // Test DeleteIdentity
+    if err := store.DeleteIdentity("test_idk_gorm_v2"); err != nil {
+        t.Fatalf("DeleteIdentity failed: %v", err)
+    }
 
-	// Verify deletion
-	_, err = store.FindIdentity("test_idk_gorm_v2")
-	if err != ssp.ErrNotFound {
-		t.Errorf("Expected ErrNotFound, got %v", err)
-	}
+    // Verify deletion
+    _, err = store.FindIdentity("test_idk_gorm_v2")
+    if err != ssp.ErrNotFound {
+        t.Errorf("Expected ErrNotFound, got %v", err)
+    }
 
-	t.Log("✅ GORM v2 integration test passed")
+    t.Log("✅ GORM v2 integration test passed")
 }
-```
+
+```text
 
 **Run:**
+
 ```bash
 go test -tags=integration -v ./...
-```
+
+```bash
 
 ---
 
@@ -484,7 +535,8 @@ gosec ./...
 govulncheck ./...
 
 # Expected: No new vulnerabilities introduced
-```
+
+```text
 
 ---
 
@@ -502,13 +554,16 @@ govulncheck ./...
 - [ ] Commit messages clear and descriptive
 
 **Commit and Tag:**
+
 ```bash
 git add go.mod go.sum auth_store.go auth_store_test.go auth_store_integration_test.go
 git commit -m "Stage 1: Migrate to GORM v2 (gorm.io/gorm v1.31.1)
 
 - Update imports from github.com/jinzhu/gorm to gorm.io/gorm
-- Replace gorm.IsRecordNotFoundError() with errors.Is(err, gorm.ErrRecordNotFound)
-- Update database connection API from gorm.Open(dialect, dsn) to gorm.Open(dialector, config)
+- Replace gorm.IsRecordNotFoundError() with errors.Is(err, gorm.
+  ErrRecordNotFound)
+- Update database connection API from gorm.Open(dialect, dsn) to gorm.
+  Open(dialector, config)
 - Add integration tests for GORM v2 compatibility
 - All tests pass (unit + integration)
 - Security scan: No new vulnerabilities
@@ -520,9 +575,11 @@ Breaking changes:
 Migration verified on PostgreSQL 14"
 
 git push origin stage-1-gorm-v2
-```
+
+```bash
 
 **Create Pull Request:**
+
 ```bash
 gh pr create --title "Stage 1: Migrate to GORM v2" \
   --body "$(cat <<EOF
@@ -532,7 +589,8 @@ gh pr create --title "Stage 1: Migrate to GORM v2" \
 Migrates from deprecated github.com/jinzhu/gorm v1.9.16 to gorm.io/gorm v1.31.1
 
 ### Breaking Changes
-- Error handling: gorm.IsRecordNotFoundError() → errors.Is(err, gorm.ErrRecordNotFound)
+- Error handling: gorm.IsRecordNotFoundError() → errors.Is(err,
+  gorm.ErrRecordNotFound)
 - Connection: gorm.Open(dialect, dsn) → gorm.Open(dialector, config)
 
 ### Testing
@@ -560,24 +618,29 @@ All database driver imports moved to test files only. Application code imports o
 EOF
 )" \
   --base main
-```
+
+```text
 
 **After Approval and CI Pass:**
+
 ```bash
 git checkout main
 git merge --no-ff stage-1-gorm-v2
 git tag -a v0.2.0-stage1 -m "Stage 1 Complete: GORM v2 Migration"
 git push origin main --tags
-```
+
+```bash
 
 ---
 
 ## Stage 2: Database Drivers (HIGH)
 
 ### Objective
+
 Upgrade database drivers to latest secure versions
 
 ### Risk Level: LOW
+
 - **Breaking Changes:** NO
 - **Estimated Effort:** 2-3 hours
 - **Testing Required:** Integration only
@@ -588,7 +651,8 @@ Upgrade database drivers to latest secure versions
 git checkout main
 git pull origin main
 git checkout -b stage-2-db-drivers
-```
+
+```bash
 
 ---
 
@@ -598,14 +662,17 @@ git checkout -b stage-2-db-drivers
 **Target:** v1.10.9 (Latest)
 
 **Security Fixes:**
+
 - CVE-2021-3121 (High): Buffer overflow in protobuf
 - Multiple SQL injection edge cases
 - TLS certificate validation improvements
 
 **Command:**
+
 ```bash
 go get github.com/lib/pq@v1.10.9
-```
+
+```bash
 
 ---
 
@@ -615,14 +682,17 @@ go get github.com/lib/pq@v1.10.9
 **Target:** v1.14.32 (Latest)
 
 **Improvements:**
+
 - SQLite 3.46.x security patches
 - JSON improvements
 - Performance optimizations
 
 **Command:**
+
 ```bash
 go get github.com/mattn/go-sqlite3@v1.14.32
-```
+
+```bash
 
 ---
 
@@ -632,14 +702,17 @@ go get github.com/mattn/go-sqlite3@v1.14.32
 **Target:** v1.9.3 (Latest)
 
 **Improvements:**
+
 - Connection pooling fixes
 - TLS improvements
 - MySQL 8.4 compatibility
 
 **Command:**
+
 ```bash
 go get github.com/go-sql-driver/mysql@v1.9.3
-```
+
+```bash
 
 ---
 
@@ -649,14 +722,17 @@ go get github.com/go-sql-driver/mysql@v1.9.3
 **Target:** v0.12.3 (Latest)
 
 **Improvements:**
+
 - SQL Server 2022 support
 - TLS 1.3 support
 - Connection reliability
 
 **Command:**
+
 ```bash
 go get github.com/denisenkom/go-mssqldb@v0.12.3
-```
+
+```bash
 
 ---
 
@@ -668,7 +744,8 @@ go get gorm.io/driver/mysql@v1.5.7
 go get gorm.io/driver/sqlite@v1.5.6
 go get gorm.io/driver/sqlserver@v1.5.3
 go mod tidy
-```
+
+```text
 
 ---
 
@@ -689,7 +766,8 @@ go test -tags=integration -v ./... -run TestMySQL
 
 # SQLite (no container needed)
 go test -tags=integration -v ./... -run TestSQLite
-```
+
+```text
 
 ---
 
@@ -704,6 +782,7 @@ go test -tags=integration -v ./... -run TestSQLite
 - [ ] Performance baseline maintained
 
 **Commit:**
+
 ```bash
 git add go.mod go.sum
 git commit -m "Stage 2: Upgrade database drivers to latest secure versions
@@ -722,24 +801,29 @@ Testing:
 No breaking changes. All tests pass."
 
 git push origin stage-2-db-drivers
-```
+
+```bash
 
 **Merge to main after PR approval:**
+
 ```bash
 git checkout main
 git merge --no-ff stage-2-db-drivers
 git tag -a v0.2.0-stage2 -m "Stage 2 Complete: Database Driver Upgrades"
 git push origin main --tags
-```
+
+```bash
 
 ---
 
 ## Stage 3: Transitive Dependencies (MEDIUM)
 
 ### Objective
+
 Update indirect dependencies to latest versions
 
 ### Risk Level: LOW
+
 - **Breaking Changes:** NO
 - **Estimated Effort:** 1-2 hours
 - **Testing Required:** Unit tests only
@@ -750,7 +834,8 @@ Update indirect dependencies to latest versions
 git checkout main
 git pull origin main
 git checkout -b stage-3-transitive
-```
+
+```bash
 
 ---
 
@@ -759,11 +844,13 @@ git checkout -b stage-3-transitive
 **Already done in previous work:** golang.org/x/crypto v0.43.0
 
 **Verify and update others:**
+
 ```bash
 go get golang.org/x/sys@latest
 go get golang.org/x/text@latest
 go mod tidy
-```
+
+```bash
 
 ---
 
@@ -776,7 +863,8 @@ go mod tidy
 
 # Review changes
 git diff go.mod
-```
+
+```bash
 
 ---
 
@@ -798,24 +886,29 @@ git commit -m "Stage 3: Update transitive dependencies
 All tests pass. No breaking changes."
 
 git push origin stage-3-transitive
-```
+
+```bash
 
 **Merge after approval:**
+
 ```bash
 git checkout main
 git merge --no-ff stage-3-transitive
 git tag -a v0.2.0-stage3 -m "Stage 3 Complete: Transitive Dependencies"
 git push origin main --tags
-```
+
+```bash
 
 ---
 
 ## Stage 4: Security Enhancements (HIGH)
 
 ### Objective
+
 Integrate security features into public API
 
 ### Risk Level: LOW
+
 - **Breaking Changes:** NO (additive only)
 - **Estimated Effort:** 4-5 hours
 - **Testing Required:** Unit + Security tests
@@ -826,7 +919,8 @@ Integrate security features into public API
 git checkout main
 git pull origin main
 git checkout -b stage-4-security
-```
+
+```bash
 
 ---
 
@@ -835,52 +929,58 @@ git checkout -b stage-4-security
 **Update:** `auth_store.go`
 
 **Add validation to FindIdentity:**
+
 ```go
 func (as *AuthStore) FindIdentity(idk string) (*ssp.SqrlIdentity, error) {
-	// Validate input
-	if err := ValidateIdk(idk); err != nil {
-		return nil, err
-	}
+    // Validate input
+    if err := ValidateIdk(idk); err != nil {
+        return nil, err
+    }
 
-	identity := &ssp.SqrlIdentity{}
-	err := as.db.Where("idk = ?", idk).First(identity).Error
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, ssp.ErrNotFound
-		}
-		return nil, err
-	}
-	return identity, nil
+    identity := &ssp.SqrlIdentity{}
+    err := as.db.Where("idk = ?", idk).First(identity).Error
+    if err != nil {
+        if errors.Is(err, gorm.ErrRecordNotFound) {
+            return nil, ssp.ErrNotFound
+        }
+        return nil, err
+    }
+    return identity, nil
 }
-```
+
+```text
 
 **Add validation to SaveIdentity:**
+
 ```go
 func (as *AuthStore) SaveIdentity(identity *ssp.SqrlIdentity) error {
-	if identity == nil {
-		return errors.New("identity cannot be nil")
-	}
+    if identity == nil {
+        return errors.New("identity cannot be nil")
+    }
 
-	// Validate Idk
-	if err := ValidateIdk(identity.Idk); err != nil {
-		return err
-	}
+    // Validate Idk
+    if err := ValidateIdk(identity.Idk); err != nil {
+        return err
+    }
 
-	return as.db.Save(identity).Error
+    return as.db.Save(identity).Error
 }
-```
+
+```text
 
 **Add validation to DeleteIdentity:**
+
 ```go
 func (as *AuthStore) DeleteIdentity(idk string) error {
-	// Validate input
-	if err := ValidateIdk(idk); err != nil {
-		return err
-	}
+    // Validate input
+    if err := ValidateIdk(idk); err != nil {
+        return err
+    }
 
-	return as.db.Where("idk = ?", idk).Delete(&ssp.SqrlIdentity{}).Error
+    return as.db.Where("idk = ?", idk).Delete(&ssp.SqrlIdentity{}).Error
 }
-```
+
+```text
 
 ---
 
@@ -889,6 +989,7 @@ func (as *AuthStore) DeleteIdentity(idk string) error {
 **Update:** `auth_store.go`
 
 **Add method:**
+
 ```go
 // FindIdentitySecure returns a SecureIdentityWrapper that automatically
 // clears sensitive data when destroyed.
@@ -899,13 +1000,14 @@ func (as *AuthStore) DeleteIdentity(idk string) error {
 //   defer wrapper.Destroy()
 //   // Use wrapper.Identity...
 func (as *AuthStore) FindIdentitySecure(idk string) (*SecureIdentityWrapper, error) {
-	identity, err := as.FindIdentity(idk)
-	if err != nil {
-		return nil, err
-	}
-	return NewSecureIdentityWrapper(identity), nil
+    identity, err := as.FindIdentity(idk)
+    if err != nil {
+        return nil, err
+    }
+    return NewSecureIdentityWrapper(identity), nil
 }
-```
+
+```text
 
 ---
 
@@ -917,57 +1019,58 @@ func (as *AuthStore) FindIdentitySecure(idk string) (*SecureIdentityWrapper, err
 package gormauthstore
 
 import (
-	"strings"
-	"testing"
+    "strings"
+    "testing"
 )
 
 func TestSQLInjectionPrevention(t *testing.T) {
-	// These should be safely handled by GORM parameterization
-	maliciousInputs := []string{
-		"'; DROP TABLE sqrl_identities; --",
-		"' OR '1'='1",
-		"admin'--",
-		"1' UNION SELECT * FROM users--",
-	}
+    // These should be safely handled by GORM parameterization
+    maliciousInputs := []string{
+        "'; DROP TABLE sqrl_identities; --",
+        "' OR '1'='1",
+        "admin'--",
+        "1' UNION SELECT * FROM users--",
+    }
 
-	store := &AuthStore{} // Mock store
+    store := &AuthStore{} // Mock store
 
-	for _, input := range maliciousInputs {
-		_, err := store.FindIdentity(input)
-		// Should return validation error or not found, never execute SQL
-		if err == nil {
-			t.Errorf("Expected error for malicious input: %s", input)
-		}
-	}
+    for _, input := range maliciousInputs {
+        _, err := store.FindIdentity(input)
+        // Should return validation error or not found, never execute SQL
+        if err == nil {
+            t.Errorf("Expected error for malicious input: %s", input)
+        }
+    }
 }
 
 func TestInputLengthLimits(t *testing.T) {
-	store := &AuthStore{}
+    store := &AuthStore{}
 
-	// Test exceeds MaxIdkLength
-	longIdk := strings.Repeat("a", MaxIdkLength+1)
-	err := ValidateIdk(longIdk)
-	if err != ErrIdentityKeyTooLong {
-		t.Errorf("Expected ErrIdentityKeyTooLong, got %v", err)
-	}
+    // Test exceeds MaxIdkLength
+    longIdk := strings.Repeat("a", MaxIdkLength+1)
+    err := ValidateIdk(longIdk)
+    if err != ErrIdentityKeyTooLong {
+        t.Errorf("Expected ErrIdentityKeyTooLong, got %v", err)
+    }
 }
 
 func TestInvalidCharacters(t *testing.T) {
-	invalidInputs := []string{
-		"idk with spaces",
-		"idk\nwith\nnewlines",
-		"idk@invalid",
-		"idk\x00null",
-	}
+    invalidInputs := []string{
+        "idk with spaces",
+        "idk\nwith\nnewlines",
+        "idk@invalid",
+        "idk\x00null",
+    }
 
-	for _, input := range invalidInputs {
-		err := ValidateIdk(input)
-		if err != ErrInvalidIdentityKeyFormat {
-			t.Errorf("Expected ErrInvalidIdentityKeyFormat for %q, got %v", input, err)
-		}
-	}
+    for _, input := range invalidInputs {
+        err := ValidateIdk(input)
+        if err != ErrInvalidIdentityKeyFormat {
+            t.Errorf("Expected ErrInvalidIdentityKeyFormat for %q, got %v", input, err)
+        }
+    }
 }
-```
+
+```text
 
 ---
 
@@ -995,24 +1098,29 @@ Security improvements:
 All tests pass. No breaking changes to existing API."
 
 git push origin stage-4-security
-```
+
+```bash
 
 **Merge:**
+
 ```bash
 git checkout main
 git merge --no-ff stage-4-security
 git tag -a v0.2.0-stage4 -m "Stage 4 Complete: Security Enhancements"
 git push origin main --tags
-```
+
+```bash
 
 ---
 
 ## Stage 5: Testing Infrastructure (MEDIUM)
 
 ### Objective
+
 Achieve 70%+ code coverage and comprehensive test suite
 
 ### Risk Level: LOW
+
 - **Breaking Changes:** NO
 - **Estimated Effort:** 8-10 hours
 - **Testing Required:** All tests
@@ -1023,7 +1131,8 @@ Achieve 70%+ code coverage and comprehensive test suite
 git checkout main
 git pull origin main
 git checkout -b stage-5-testing
-```
+
+```bash
 
 ---
 
@@ -1032,6 +1141,7 @@ git checkout -b stage-5-testing
 **Expand:** `auth_store_test.go`
 
 Add tests for:
+
 - [ ] Concurrent access (race conditions)
 - [ ] Transaction rollback
 - [ ] Error path coverage
@@ -1047,43 +1157,44 @@ Add tests for:
 package gormauthstore
 
 import (
-	"testing"
+    "testing"
 
-	ssp "github.com/sqrldev/server-go-ssp"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
+    ssp "github.com/sqrldev/server-go-ssp"
+    "gorm.io/driver/sqlite"
+    "gorm.io/gorm"
 )
 
 func BenchmarkFindIdentity(b *testing.B) {
-	db, _ := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-	store := NewAuthStore(db)
-	store.AutoMigrate()
+    db, _ := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+    store := NewAuthStore(db)
+    store.AutoMigrate()
 
-	// Seed data
-	identity := &ssp.SqrlIdentity{Idk: "bench_idk", Suk: "bench_suk", Vuk: "bench_vuk"}
-	store.SaveIdentity(identity)
+    // Seed data
+    identity := &ssp.SqrlIdentity{Idk: "bench_idk", Suk: "bench_suk", Vuk: "bench_vuk"}
+    store.SaveIdentity(identity)
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		store.FindIdentity("bench_idk")
-	}
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        store.FindIdentity("bench_idk")
+    }
 }
 
 func BenchmarkSaveIdentity(b *testing.B) {
-	db, _ := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-	store := NewAuthStore(db)
-	store.AutoMigrate()
+    db, _ := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+    store := NewAuthStore(db)
+    store.AutoMigrate()
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		identity := &ssp.SqrlIdentity{
-			Idk: fmt.Sprintf("bench_%d", i),
-			Suk: "suk", Vuk: "vuk",
-		}
-		store.SaveIdentity(identity)
-	}
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        identity := &ssp.SqrlIdentity{
+            Idk: fmt.Sprintf("bench_%d", i),
+            Suk: "suk", Vuk: "vuk",
+        }
+        store.SaveIdentity(identity)
+    }
 }
-```
+
+```text
 
 ---
 
@@ -1095,7 +1206,8 @@ go tool cover -func=coverage.out
 
 # Target: 70%+ coverage
 # If below target, add more tests
-```
+
+```text
 
 ---
 
@@ -1124,24 +1236,29 @@ Performance baseline:
 All tests pass with -race flag."
 
 git push origin stage-5-testing
-```
+
+```bash
 
 **Merge:**
+
 ```bash
 git checkout main
 git merge --no-ff stage-5-testing
 git tag -a v0.3.0-rc1 -m "Stage 5 Complete: Testing Infrastructure - Release Candidate 1"
 git push origin main --tags
-```
+
+```bash
 
 ---
 
 ## Stage 6: Production Readiness (MEDIUM)
 
 ### Objective
+
 Final hardening for production deployment
 
 ### Risk Level: LOW
+
 - **Breaking Changes:** MAYBE (context.Context support)
 - **Estimated Effort:** 3-4 hours
 - **Testing Required:** All tests
@@ -1152,7 +1269,8 @@ Final hardening for production deployment
 git checkout main
 git pull origin main
 git checkout -b stage-6-production
-```
+
+```bash
 
 ---
 
@@ -1160,21 +1278,25 @@ git checkout -b stage-6-production
 
 **Decision Required:** Should we add context.Context to all methods?
 
-**Option A: Breaking Change (Recommended for v1.0)**
+#### Option A: Breaking Change (Recommended for v1.0)
+
 ```go
 func (as *AuthStore) FindIdentity(ctx context.Context, idk string) (*ssp.SqrlIdentity, error) {
-	// ... implementation with ctx.Done() checking
+    // ... implementation with ctx.Done() checking
 }
-```
 
-**Option B: Non-Breaking (Add new methods)**
+```text
+
+#### Option B: Non-Breaking (Add new methods)
+
 ```go
 func (as *AuthStore) FindIdentityContext(ctx context.Context, idk string) (*ssp.SqrlIdentity, error) {
-	// ... implementation
+    // ... implementation
 }
-```
 
-**Option C: Defer to v2.0 (No changes)**
+```text
+
+#### Option C: Defer to v2.0 (No changes)
 
 **⚠️ USER INPUT REQUIRED ⚠️**
 See: [Decision Point 1](#decision-point-1-context-support) below
@@ -1191,6 +1313,7 @@ See: [Decision Point 1](#decision-point-1-context-support) below
 ## Database Configuration
 
 ### PostgreSQL (Recommended)
+
 ```go
 dsn := "host=db.example.com user=sqrl password=secure dbname=sqrl_prod sslmode=require sslrootcert=/path/to/ca.crt"
 db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
@@ -1202,15 +1325,18 @@ sqlDB, _ := db.DB()
 sqlDB.SetMaxOpenConns(25)
 sqlDB.SetMaxIdleConns(5)
 sqlDB.SetConnMaxLifetime(5 * time.Minute)
-```
+
+```text
 
 ## Security Checklist
+
 - [ ] TLS enabled for database connections
 - [ ] Database encryption at rest (TDE)
 - [ ] Connection pool limits configured
 - [ ] Error logging sanitized (no sensitive data)
 - [ ] Rate limiting at application layer
-```
+
+```text
 
 ---
 
@@ -1222,7 +1348,8 @@ govulncheck ./...
 golangci-lint run --timeout=5m
 
 # Review reports for any remaining issues
-```
+
+```text
 
 ---
 
@@ -1241,9 +1368,11 @@ git commit -m "Stage 6: Production readiness
 Ready for v1.0.0 release."
 
 git push origin stage-6-production
-```
+
+```bash
 
 **Merge:**
+
 ```bash
 git checkout main
 git merge --no-ff stage-6-production
@@ -1263,7 +1392,8 @@ Breaking changes from v0.x:
 Migration guide: See UPGRADE.md"
 
 git push origin main --tags
-```
+
+```bash
 
 ---
 
@@ -1272,7 +1402,7 @@ git push origin main --tags
 ### Test Matrix
 
 | Test Type | Stage 1 | Stage 2 | Stage 3 | Stage 4 | Stage 5 | Stage 6 |
-|-----------|---------|---------|---------|---------|---------|---------|
+| ----------- | --------- | --------- | --------- | --------- | --------- | --------- |
 | Unit Tests | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | Integration Tests | ✅ | ✅ | - | ✅ | ✅ | ✅ |
 | Security Tests | ✅ | ✅ | - | ✅ | ✅ | ✅ |
@@ -1306,7 +1436,8 @@ govulncheck ./...
 
 # Linting
 golangci-lint run
-```
+
+```text
 
 ---
 
@@ -1324,7 +1455,8 @@ git push origin rollback-to-stage2
 git checkout main
 git reset --hard v0.2.0-stage2
 git push --force-with-lease origin main
-```
+
+```bash
 
 ### Rollback to Pre-Upgrade
 
@@ -1334,7 +1466,8 @@ git checkout -b rollback-to-pre-upgrade
 
 # Restore old code
 git push origin rollback-to-pre-upgrade
-```
+
+```bash
 
 ### Database Rollback
 
@@ -1344,7 +1477,8 @@ psql -U postgres sqrl_db < backup_YYYYMMDD_HHMMSS.sql
 
 # MySQL
 mysql -u root -p sqrl_db < backup_YYYYMMDD_HHMMSS.sql
-```
+
+```text
 
 ---
 
@@ -1353,47 +1487,60 @@ mysql -u root -p sqrl_db < backup_YYYYMMDD_HHMMSS.sql
 ### Smoke Test Checklist
 
 - [ ] **Application Starts**
+
   ```bash
   # Build succeeds
   go build ./...
-  ```
+
+```bash
 
 - [ ] **Database Connection**
+
   ```bash
   # Can connect to all databases
   # Check application logs
-  ```
+
+```bash
 
 - [ ] **Basic CRUD Operations**
+
   ```bash
   # SaveIdentity works
   # FindIdentity works
   # DeleteIdentity works
-  ```
+
+```bash
 
 - [ ] **Performance Baseline**
+
   ```bash
   go test -bench=. -benchmem ./...
   # Compare to pre-upgrade baseline
-  ```
+
+```bash
 
 - [ ] **Security Scan**
+
   ```bash
   gosec ./...
   govulncheck ./...
   # Zero high/critical issues
-  ```
+
+```bash
 
 - [ ] **Memory Leaks**
+
   ```bash
   go test -memprofile=mem.prof ./...
   go tool pprof mem.prof
   # Review for leaks
-  ```
+
+```bash
 
 ### Production Monitoring
 
 Monitor for 48 hours after deployment:
+
 - Database connection pool usage
 - Query latency (should be similar to pre-upgrade)
 - Error rates (should not increase)
@@ -1409,25 +1556,30 @@ Monitor for 48 hours after deployment:
 
 **Options:**
 A. **Add context.Context (BREAKING CHANGE)**
-   - Pros: Modern Go idiom, cancellation support, production-ready
-   - Cons: Breaking change, requires callers to update
-   - Recommendation: **DO THIS** for v1.0.0
+
+- Pros: Modern Go idiom, cancellation support, production-ready
+- Cons: Breaking change, requires callers to update
+- Recommendation: **DO THIS** for v1.0.0
 
 B. **Add new methods with context (NON-BREAKING)**
-   - Pros: Backward compatible
-   - Cons: Duplicated methods, deprecated old methods
-   - Recommendation: Only if v1.0.0 must be backward compatible
+
+- Pros: Backward compatible
+- Cons: Duplicated methods, deprecated old methods
+- Recommendation: Only if v1.0.0 must be backward compatible
 
 C. **Defer to v2.0.0**
-   - Pros: No immediate work
-   - Cons: v1.0.0 not production-ready
-   - Recommendation: **AVOID** unless time-constrained
+
+- Pros: No immediate work
+- Cons: v1.0.0 not production-ready
+- Recommendation: **AVOID** unless time-constrained
 
 **Please provide decision before Stage 6:**
 
-```
+```text
+
 DECISION: [A/B/C]
 RATIONALE: [Your reasoning]
+
 ```
 
 ---
@@ -1438,18 +1590,22 @@ RATIONALE: [Your reasoning]
 
 **Options:**
 A. **Implement in v1.0.0**
-   - Requires encryption key management
-   - Adds complexity but improves security
+
+- Requires encryption key management
+- Adds complexity but improves security
 
 B. **Defer to v1.1.0**
-   - Document as enhancement
-   - Rely on database TDE for now
+
+- Document as enhancement
+- Rely on database TDE for now
 
 **Recommendation:** Option B (defer to v1.1.0)
 
-```
+```text
+
 DECISION: [A/B]
 RATIONALE: [Your reasoning]
+
 ```
 
 ---
@@ -1457,7 +1613,7 @@ RATIONALE: [Your reasoning]
 ## Summary Timeline
 
 | Stage | Duration | Cumulative | Milestone |
-|-------|----------|------------|-----------|
+| ------- | ---------- | ------------ | ----------- |
 | Pre-Upgrade | 2 hours | 2h | Baseline established |
 | Stage 1 | 6-8 hours | 8-10h | GORM v2 migration |
 | Stage 2 | 2-3 hours | 10-13h | Secure drivers |
@@ -1471,4 +1627,4 @@ RATIONALE: [Your reasoning]
 
 ---
 
-**END OF STAGED UPGRADE PLAN**
+### END OF STAGED UPGRADE PLAN
