@@ -69,7 +69,7 @@ graph LR
     style S4 fill:#ff9800
     style END fill:#4CAF50
 
-```text
+```
 
 ---
 
@@ -132,7 +132,7 @@ gitGraph
     checkout main
     merge stage-6-production tag: "v1.0.0"
 
-```text
+```
 
 ### Test Gate Requirements
 
@@ -155,18 +155,18 @@ Each stage requires:
 
 - [ ] **Backup Production Database**
 
-  ```bash
+```bash
   # PostgreSQL
   pg_dump -h localhost -U postgres sqrl_db > backup_$(date +%Y%m%d_%H%M%S).sql
 
   # MySQL
   mysqldump -u root -p sqrl_db > backup_$(date +%Y%m%d_%H%M%S).sql
 
-```text
+```
 
 - [ ] **Create Development Environment**
 
-  ```bash
+```bash
   # Clone repository
   git clone https://github.com/dxcSithLord/server-go-ssp-gormauthstore.git
   cd server-go-ssp-gormauthstore
@@ -174,42 +174,42 @@ Each stage requires:
   # Create development database
   createdb sqrl_test  # PostgreSQL
 
-```bash
+```
 
 - [ ] **Verify Current Version**
 
-  ```bash
+```bash
   go version  # Should be 1.23+ or 1.24+
   go mod graph | grep gorm  # Check current GORM version
 
-```bash
+```
 
 - [ ] **Install Development Tools**
 
-  ```bash
+```bash
   make tools
   # OR manually:
   go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
   go install github.com/securego/gosec/v2/cmd/gosec@latest
   go install golang.org/x/vuln/cmd/govulncheck@latest
 
-```bash
+```
 
 - [ ] **Run Baseline Tests**
 
-  ```bash
+```bash
   go test ./... -v
   # Document current test results as baseline
 
-```bash
+```
 
 - [ ] **Tag Current State**
 
-  ```bash
+```bash
   git tag -a v0.1.0-pre-upgrade -m "Pre-upgrade baseline"
   git push origin v0.1.0-pre-upgrade
 
-```bash
+```
 
 ---
 
@@ -232,7 +232,7 @@ git checkout main
 git pull origin main
 git checkout -b stage-1-gorm-v2
 
-```bash
+```
 
 ---
 
@@ -248,7 +248,7 @@ require (
     github.com/sqrldev/server-go-ssp v0.0.0-20241212182118-c8230b16b87d
 )
 
-```bash
+```
 
 **New:**
 
@@ -262,7 +262,7 @@ require (
     gorm.io/gorm v1.31.1
 )
 
-```text
+```
 
 **Commands:**
 
@@ -280,7 +280,7 @@ go get gorm.io/driver/sqlserver@v1.5.3
 # Tidy
 go mod tidy
 
-```text
+```
 
 **Verification:**
 
@@ -288,7 +288,7 @@ go mod tidy
 go mod graph | grep gorm
 # Should show gorm.io/gorm v1.31.1
 
-```bash
+```
 
 ---
 
@@ -304,7 +304,7 @@ import (
     ssp "github.com/sqrldev/server-go-ssp"
 )
 
-```bash
+```
 
 **New:**
 
@@ -316,7 +316,7 @@ import (
     "gorm.io/gorm"
 )
 
-```bash
+```
 
 **Changes:**
 
@@ -344,7 +344,7 @@ func (as *AuthStore) FindIdentity(idk string) (*ssp.SqrlIdentity, error) {
     return identity, nil
 }
 
-```text
+```
 
 **New:**
 
@@ -361,7 +361,7 @@ func (as *AuthStore) FindIdentity(idk string) (*ssp.SqrlIdentity, error) {
     return identity, nil
 }
 
-```text
+```
 
 **Breaking Change Details:**
 
@@ -383,7 +383,7 @@ import (
     ssp "github.com/sqrldev/server-go-ssp"
 )
 
-```bash
+```
 
 **New:**
 
@@ -396,7 +396,7 @@ import (
     "gorm.io/gorm"
 )
 
-```bash
+```
 
 **Database Connection Update:**
 
@@ -405,7 +405,7 @@ import (
 ```go
 db, err := gorm.Open("postgres", "dbname=sqrl_test sslmode=disable")
 
-```text
+```
 
 **New:**
 
@@ -413,7 +413,7 @@ db, err := gorm.Open("postgres", "dbname=sqrl_test sslmode=disable")
 dsn := "host=localhost user=postgres dbname=sqrl_test sslmode=disable"
 db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
-```text
+```
 
 **Breaking Change Details:**
 
@@ -436,7 +436,7 @@ go test ./... -v
 
 # If tests fail, review error messages and adjust
 
-```text
+```
 
 **Common Issues:**
 
@@ -514,14 +514,14 @@ func TestGORMv2Integration(t *testing.T) {
     t.Log("✅ GORM v2 integration test passed")
 }
 
-```text
+```
 
 **Run:**
 
 ```bash
 go test -tags=integration -v ./...
 
-```bash
+```
 
 ---
 
@@ -536,7 +536,7 @@ govulncheck ./...
 
 # Expected: No new vulnerabilities introduced
 
-```text
+```
 
 ---
 
@@ -576,7 +576,7 @@ Migration verified on PostgreSQL 14"
 
 git push origin stage-1-gorm-v2
 
-```bash
+```
 
 **Create Pull Request:**
 
@@ -619,7 +619,7 @@ EOF
 )" \
   --base main
 
-```text
+```
 
 **After Approval and CI Pass:**
 
@@ -629,7 +629,7 @@ git merge --no-ff stage-1-gorm-v2
 git tag -a v0.2.0-stage1 -m "Stage 1 Complete: GORM v2 Migration"
 git push origin main --tags
 
-```bash
+```
 
 ---
 
@@ -652,7 +652,7 @@ git checkout main
 git pull origin main
 git checkout -b stage-2-db-drivers
 
-```bash
+```
 
 ---
 
@@ -672,7 +672,7 @@ git checkout -b stage-2-db-drivers
 ```bash
 go get github.com/lib/pq@v1.10.9
 
-```bash
+```
 
 ---
 
@@ -692,7 +692,7 @@ go get github.com/lib/pq@v1.10.9
 ```bash
 go get github.com/mattn/go-sqlite3@v1.14.32
 
-```bash
+```
 
 ---
 
@@ -712,7 +712,7 @@ go get github.com/mattn/go-sqlite3@v1.14.32
 ```bash
 go get github.com/go-sql-driver/mysql@v1.9.3
 
-```bash
+```
 
 ---
 
@@ -732,7 +732,7 @@ go get github.com/go-sql-driver/mysql@v1.9.3
 ```bash
 go get github.com/denisenkom/go-mssqldb@v0.12.3
 
-```bash
+```
 
 ---
 
@@ -745,7 +745,7 @@ go get gorm.io/driver/sqlite@v1.5.6
 go get gorm.io/driver/sqlserver@v1.5.3
 go mod tidy
 
-```text
+```
 
 ---
 
@@ -767,7 +767,7 @@ go test -tags=integration -v ./... -run TestMySQL
 # SQLite (no container needed)
 go test -tags=integration -v ./... -run TestSQLite
 
-```text
+```
 
 ---
 
@@ -802,7 +802,7 @@ No breaking changes. All tests pass."
 
 git push origin stage-2-db-drivers
 
-```bash
+```
 
 **Merge to main after PR approval:**
 
@@ -812,7 +812,7 @@ git merge --no-ff stage-2-db-drivers
 git tag -a v0.2.0-stage2 -m "Stage 2 Complete: Database Driver Upgrades"
 git push origin main --tags
 
-```bash
+```
 
 ---
 
@@ -835,7 +835,7 @@ git checkout main
 git pull origin main
 git checkout -b stage-3-transitive
 
-```bash
+```
 
 ---
 
@@ -850,7 +850,7 @@ go get golang.org/x/sys@latest
 go get golang.org/x/text@latest
 go mod tidy
 
-```bash
+```
 
 ---
 
@@ -864,7 +864,7 @@ go mod tidy
 # Review changes
 git diff go.mod
 
-```bash
+```
 
 ---
 
@@ -887,7 +887,7 @@ All tests pass. No breaking changes."
 
 git push origin stage-3-transitive
 
-```bash
+```
 
 **Merge after approval:**
 
@@ -897,7 +897,7 @@ git merge --no-ff stage-3-transitive
 git tag -a v0.2.0-stage3 -m "Stage 3 Complete: Transitive Dependencies"
 git push origin main --tags
 
-```bash
+```
 
 ---
 
@@ -920,7 +920,7 @@ git checkout main
 git pull origin main
 git checkout -b stage-4-security
 
-```bash
+```
 
 ---
 
@@ -948,7 +948,7 @@ func (as *AuthStore) FindIdentity(idk string) (*ssp.SqrlIdentity, error) {
     return identity, nil
 }
 
-```text
+```
 
 **Add validation to SaveIdentity:**
 
@@ -966,7 +966,7 @@ func (as *AuthStore) SaveIdentity(identity *ssp.SqrlIdentity) error {
     return as.db.Save(identity).Error
 }
 
-```text
+```
 
 **Add validation to DeleteIdentity:**
 
@@ -980,7 +980,7 @@ func (as *AuthStore) DeleteIdentity(idk string) error {
     return as.db.Where("idk = ?", idk).Delete(&ssp.SqrlIdentity{}).Error
 }
 
-```text
+```
 
 ---
 
@@ -1007,7 +1007,7 @@ func (as *AuthStore) FindIdentitySecure(idk string) (*SecureIdentityWrapper, err
     return NewSecureIdentityWrapper(identity), nil
 }
 
-```text
+```
 
 ---
 
@@ -1070,7 +1070,7 @@ func TestInvalidCharacters(t *testing.T) {
     }
 }
 
-```text
+```
 
 ---
 
@@ -1099,7 +1099,7 @@ All tests pass. No breaking changes to existing API."
 
 git push origin stage-4-security
 
-```bash
+```
 
 **Merge:**
 
@@ -1109,7 +1109,7 @@ git merge --no-ff stage-4-security
 git tag -a v0.2.0-stage4 -m "Stage 4 Complete: Security Enhancements"
 git push origin main --tags
 
-```bash
+```
 
 ---
 
@@ -1132,7 +1132,7 @@ git checkout main
 git pull origin main
 git checkout -b stage-5-testing
 
-```bash
+```
 
 ---
 
@@ -1194,7 +1194,7 @@ func BenchmarkSaveIdentity(b *testing.B) {
     }
 }
 
-```text
+```
 
 ---
 
@@ -1207,7 +1207,7 @@ go tool cover -func=coverage.out
 # Target: 70%+ coverage
 # If below target, add more tests
 
-```text
+```
 
 ---
 
@@ -1237,7 +1237,7 @@ All tests pass with -race flag."
 
 git push origin stage-5-testing
 
-```bash
+```
 
 **Merge:**
 
@@ -1247,7 +1247,7 @@ git merge --no-ff stage-5-testing
 git tag -a v0.3.0-rc1 -m "Stage 5 Complete: Testing Infrastructure - Release Candidate 1"
 git push origin main --tags
 
-```bash
+```
 
 ---
 
@@ -1270,7 +1270,7 @@ git checkout main
 git pull origin main
 git checkout -b stage-6-production
 
-```bash
+```
 
 ---
 
@@ -1285,7 +1285,7 @@ func (as *AuthStore) FindIdentity(ctx context.Context, idk string) (*ssp.SqrlIde
     // ... implementation with ctx.Done() checking
 }
 
-```text
+```
 
 #### Option B: Non-Breaking (Add new methods)
 
@@ -1294,7 +1294,7 @@ func (as *AuthStore) FindIdentityContext(ctx context.Context, idk string) (*ssp.
     // ... implementation
 }
 
-```text
+```
 
 #### Option C: Defer to v2.0 (No changes)
 
@@ -1307,7 +1307,7 @@ See: [Decision Point 1](#decision-point-1-context-support) below
 
 **Create:** `PRODUCTION.md`
 
-```markdown
+
 # Production Deployment Guide
 
 ## Database Configuration
@@ -1326,7 +1326,8 @@ sqlDB.SetMaxOpenConns(25)
 sqlDB.SetMaxIdleConns(5)
 sqlDB.SetConnMaxLifetime(5 * time.Minute)
 
-```text
+```
+
 
 ## Security Checklist
 
@@ -1336,7 +1337,7 @@ sqlDB.SetConnMaxLifetime(5 * time.Minute)
 - [ ] Error logging sanitized (no sensitive data)
 - [ ] Rate limiting at application layer
 
-```text
+
 
 ---
 
@@ -1349,7 +1350,7 @@ golangci-lint run --timeout=5m
 
 # Review reports for any remaining issues
 
-```text
+```
 
 ---
 
@@ -1369,7 +1370,7 @@ Ready for v1.0.0 release."
 
 git push origin stage-6-production
 
-```bash
+```
 
 **Merge:**
 
@@ -1393,7 +1394,7 @@ Migration guide: See UPGRADE.md"
 
 git push origin main --tags
 
-```bash
+```
 
 ---
 
@@ -1437,7 +1438,7 @@ govulncheck ./...
 # Linting
 golangci-lint run
 
-```text
+```
 
 ---
 
@@ -1456,7 +1457,7 @@ git checkout main
 git reset --hard v0.2.0-stage2
 git push --force-with-lease origin main
 
-```bash
+```
 
 ### Rollback to Pre-Upgrade
 
@@ -1467,7 +1468,7 @@ git checkout -b rollback-to-pre-upgrade
 # Restore old code
 git push origin rollback-to-pre-upgrade
 
-```bash
+```
 
 ### Database Rollback
 
@@ -1478,7 +1479,7 @@ psql -U postgres sqrl_db < backup_YYYYMMDD_HHMMSS.sql
 # MySQL
 mysql -u root -p sqrl_db < backup_YYYYMMDD_HHMMSS.sql
 
-```text
+```
 
 ---
 
@@ -1488,54 +1489,54 @@ mysql -u root -p sqrl_db < backup_YYYYMMDD_HHMMSS.sql
 
 - [ ] **Application Starts**
 
-  ```bash
+```bash
   # Build succeeds
   go build ./...
 
-```bash
+```
 
 - [ ] **Database Connection**
 
-  ```bash
+```bash
   # Can connect to all databases
   # Check application logs
 
-```bash
+```
 
 - [ ] **Basic CRUD Operations**
 
-  ```bash
+```bash
   # SaveIdentity works
   # FindIdentity works
   # DeleteIdentity works
 
-```bash
+```
 
 - [ ] **Performance Baseline**
 
-  ```bash
+```bash
   go test -bench=. -benchmem ./...
   # Compare to pre-upgrade baseline
 
-```bash
+```
 
 - [ ] **Security Scan**
 
-  ```bash
+```bash
   gosec ./...
   govulncheck ./...
   # Zero high/critical issues
 
-```bash
+```
 
 - [ ] **Memory Leaks**
 
-  ```bash
+```bash
   go test -memprofile=mem.prof ./...
   go tool pprof mem.prof
   # Review for leaks
 
-```bash
+```
 
 ### Production Monitoring
 
