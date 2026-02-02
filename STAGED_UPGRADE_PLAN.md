@@ -272,18 +272,18 @@ go mod graph | grep gorm
 **Current (Lines 3-6):**
 ```go
 import (
-	"github.com/jinzhu/gorm"
-	ssp "github.com/sqrldev/server-go-ssp"
+    "github.com/jinzhu/gorm"
+    ssp "github.com/sqrldev/server-go-ssp"
 )
 ```
 
 **New:**
 ```go
 import (
-	"errors"
+    "errors"
 
-	ssp "github.com/sqrldev/server-go-ssp"
-	"gorm.io/gorm"
+    ssp "github.com/sqrldev/server-go-ssp"
+    "gorm.io/gorm"
 )
 ```
 
@@ -300,30 +300,30 @@ import (
 **Current (Lines 24-34):**
 ```go
 func (as *AuthStore) FindIdentity(idk string) (*ssp.SqrlIdentity, error) {
-	identity := &ssp.SqrlIdentity{}
-	err := as.db.Where("idk = ?", idk).First(identity).Error
-	if err != nil {
-		if gorm.IsRecordNotFoundError(err) {  // ❌ OLD API
-			return nil, ssp.ErrNotFound
-		}
-		return nil, err
-	}
-	return identity, nil
+    identity := &ssp.SqrlIdentity{}
+    err := as.db.Where("idk = ?", idk).First(identity).Error
+    if err != nil {
+        if gorm.IsRecordNotFoundError(err) {  // ❌ OLD API
+            return nil, ssp.ErrNotFound
+        }
+        return nil, err
+    }
+    return identity, nil
 }
 ```
 
 **New:**
 ```go
 func (as *AuthStore) FindIdentity(idk string) (*ssp.SqrlIdentity, error) {
-	identity := &ssp.SqrlIdentity{}
-	err := as.db.Where("idk = ?", idk).First(identity).Error
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {  // ✅ NEW API
-			return nil, ssp.ErrNotFound
-		}
-		return nil, err
-	}
-	return identity, nil
+    identity := &ssp.SqrlIdentity{}
+    err := as.db.Where("idk = ?", idk).First(identity).Error
+    if err != nil {
+        if errors.Is(err, gorm.ErrRecordNotFound) {  // ✅ NEW API
+            return nil, ssp.ErrNotFound
+        }
+        return nil, err
+    }
+    return identity, nil
 }
 ```
 
@@ -340,20 +340,20 @@ func (as *AuthStore) FindIdentity(idk string) (*ssp.SqrlIdentity, error) {
 **Current (Lines 8-9):**
 ```go
 import (
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
-	ssp "github.com/sqrldev/server-go-ssp"
+    "github.com/jinzhu/gorm"
+    _ "github.com/jinzhu/gorm/dialects/postgres"
+    ssp "github.com/sqrldev/server-go-ssp"
 )
 ```
 
 **New:**
 ```go
 import (
-	"testing"
+    "testing"
 
-	ssp "github.com/sqrldev/server-go-ssp"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+    ssp "github.com/sqrldev/server-go-ssp"
+    "gorm.io/driver/postgres"
+    "gorm.io/gorm"
 )
 ```
 
@@ -410,60 +410,60 @@ go test ./... -v
 package gormauthstore
 
 import (
-	"testing"
+    "testing"
 
-	ssp "github.com/sqrldev/server-go-ssp"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+    ssp "github.com/sqrldev/server-go-ssp"
+    "gorm.io/driver/postgres"
+    "gorm.io/gorm"
 )
 
 func TestGORMv2Integration(t *testing.T) {
-	dsn := "host=localhost user=postgres dbname=sqrl_test sslmode=disable"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		t.Fatalf("Failed to connect: %v", err)
-	}
+    dsn := "host=localhost user=postgres dbname=sqrl_test sslmode=disable"
+    db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+    if err != nil {
+        t.Fatalf("Failed to connect: %v", err)
+    }
 
-	store := NewAuthStore(db)
+    store := NewAuthStore(db)
 
-	// Test AutoMigrate
-	if err := store.AutoMigrate(); err != nil {
-		t.Fatalf("AutoMigrate failed: %v", err)
-	}
+    // Test AutoMigrate
+    if err := store.AutoMigrate(); err != nil {
+        t.Fatalf("AutoMigrate failed: %v", err)
+    }
 
-	// Test SaveIdentity
-	identity := &ssp.SqrlIdentity{
-		Idk: string([]byte("test_idk_gorm_v2")),
-		Suk: string([]byte("test_suk")),
-		Vuk: string([]byte("test_vuk")),
-	}
+    // Test SaveIdentity
+    identity := &ssp.SqrlIdentity{
+        Idk: string([]byte("test_idk_gorm_v2")),
+        Suk: string([]byte("test_suk")),
+        Vuk: string([]byte("test_vuk")),
+    }
 
-	if err := store.SaveIdentity(identity); err != nil {
-		t.Fatalf("SaveIdentity failed: %v", err)
-	}
+    if err := store.SaveIdentity(identity); err != nil {
+        t.Fatalf("SaveIdentity failed: %v", err)
+    }
 
-	// Test FindIdentity
-	found, err := store.FindIdentity("test_idk_gorm_v2")
-	if err != nil {
-		t.Fatalf("FindIdentity failed: %v", err)
-	}
+    // Test FindIdentity
+    found, err := store.FindIdentity("test_idk_gorm_v2")
+    if err != nil {
+        t.Fatalf("FindIdentity failed: %v", err)
+    }
 
-	if found.Suk != identity.Suk {
-		t.Errorf("Suk mismatch: got %s, want %s", found.Suk, identity.Suk)
-	}
+    if found.Suk != identity.Suk {
+        t.Errorf("Suk mismatch: got %s, want %s", found.Suk, identity.Suk)
+    }
 
-	// Test DeleteIdentity
-	if err := store.DeleteIdentity("test_idk_gorm_v2"); err != nil {
-		t.Fatalf("DeleteIdentity failed: %v", err)
-	}
+    // Test DeleteIdentity
+    if err := store.DeleteIdentity("test_idk_gorm_v2"); err != nil {
+        t.Fatalf("DeleteIdentity failed: %v", err)
+    }
 
-	// Verify deletion
-	_, err = store.FindIdentity("test_idk_gorm_v2")
-	if err != ssp.ErrNotFound {
-		t.Errorf("Expected ErrNotFound, got %v", err)
-	}
+    // Verify deletion
+    _, err = store.FindIdentity("test_idk_gorm_v2")
+    if err != ssp.ErrNotFound {
+        t.Errorf("Expected ErrNotFound, got %v", err)
+    }
 
-	t.Log("✅ GORM v2 integration test passed")
+    t.Log("✅ GORM v2 integration test passed")
 }
 ```
 
@@ -837,48 +837,48 @@ git checkout -b stage-4-security
 **Add validation to FindIdentity:**
 ```go
 func (as *AuthStore) FindIdentity(idk string) (*ssp.SqrlIdentity, error) {
-	// Validate input
-	if err := ValidateIdk(idk); err != nil {
-		return nil, err
-	}
+    // Validate input
+    if err := ValidateIdk(idk); err != nil {
+        return nil, err
+    }
 
-	identity := &ssp.SqrlIdentity{}
-	err := as.db.Where("idk = ?", idk).First(identity).Error
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, ssp.ErrNotFound
-		}
-		return nil, err
-	}
-	return identity, nil
+    identity := &ssp.SqrlIdentity{}
+    err := as.db.Where("idk = ?", idk).First(identity).Error
+    if err != nil {
+        if errors.Is(err, gorm.ErrRecordNotFound) {
+            return nil, ssp.ErrNotFound
+        }
+        return nil, err
+    }
+    return identity, nil
 }
 ```
 
 **Add validation to SaveIdentity:**
 ```go
 func (as *AuthStore) SaveIdentity(identity *ssp.SqrlIdentity) error {
-	if identity == nil {
-		return errors.New("identity cannot be nil")
-	}
+    if identity == nil {
+        return errors.New("identity cannot be nil")
+    }
 
-	// Validate Idk
-	if err := ValidateIdk(identity.Idk); err != nil {
-		return err
-	}
+    // Validate Idk
+    if err := ValidateIdk(identity.Idk); err != nil {
+        return err
+    }
 
-	return as.db.Save(identity).Error
+    return as.db.Save(identity).Error
 }
 ```
 
 **Add validation to DeleteIdentity:**
 ```go
 func (as *AuthStore) DeleteIdentity(idk string) error {
-	// Validate input
-	if err := ValidateIdk(idk); err != nil {
-		return err
-	}
+    // Validate input
+    if err := ValidateIdk(idk); err != nil {
+        return err
+    }
 
-	return as.db.Where("idk = ?", idk).Delete(&ssp.SqrlIdentity{}).Error
+    return as.db.Where("idk = ?", idk).Delete(&ssp.SqrlIdentity{}).Error
 }
 ```
 
@@ -899,11 +899,11 @@ func (as *AuthStore) DeleteIdentity(idk string) error {
 //   defer wrapper.Destroy()
 //   // Use wrapper.Identity...
 func (as *AuthStore) FindIdentitySecure(idk string) (*SecureIdentityWrapper, error) {
-	identity, err := as.FindIdentity(idk)
-	if err != nil {
-		return nil, err
-	}
-	return NewSecureIdentityWrapper(identity), nil
+    identity, err := as.FindIdentity(idk)
+    if err != nil {
+        return nil, err
+    }
+    return NewSecureIdentityWrapper(identity), nil
 }
 ```
 
@@ -917,55 +917,55 @@ func (as *AuthStore) FindIdentitySecure(idk string) (*SecureIdentityWrapper, err
 package gormauthstore
 
 import (
-	"strings"
-	"testing"
+    "strings"
+    "testing"
 )
 
 func TestSQLInjectionPrevention(t *testing.T) {
-	// These should be safely handled by GORM parameterization
-	maliciousInputs := []string{
-		"'; DROP TABLE sqrl_identities; --",
-		"' OR '1'='1",
-		"admin'--",
-		"1' UNION SELECT * FROM users--",
-	}
+    // These should be safely handled by GORM parameterization
+    maliciousInputs := []string{
+        "'; DROP TABLE sqrl_identities; --",
+        "' OR '1'='1",
+        "admin'--",
+        "1' UNION SELECT * FROM users--",
+    }
 
-	store := &AuthStore{} // Mock store
+    store := &AuthStore{} // Mock store
 
-	for _, input := range maliciousInputs {
-		_, err := store.FindIdentity(input)
-		// Should return validation error or not found, never execute SQL
-		if err == nil {
-			t.Errorf("Expected error for malicious input: %s", input)
-		}
-	}
+    for _, input := range maliciousInputs {
+        _, err := store.FindIdentity(input)
+        // Should return validation error or not found, never execute SQL
+        if err == nil {
+            t.Errorf("Expected error for malicious input: %s", input)
+        }
+    }
 }
 
 func TestInputLengthLimits(t *testing.T) {
-	store := &AuthStore{}
+    store := &AuthStore{}
 
-	// Test exceeds MaxIdkLength
-	longIdk := strings.Repeat("a", MaxIdkLength+1)
-	err := ValidateIdk(longIdk)
-	if err != ErrIdentityKeyTooLong {
-		t.Errorf("Expected ErrIdentityKeyTooLong, got %v", err)
-	}
+    // Test exceeds MaxIdkLength
+    longIdk := strings.Repeat("a", MaxIdkLength+1)
+    err := ValidateIdk(longIdk)
+    if err != ErrIdentityKeyTooLong {
+        t.Errorf("Expected ErrIdentityKeyTooLong, got %v", err)
+    }
 }
 
 func TestInvalidCharacters(t *testing.T) {
-	invalidInputs := []string{
-		"idk with spaces",
-		"idk\nwith\nnewlines",
-		"idk@invalid",
-		"idk\x00null",
-	}
+    invalidInputs := []string{
+        "idk with spaces",
+        "idk\nwith\nnewlines",
+        "idk@invalid",
+        "idk\x00null",
+    }
 
-	for _, input := range invalidInputs {
-		err := ValidateIdk(input)
-		if err != ErrInvalidIdentityKeyFormat {
-			t.Errorf("Expected ErrInvalidIdentityKeyFormat for %q, got %v", input, err)
-		}
-	}
+    for _, input := range invalidInputs {
+        err := ValidateIdk(input)
+        if err != ErrInvalidIdentityKeyFormat {
+            t.Errorf("Expected ErrInvalidIdentityKeyFormat for %q, got %v", input, err)
+        }
+    }
 }
 ```
 
@@ -1047,41 +1047,41 @@ Add tests for:
 package gormauthstore
 
 import (
-	"testing"
+    "testing"
 
-	ssp "github.com/sqrldev/server-go-ssp"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
+    ssp "github.com/sqrldev/server-go-ssp"
+    "gorm.io/driver/sqlite"
+    "gorm.io/gorm"
 )
 
 func BenchmarkFindIdentity(b *testing.B) {
-	db, _ := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-	store := NewAuthStore(db)
-	store.AutoMigrate()
+    db, _ := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+    store := NewAuthStore(db)
+    store.AutoMigrate()
 
-	// Seed data
-	identity := &ssp.SqrlIdentity{Idk: "bench_idk", Suk: "bench_suk", Vuk: "bench_vuk"}
-	store.SaveIdentity(identity)
+    // Seed data
+    identity := &ssp.SqrlIdentity{Idk: "bench_idk", Suk: "bench_suk", Vuk: "bench_vuk"}
+    store.SaveIdentity(identity)
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		store.FindIdentity("bench_idk")
-	}
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        store.FindIdentity("bench_idk")
+    }
 }
 
 func BenchmarkSaveIdentity(b *testing.B) {
-	db, _ := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-	store := NewAuthStore(db)
-	store.AutoMigrate()
+    db, _ := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+    store := NewAuthStore(db)
+    store.AutoMigrate()
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		identity := &ssp.SqrlIdentity{
-			Idk: fmt.Sprintf("bench_%d", i),
-			Suk: "suk", Vuk: "vuk",
-		}
-		store.SaveIdentity(identity)
-	}
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        identity := &ssp.SqrlIdentity{
+            Idk: fmt.Sprintf("bench_%d", i),
+            Suk: "suk", Vuk: "vuk",
+        }
+        store.SaveIdentity(identity)
+    }
 }
 ```
 
@@ -1163,14 +1163,14 @@ git checkout -b stage-6-production
 **Option A: Breaking Change (Recommended for v1.0)**
 ```go
 func (as *AuthStore) FindIdentity(ctx context.Context, idk string) (*ssp.SqrlIdentity, error) {
-	// ... implementation with ctx.Done() checking
+    // ... implementation with ctx.Done() checking
 }
 ```
 
 **Option B: Non-Breaking (Add new methods)**
 ```go
 func (as *AuthStore) FindIdentityContext(ctx context.Context, idk string) (*ssp.SqrlIdentity, error) {
-	// ... implementation
+    // ... implementation
 }
 ```
 
