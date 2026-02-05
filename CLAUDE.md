@@ -61,16 +61,14 @@ make fmt           # gofmt
 ├── *.go                          # Go source (auth_store, errors, secure_memory)
 ├── *_test.go                     # Go tests
 ├── docs/                         # All planning and design documentation
-│   ├── UNIFIED_TODO.md           # Master plan (44 tasks, 3 phases)
-│   ├── STAGED_UPGRADE_PLAN.md    # 6-stage upgrade path
-│   ├── SECURITY_REVIEW_AND_UPGRADE_PLAN.md
+│   ├── PROJECT_PLAN.md           # Consolidated plan (44 tasks, 3 phases, 6 stages)
 │   ├── REQUIREMENTS.md
 │   ├── ARCHITECTURE.md
 │   ├── API_SPECIFICATION.md
 │   ├── API_TESTS_SPEC.md
 │   ├── DEPENDENCIES.md
 │   ├── Notice_of_Decisions.md
-│   └── TODO.md
+│   └── archive/                  # Superseded planning documents
 ├── .github/workflows/ci.yml     # GitHub Actions CI pipeline
 ├── Makefile                      # Development automation
 ├── go.mod / go.sum               # Go module definition
@@ -95,9 +93,8 @@ Specifically, update the following sections:
    - Update the "Status" column (e.g., "Not started" -> "In progress" -> "Complete")
    - Recalculate the TOTAL percentage
 
-3. **docs/UNIFIED_TODO.md** task status:
+3. **docs/PROJECT_PLAN.md** task status:
    - Mark completed tasks with their completion date
-   - Update the summary counts at the top of that document
 
 ### Example: After completing GORM v2 migration
 
@@ -127,7 +124,7 @@ In `README.md`, update:
 
 ### What needs to be done next
 
-1. **GORM v1 -> v2 migration** in `auth_store.go` (see docs/STAGED_UPGRADE_PLAN.md Stage 1)
+1. **GORM v1 -> v2 migration** in `auth_store.go` (see docs/PROJECT_PLAN.md Phase 1)
 2. Integrate `ValidateIdk()` into AuthStore methods
 3. Expand test suite to 70%+ coverage
 4. Tag v1.0.0 release
@@ -142,10 +139,9 @@ In `README.md`, update:
 
 ## Decision Points
 
-There are 4 open decision points documented in `docs/UNIFIED_TODO.md` that
+There are 3 open decision points documented in `docs/PROJECT_PLAN.md` that
 require human input before proceeding:
 
 - **DP-001:** MemGuard vs custom implementation for secure memory
 - **DP-002:** Database driver selection (PostgreSQL-only vs multi-database)
 - **DP-003:** Context API design (new methods vs modify existing signatures)
-- **DP-004:** Release versioning (v0.x pre-release vs v1.0.0)

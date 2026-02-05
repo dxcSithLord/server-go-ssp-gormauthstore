@@ -25,9 +25,7 @@ SQRL `ssp.AuthStore` implementation using the GORM ORM.
 | **TOTAL** | 44 implementation tasks | 44 | 0 | **0%** |
 
 > **Next milestone:** Phase 1 / Stage 1.1 -- GORM v2 Migration (blocks all other work).
-> See [docs/UNIFIED_TODO.md](docs/UNIFIED_TODO.md) for the full plan and
-> [docs/STAGED_UPGRADE_PLAN.md](docs/STAGED_UPGRADE_PLAN.md) for step-by-step
-> upgrade instructions.
+> See [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) for the full plan.
 
 ---
 
@@ -76,16 +74,14 @@ All project documentation lives in the [`docs/`](docs/) directory:
 
 | Document | Purpose |
 |----------|---------|
-| [UNIFIED_TODO.md](docs/UNIFIED_TODO.md) | Consolidated project plan (44 tasks, 3 phases) |
-| [STAGED_UPGRADE_PLAN.md](docs/STAGED_UPGRADE_PLAN.md) | Step-by-step 6-stage upgrade path |
-| [SECURITY_REVIEW_AND_UPGRADE_PLAN.md](docs/SECURITY_REVIEW_AND_UPGRADE_PLAN.md) | Security analysis and remediation plan |
+| [PROJECT_PLAN.md](docs/PROJECT_PLAN.md) | Consolidated project plan (44 tasks, 3 phases, 6 stages) |
 | [REQUIREMENTS.md](docs/REQUIREMENTS.md) | Reverse-engineered functional and non-functional requirements |
 | [ARCHITECTURE.md](docs/ARCHITECTURE.md) | TOGAF-aligned architecture views |
 | [API_SPECIFICATION.md](docs/API_SPECIFICATION.md) | OpenAPI-style Go interface specification |
 | [API_TESTS_SPEC.md](docs/API_TESTS_SPEC.md) | 70+ test case specifications |
 | [DEPENDENCIES.md](docs/DEPENDENCIES.md) | Dependency management and local build setup |
 | [Notice_of_Decisions.md](docs/Notice_of_Decisions.md) | Decision log with SQRL protocol compliance analysis |
-| [TODO.md](docs/TODO.md) | Original security review checklist |
+| [archive/](docs/archive/) | Superseded planning documents (TODO, UNIFIED_TODO, STAGED_UPGRADE_PLAN, SECURITY_REVIEW) |
 
 ## Development
 
