@@ -1,5 +1,37 @@
 # CLAUDE.md - Project Instructions for Claude Code
 
+## Working Preferences
+
+- **Think first, read second, act third.** Always think through the problem,
+  read the codebase for relevant files, and understand context before making
+  changes. Never speculate about code you have not opened. If a specific file
+  is referenced, read it before answering.
+- **Check in before major changes.** Before making any major changes, present
+  the plan and wait for confirmation before generating code.
+- **Keep it simple.** Make every task and code change as simple as possible.
+  Comply with good coding standards appropriate for the file type, but avoid
+  massive or complex changes. Every change should impact as little code as
+  possible. Simplicity, readability, and security are the priorities.
+- **Security and defensive coding.** Code with security and defensive coding
+  practices. All generated code must meet appropriate standards for the
+  language, including security checks from NIST, OWASP, to at least FIPS 140-2
+  standard.
+- **High-level explanations.** For each step, provide a high-level explanation
+  of what changes were made rather than exhaustive detail.
+- **Grounded answers only.** Never make claims about code before investigating.
+  Give grounded, hallucination-free answers. If unable to determine something,
+  say so.
+- **Verify "latest" claims.** Verify the current date against any references
+  to "latest" and confirm the assumption from a trusted and verified source.
+  Ask if unable to determine trust of source.
+- **Diagrams in Mermaid.** Any diagrams created should be in Mermaid markdown
+  format.
+- **Maintain architecture documentation.** Keep `docs/ARCHITECTURE.md` up to
+  date so it describes how the application works inside and out.
+- **Use available skills.** Consider relevant skills (e.g., PDF skill at
+  `/mnt/skills/public/pdf/SKILL.md` for PDF extraction) before proceeding.
+  Create a plan first and ask for confirmation before generating code.
+
 ## Project Overview
 
 This is a Go library (`gormauthstore`) that implements the `ssp.AuthStore`
