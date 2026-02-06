@@ -61,7 +61,7 @@ make fmt           # gofmt
 ├── *.go                          # Go source (auth_store, errors, secure_memory)
 ├── *_test.go                     # Go tests
 ├── docs/                         # All planning and design documentation
-│   ├── PROJECT_PLAN.md           # Consolidated plan (44 tasks, 3 phases, 6 stages)
+│   ├── PROJECT_PLAN.md           # Consolidated plan (44 tasks, 3 phases, 7 stages)
 │   ├── REQUIREMENTS.md
 │   ├── ARCHITECTURE.md
 │   ├── API_SPECIFICATION.md
