@@ -3,7 +3,7 @@ package gormauthstore
 import (
 	"runtime"
 
-	ssp "github.com/sqrldev/server-go-ssp"
+	ssp "github.com/dxcSithLord/server-go-ssp"
 )
 
 // ScrambleBytes overwrites a byte slice with pseudo-random data.
