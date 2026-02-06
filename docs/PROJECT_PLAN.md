@@ -14,7 +14,7 @@
 |--------|-------|-------|
 | **GORM Version** | v2 (gorm.io/gorm v1.31.1) | Migrated from deprecated jinzhu/gorm v1.9.16 |
 | **Go Version** | 1.24.7 | go.mod min 1.24.0, toolchain go1.24.7 |
-| **Test Coverage** | ~35% | Target: 70%+. Unit + integration tests pass with SQLite |
+| **Test Coverage** | ~98% | Target: 70%+. Unit + integration + security tests pass with SQLite |
 | **Security Scans** | CI/CD configured | gosec clean; govulncheck blocked by network |
 | **Secure Memory** | Implemented | ClearIdentity, WipeBytes, SecureIdentityWrapper available |
 | **Input Validation** | Integrated | ValidateIdk() called by FindIdentity, SaveIdentity, DeleteIdentity |
