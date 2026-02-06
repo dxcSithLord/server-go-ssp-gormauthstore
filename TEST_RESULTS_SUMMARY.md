@@ -200,16 +200,16 @@ These tests can be run as part of the CI pipeline:
 make test
 
 # Run standalone
-go test -v ./docs_test.go
+go test -v ./...
 
 # Run with coverage
-go test -v -coverprofile=coverage.out ./docs_test.go
+go test -v -coverprofile=coverage.out ./...
 ```
 
 ## Recommendations
 
 ### For Documentation Maintainers
-1. Run `go test ./docs_test.go` before committing documentation changes
+1. Run `go test ./...` before committing documentation changes
 2. Fix any broken links immediately
 3. Keep cross-document references consistent
 4. Update tests when adding new required sections
