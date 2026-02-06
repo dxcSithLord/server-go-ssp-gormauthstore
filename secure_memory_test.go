@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	ssp "github.com/sqrldev/server-go-ssp"
+	ssp "github.com/dxcSithLord/server-go-ssp"
 )
 
 // TestWipeBytes verifies that byte slices are properly zeroed

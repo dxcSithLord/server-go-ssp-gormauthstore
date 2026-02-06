@@ -7,9 +7,9 @@ SQRL `ssp.AuthStore` implementation using the GORM ORM.
 | Area | Status | Detail |
 |------|--------|--------|
 | **SQRL Protocol Compliance** | **COMPLIANT** | All required storage fields (Idk, Suk, Vuk) plus optional enhancements |
-| **GORM Version** | DEPRECATED (v1.9.16) | Migration to gorm.io/gorm v2 is the critical next step |
+| **GORM Version** | **CURRENT (v2 -- gorm.io/gorm v1.31.1)** | Migrated from deprecated jinzhu/gorm v1.9.16 |
 | **Go Version** | 1.24 | Module initialised with Go 1.24.0 toolchain |
-| **Test Coverage** | ~30% | Target: 70%+. Secure memory tests pass; auth_store tests need expansion |
+| **Test Coverage** | ~35% | Target: 70%+. Unit + integration tests pass with SQLite |
 | **CI/CD Pipeline** | Configured | GitHub Actions workflow with lint, security scan, build matrix |
 | **Security Hardening** | Partial | Secure memory clearing implemented; not yet integrated into AuthStore |
 | **Documentation** | Comprehensive | 10 documents covering requirements, architecture, API, security, and upgrade plan |
@@ -18,13 +18,13 @@ SQRL `ssp.AuthStore` implementation using the GORM ORM.
 
 | Phase | Description | Tasks | Completed | Status |
 |-------|-------------|-------|-----------|--------|
-| **Phase 1** | Critical Foundation (GORM v2, drivers, deps) | 20 | 0 | Not started |
+| **Phase 1** | Critical Foundation (GORM v2, drivers, deps) | 20 | 16 | In progress |
 | **Phase 2** | Security & Testing | 14 | 0 | Not started |
 | **Phase 3** | Production Readiness & Release | 10 | 0 | Not started |
 | **Docs & Infra** | Documentation, CI/CD, secure memory | -- | Done | Complete |
-| **TOTAL** | 44 implementation tasks | 44 | 0 | **0%** |
+| **TOTAL** | 44 implementation tasks | 44 | 16 | **36%** |
 
-> **Next milestone:** Phase 1 / Stage 1.1 -- GORM v2 Migration (blocks all other work).
+> **Next milestone:** Phase 2 / Stage 2.1 -- Security Integration.
 > See [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) for the full plan.
 
 ---
@@ -65,8 +65,8 @@ store := gormauthstore.NewAuthStore(db)
 store.AutoMigrate()
 ```
 
-> **Note:** The code currently uses `github.com/jinzhu/gorm` (deprecated).
-> The GORM v2 migration is the first task in the upgrade plan.
+> **Note:** The code uses `gorm.io/gorm` v2. An internal `identityRecord`
+> model provides GORM v2 tags for the upstream `SqrlIdentity` struct.
 
 ## Documentation
 
