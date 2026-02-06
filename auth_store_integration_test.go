@@ -171,7 +171,8 @@ func TestDeleteIdentity_NonExistent(t *testing.T) {
 		t.Fatalf("AutoMigrate failed: %v", err)
 	}
 
-	// GORM soft-deletes are a no-op if the record doesn't exist
+	// GORM performs a hard delete because identityRecord does not have a
+	// gorm.DeletedAt field. Deleting a non-existent key is a no-op (no error).
 	err = store.DeleteIdentity("nonexistent-key")
 	if err != nil {
 		t.Fatalf("DeleteIdentity on non-existent key should not error, got: %v", err)
@@ -199,6 +200,7 @@ func TestSaveIdentity_AllFields(t *testing.T) {
 		Hardlock: true,
 		Disabled: true,
 		Rekeyed:  "rekeyed-to-new",
+		Btn:      3,
 	}
 
 	if err := store.SaveIdentity(identity); err != nil {
@@ -233,5 +235,8 @@ func TestSaveIdentity_AllFields(t *testing.T) {
 	}
 	if found.Rekeyed != identity.Rekeyed {
 		t.Errorf("Rekeyed: got %q, want %q", found.Rekeyed, identity.Rekeyed)
+	}
+	if found.Btn != identity.Btn {
+		t.Errorf("Btn: got %d, want %d", found.Btn, identity.Btn)
 	}
 }

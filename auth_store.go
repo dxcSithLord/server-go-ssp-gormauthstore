@@ -20,6 +20,7 @@ type identityRecord struct {
 	Hardlock bool   `gorm:"column:hardlock"`
 	Disabled bool   `gorm:"column:disabled"`
 	Rekeyed  string `gorm:"column:rekeyed"`
+	Btn      int    `gorm:"column:btn"`
 }
 
 // TableName returns the table name matching the GORM v1 convention for SqrlIdentity.
@@ -38,6 +39,7 @@ func toRecord(identity *ssp.SqrlIdentity) *identityRecord {
 		Hardlock: identity.Hardlock,
 		Disabled: identity.Disabled,
 		Rekeyed:  identity.Rekeyed,
+		Btn:      identity.Btn,
 	}
 }
 
@@ -52,6 +54,7 @@ func toIdentity(record *identityRecord) *ssp.SqrlIdentity {
 		Hardlock: record.Hardlock,
 		Disabled: record.Disabled,
 		Rekeyed:  record.Rekeyed,
+		Btn:      record.Btn,
 	}
 }
 
@@ -70,8 +73,12 @@ func (as *AuthStore) AutoMigrate() error {
 	return as.db.AutoMigrate(&identityRecord{})
 }
 
-// FindIdentity implements ssp.AuthStore
+// FindIdentity implements ssp.AuthStore.
+// Validates the idk before querying the database.
 func (as *AuthStore) FindIdentity(idk string) (*ssp.SqrlIdentity, error) {
+	if err := ValidateIdk(idk); err != nil {
+		return nil, err
+	}
 	record := &identityRecord{}
 	err := as.db.Where("idk = ?", idk).First(record).Error
 	if err != nil {
@@ -83,13 +90,24 @@ func (as *AuthStore) FindIdentity(idk string) (*ssp.SqrlIdentity, error) {
 	return toIdentity(record), nil
 }
 
-// SaveIdentity implements ssp.AuthStore
+// SaveIdentity implements ssp.AuthStore.
+// Validates the identity and its Idk before persisting.
 func (as *AuthStore) SaveIdentity(identity *ssp.SqrlIdentity) error {
+	if identity == nil {
+		return ErrNilIdentity
+	}
+	if err := ValidateIdk(identity.Idk); err != nil {
+		return err
+	}
 	record := toRecord(identity)
 	return as.db.Save(record).Error
 }
 
-// DeleteIdentity implements ssp.AuthStore
+// DeleteIdentity implements ssp.AuthStore.
+// Validates the idk before executing the delete.
 func (as *AuthStore) DeleteIdentity(idk string) error {
+	if err := ValidateIdk(idk); err != nil {
+		return err
+	}
 	return as.db.Where("idk = ?", idk).Delete(&identityRecord{}).Error
 }

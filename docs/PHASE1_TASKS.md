@@ -51,6 +51,10 @@
 - [x] **TASK-007** Security scan after GORM upgrade -- 2026-02-06
   - `gosec ./...` -- zero issues
   - `govulncheck` -- blocked by network (vuln.go.dev inaccessible)
+  - **TODO:** Re-run `govulncheck ./...` once network access to vuln.go.dev is
+    available to verify that the `golang.org/x/crypto` upgrade from v0.43.0
+    (CVE-2025-47914, CVE-2025-58181) to v0.47.0 resolves all known
+    vulnerabilities. Track via CI pipeline or manual verification.
 
 - [ ] **TASK-008** Code review and PR creation
   - Branch PR to main

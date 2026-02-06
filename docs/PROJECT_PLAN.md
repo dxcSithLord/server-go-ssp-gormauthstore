@@ -12,12 +12,12 @@
 
 | Metric | Value | Notes |
 |--------|-------|-------|
-| **GORM Version** | v1.9.16 (DEPRECATED) | Migration to gorm.io/gorm v2 blocks all work |
+| **GORM Version** | v2 (gorm.io/gorm v1.31.1) | Migrated from deprecated jinzhu/gorm v1.9.16 |
 | **Go Version** | 1.24.0 | go.mod initialised |
-| **Test Coverage** | ~30% | Target: 70%+. Secure memory tests pass |
-| **Security Scans** | CI/CD configured | gosec + govulncheck in pipeline |
-| **Secure Memory** | Implemented | Not yet integrated into AuthStore methods |
-| **Input Validation** | Implemented | ValidateIdk() exists but not called by AuthStore |
+| **Test Coverage** | ~35% | Target: 70%+. Unit + integration tests pass with SQLite |
+| **Security Scans** | CI/CD configured | gosec clean; govulncheck blocked by network |
+| **Secure Memory** | Implemented | ClearIdentity, WipeBytes, SecureIdentityWrapper available |
+| **Input Validation** | Integrated | ValidateIdk() called by FindIdentity, SaveIdentity, DeleteIdentity |
 
 ### Completed (not repeated in tasks below)
 
