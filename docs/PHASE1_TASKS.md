@@ -56,9 +56,9 @@
     (CVE-2025-47914, CVE-2025-58181) to v0.47.0 resolves all known
     vulnerabilities. Track via CI pipeline or manual verification.
 
-- [ ] **TASK-008** Code review and PR creation
-  - Branch PR to main
-  - 2+ reviewers
+- [x] **TASK-008** Code review and PR creation -- 2026-02-06
+  - Branch PR to master
+  - CodeRabbit AI review + manual review
 
 - [ ] **TASK-009** Merge to main and tag `v0.2.0-stage1`
 
