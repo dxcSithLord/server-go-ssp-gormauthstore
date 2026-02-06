@@ -105,7 +105,9 @@ new vulnerabilities.
 **Risk:** LOW
 
 - [ ] **TASK-017** Update all golang.org/x packages
-  - `go get -u golang.org/x/sys golang.org/x/text golang.org/x/crypto`
+  - **IMPORTANT:** `golang.org/x/crypto` v0.43.0 has CVE-2025-47914 and CVE-2025-58181
+  - `go get golang.org/x/crypto@v0.45.0` (or later) first
+  - Then `go get -u golang.org/x/sys golang.org/x/text`
 
 - [ ] **TASK-018** Review and update all indirect dependencies
   - `go get -u ./...`

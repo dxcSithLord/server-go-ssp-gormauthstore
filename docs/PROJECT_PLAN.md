@@ -22,11 +22,17 @@
 ### Completed (not repeated in tasks below)
 
 - Go module initialisation (`go.mod`, `go.sum`)
-- Secure memory functions (`secure_memory*.go`)
+- Secure memory functions (`secure_memory*.go`) -- safe copy-then-wipe implementation
 - Custom error types (`errors.go`)
 - CI/CD pipeline (`.github/workflows/ci.yml`)
 - Makefile, `.golangci.yml`, `.markdownlintrc`
 - Comprehensive documentation (10 documents)
+- CodeRabbit unit tests (`docs_test.go`, `TESTING_GUIDE.md`, `TEST_RESULTS_SUMMARY.md`)
+
+> **Note:** PR #5 (`claude/update-crypto-refactor-memory`) is superseded.
+> It proposed an alternative secure memory implementation with issues
+> (deprecated APIs, wrong Windows function name, vulnerable crypto version).
+> Master's implementation is safer and should be used.
 
 ---
 
@@ -102,7 +108,7 @@ Integration tests pass on PostgreSQL, MySQL, SQLite. No new vulnerabilities.
 
 | Task | Action | Est. |
 |------|--------|------|
-| **TASK-017** Update golang.org/x packages | `go get -u golang.org/x/...` | 0.5h |
+| **TASK-017** Update golang.org/x packages | `go get golang.org/x/crypto@v0.45.0` or later (v0.43.0 has CVEs), then `go get -u golang.org/x/...` | 0.5h |
 | **TASK-018** Update all indirect deps | `go get -u ./... && go mod tidy`, review diff | 0.5h |
 | **TASK-019** Full test suite with race detection | `go test ./... -v -race` | 0.5h |
 | **TASK-020** Merge and tag | Tag `v0.2.0-stage3` | 0.5h |
