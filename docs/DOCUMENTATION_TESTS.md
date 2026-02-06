@@ -189,17 +189,17 @@ Performs basic validation of mermaid diagrams:
 
 ### Run all documentation tests
 ```bash
-go test -v ./docs_test.go
+go test -v ./...
 ```
 
 ### Run specific test
 ```bash
-go test -v -run TestREADMEContent ./docs_test.go
+go test -v -run TestREADMEContent ./...
 ```
 
 ### Run with coverage
 ```bash
-go test -v -coverprofile=coverage.out ./docs_test.go
+go test -v -coverprofile=coverage.out ./...
 go tool cover -html=coverage.out
 ```
 

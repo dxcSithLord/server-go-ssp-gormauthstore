@@ -316,9 +316,15 @@ func TestAPISpecification(t *testing.T) {
 	// Verify security section has content
 	if strings.Contains(spec, "## Security") {
 		securityIndex := strings.Index(spec, "## Security")
-		securitySection := spec[securityIndex : securityIndex+2000]
-		if !strings.Contains(securitySection, "SQL Injection") {
-			t.Error("API_SPECIFICATION.md security section missing SQL Injection discussion")
+		if securityIndex != -1 {
+			end := securityIndex + 2000
+			if end > len(spec) {
+				end = len(spec)
+			}
+			securitySection := spec[securityIndex:end]
+			if !strings.Contains(securitySection, "SQL Injection") {
+				t.Error("API_SPECIFICATION.md security section missing SQL Injection discussion")
+			}
 		}
 	}
 }
@@ -507,9 +513,18 @@ func TestRequirementsDocument(t *testing.T) {
 // TestDocumentationConsistency verifies cross-document consistency
 func TestDocumentationConsistency(t *testing.T) {
 	// Read key documents
-	readme, _ := os.ReadFile("README.md")
-	claude, _ := os.ReadFile("CLAUDE.md")
-	plan, _ := os.ReadFile("docs/PROJECT_PLAN.md")
+	readme, err := os.ReadFile("README.md")
+	if err != nil {
+		t.Fatalf("Cannot read README.md: %v", err)
+	}
+	claude, err := os.ReadFile("CLAUDE.md")
+	if err != nil {
+		t.Fatalf("Cannot read CLAUDE.md: %v", err)
+	}
+	plan, err := os.ReadFile("docs/PROJECT_PLAN.md")
+	if err != nil {
+		t.Fatalf("Cannot read docs/PROJECT_PLAN.md: %v", err)
+	}
 
 	readmeStr := string(readme)
 	claudeStr := string(claude)
@@ -610,17 +625,21 @@ func TestNoHardcodedPasswords(t *testing.T) {
 			}
 
 			docStr := strings.ToLower(string(content))
+			lines := strings.Split(docStr, "\n")
 			for _, pattern := range suspiciousPatterns {
-				if strings.Contains(docStr, pattern) {
-					// Check if it's in a code block or obvious example
-					if strings.Contains(docStr, "password=secret") ||
-						strings.Contains(docStr, "password=test") ||
-						strings.Contains(docStr, "password=your") ||
-						strings.Contains(docStr, "example") {
-						// This is OK - obvious placeholder
-						continue
+				for lineNum, line := range lines {
+					if strings.Contains(line, pattern) {
+						// Check if this specific line contains an obvious placeholder
+						if strings.Contains(line, "password=secret") ||
+							strings.Contains(line, "password=test") ||
+							strings.Contains(line, "password=your") ||
+							strings.Contains(line, "example") ||
+							strings.Contains(line, "placeholder") {
+							// This is OK - obvious placeholder on this line
+							continue
+						}
+						t.Logf("NOTE: %s line %d contains '%s' - verify it's just an example", doc, lineNum+1, pattern)
 					}
-					t.Logf("NOTE: %s contains '%s' - verify it's just an example", doc, pattern)
 				}
 			}
 		})

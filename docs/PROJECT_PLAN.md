@@ -85,7 +85,7 @@ All unit + integration tests pass, security scan clean, PR approved.
 
 | Task | Package | Action | Est. |
 |------|---------|--------|------|
-| **TASK-010** Upgrade lib/pq | `github.com/lib/pq` | v1.1.1 -> latest (fixes CVE-2021-3121) | 0.25h |
+| **TASK-010** Upgrade lib/pq | `github.com/lib/pq` | v1.1.1 -> latest (security and stability fixes) | 0.25h |
 | **TASK-011** Upgrade go-sqlite3 | `github.com/mattn/go-sqlite3` | -> latest | 0.25h |
 | **TASK-012** Upgrade go-sql-driver/mysql | `github.com/go-sql-driver/mysql` | -> latest (TLS 1.3, MySQL 8.4) | 0.25h |
 | **TASK-013** Upgrade go-mssqldb | `github.com/denisenkom/go-mssqldb` | -> latest (SQL Server 2022) | 0.25h |
@@ -166,7 +166,7 @@ All AuthStore methods validate inputs. 10+ security tests pass.
 
 **Priority:** P1 -- HIGH
 **Depends on:** Phase 2 complete
-**Stages:** 1 (hardening + release)
+**Stages:** 2 (Stage 3.1: Production Hardening, Stage 3.2: Release v1.0.0)
 
 ### Stage 3.1: Production Hardening
 
@@ -193,7 +193,7 @@ v1.0.0 tagged, GitHub release created, available on pkg.go.dev.
 
 ---
 
-## Decision Points (3 open)
+## Decision Points (3 open, 1 resolved)
 
 ### DP-001: MemGuard vs Custom Secure Memory
 
@@ -231,6 +231,18 @@ changes the `ssp.AuthStore` interface contract.
 
 **Recommendation:** A for v1.0.0 if upstream can be updated.
 **Blocks:** TASK-035 (Phase 3).
+
+### DP-004: Goauthentik Integration (RESOLVED)
+
+**Status:** RESOLVED -- No action required.
+
+**Context:** Question raised whether this library should integrate with
+goauthentik.io or other IAM systems.
+
+**Resolution:** SQRL is an independent authentication protocol, separate from
+OAuth/OIDC/SAML. This library is SQRL-specific and does not need IAM
+integration. Applications can use both SQRL and goauthentik as separate auth
+methods if desired.
 
 ---
 

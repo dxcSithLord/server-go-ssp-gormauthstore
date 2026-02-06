@@ -58,17 +58,17 @@ go test ./... -v
 
 #### Run Only Documentation Tests
 ```bash
-go test -v ./docs_test.go
+go test -v -run "^Test(Documentation|Archive|Markdown|README|CLAUDE|ProjectPlan|Architecture|API|Dependencies|Notice|Phase1|Requirements|NoHardcoded|Mermaid)" ./...
 ```
 
 #### Run Only Secure Memory Tests
 ```bash
-go test -v -run "^Test.*Memory" ./secure_memory_test.go
+go test -v -run "^Test.*Memory" ./...
 ```
 
 #### Run Only AuthStore Tests
 ```bash
-go test -v ./auth_store_test.go
+go test -v -run "^TestSave" ./...
 ```
 
 ### Run Tests with Coverage
@@ -282,6 +282,20 @@ go test -bench=. -benchmem ./...
 
 The project includes test helper functions:
 
+**Current GORM v1 syntax (pre-migration):**
+```go
+// setupTestDB creates an in-memory SQLite database for testing
+func setupTestDB(t *testing.T) *gorm.DB {
+    t.Helper()
+    db, err := gorm.Open("sqlite3", ":memory:")
+    if err != nil {
+        t.Fatalf("Failed to open test database: %v", err)
+    }
+    return db
+}
+```
+
+**GORM v2 syntax (post-migration -- Phase 1 complete):**
 ```go
 // setupTestDB creates an in-memory SQLite database for testing
 func setupTestDB(t *testing.T) *gorm.DB {
