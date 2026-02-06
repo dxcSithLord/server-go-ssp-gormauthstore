@@ -58,6 +58,13 @@ func toIdentity(record *identityRecord) *ssp.SqrlIdentity {
 	}
 }
 
+// clearRecord wipes sensitive cryptographic fields from an identityRecord.
+// Called after conversion to reduce the window where Suk/Vuk remain in memory.
+func clearRecord(record *identityRecord) {
+	WipeString(&record.Suk)
+	WipeString(&record.Vuk)
+}
+
 // AuthStore is an ssp.AuthStore implementation using the gorm ORM
 type AuthStore struct {
 	db *gorm.DB
@@ -87,7 +94,9 @@ func (as *AuthStore) FindIdentity(idk string) (*ssp.SqrlIdentity, error) {
 		}
 		return nil, err
 	}
-	return toIdentity(record), nil
+	result := toIdentity(record)
+	clearRecord(record)
+	return result, nil
 }
 
 // SaveIdentity implements ssp.AuthStore.
@@ -100,11 +109,14 @@ func (as *AuthStore) SaveIdentity(identity *ssp.SqrlIdentity) error {
 		return err
 	}
 	record := toRecord(identity)
-	return as.db.Save(record).Error
+	err := as.db.Save(record).Error
+	clearRecord(record)
+	return err
 }
 
 // DeleteIdentity implements ssp.AuthStore.
 // Validates the idk before executing the delete.
+// Returns nil (no error) if the key does not exist.
 func (as *AuthStore) DeleteIdentity(idk string) error {
 	if err := ValidateIdk(idk); err != nil {
 		return err

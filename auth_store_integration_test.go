@@ -3,6 +3,7 @@
 package gormauthstore
 
 import (
+	"errors"
 	"testing"
 
 	ssp "github.com/dxcSithLord/server-go-ssp"
@@ -10,18 +11,24 @@ import (
 	"gorm.io/gorm"
 )
 
-// TestCRUDRoundTrip exercises a full Create-Read-Update-Read-Delete cycle
-// using an in-memory SQLite database to verify GORM v2 compatibility.
-func TestCRUDRoundTrip(t *testing.T) {
+// setupTestStore creates an in-memory SQLite AuthStore for testing.
+func setupTestStore(t *testing.T) *AuthStore {
+	t.Helper()
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	if err != nil {
 		t.Fatalf("failed to open database: %v", err)
 	}
-
 	store := NewAuthStore(db)
 	if err := store.AutoMigrate(); err != nil {
 		t.Fatalf("AutoMigrate failed: %v", err)
 	}
+	return store
+}
+
+// TestCRUDRoundTrip exercises a full Create-Read-Update-Read-Delete cycle
+// using an in-memory SQLite database to verify GORM v2 compatibility.
+func TestCRUDRoundTrip(t *testing.T) {
+	store := setupTestStore(t)
 
 	// --- Create ---
 	identity := &ssp.SqrlIdentity{
@@ -84,40 +91,24 @@ func TestCRUDRoundTrip(t *testing.T) {
 
 	// --- Read after delete ---
 	_, err = store.FindIdentity("integration-test-idk")
-	if err != ssp.ErrNotFound {
+	if !errors.Is(err, ssp.ErrNotFound) {
 		t.Fatalf("expected ErrNotFound after delete, got: %v", err)
 	}
 }
 
 // TestFindIdentity_NotFound verifies ErrNotFound for non-existent keys.
 func TestFindIdentity_NotFound(t *testing.T) {
-	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-	if err != nil {
-		t.Fatalf("failed to open database: %v", err)
-	}
+	store := setupTestStore(t)
 
-	store := NewAuthStore(db)
-	if err := store.AutoMigrate(); err != nil {
-		t.Fatalf("AutoMigrate failed: %v", err)
-	}
-
-	_, err = store.FindIdentity("nonexistent-key")
-	if err != ssp.ErrNotFound {
+	_, err := store.FindIdentity("nonexistent-key")
+	if !errors.Is(err, ssp.ErrNotFound) {
 		t.Fatalf("expected ErrNotFound, got: %v", err)
 	}
 }
 
 // TestSaveIdentity_MultipleRecords verifies storing and retrieving multiple identities.
 func TestSaveIdentity_MultipleRecords(t *testing.T) {
-	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-	if err != nil {
-		t.Fatalf("failed to open database: %v", err)
-	}
-
-	store := NewAuthStore(db)
-	if err := store.AutoMigrate(); err != nil {
-		t.Fatalf("AutoMigrate failed: %v", err)
-	}
+	store := setupTestStore(t)
 
 	identities := []*ssp.SqrlIdentity{
 		{Idk: "idk-alpha", Suk: "suk-alpha", Vuk: "vuk-alpha"},
@@ -146,8 +137,8 @@ func TestSaveIdentity_MultipleRecords(t *testing.T) {
 		t.Fatalf("DeleteIdentity failed: %v", err)
 	}
 
-	_, err = store.FindIdentity("idk-bravo")
-	if err != ssp.ErrNotFound {
+	_, err := store.FindIdentity("idk-bravo")
+	if !errors.Is(err, ssp.ErrNotFound) {
 		t.Fatalf("expected ErrNotFound for deleted record, got: %v", err)
 	}
 
@@ -161,19 +152,11 @@ func TestSaveIdentity_MultipleRecords(t *testing.T) {
 
 // TestDeleteIdentity_NonExistent verifies deleting a non-existent key does not error.
 func TestDeleteIdentity_NonExistent(t *testing.T) {
-	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-	if err != nil {
-		t.Fatalf("failed to open database: %v", err)
-	}
-
-	store := NewAuthStore(db)
-	if err := store.AutoMigrate(); err != nil {
-		t.Fatalf("AutoMigrate failed: %v", err)
-	}
+	store := setupTestStore(t)
 
 	// GORM performs a hard delete because identityRecord does not have a
 	// gorm.DeletedAt field. Deleting a non-existent key is a no-op (no error).
-	err = store.DeleteIdentity("nonexistent-key")
+	err := store.DeleteIdentity("nonexistent-key")
 	if err != nil {
 		t.Fatalf("DeleteIdentity on non-existent key should not error, got: %v", err)
 	}
@@ -181,15 +164,7 @@ func TestDeleteIdentity_NonExistent(t *testing.T) {
 
 // TestSaveIdentity_AllFields verifies all SqrlIdentity fields round-trip correctly.
 func TestSaveIdentity_AllFields(t *testing.T) {
-	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-	if err != nil {
-		t.Fatalf("failed to open database: %v", err)
-	}
-
-	store := NewAuthStore(db)
-	if err := store.AutoMigrate(); err != nil {
-		t.Fatalf("AutoMigrate failed: %v", err)
-	}
+	store := setupTestStore(t)
 
 	identity := &ssp.SqrlIdentity{
 		Idk:      "full-field-test",
