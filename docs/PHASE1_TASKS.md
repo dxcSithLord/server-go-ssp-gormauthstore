@@ -1,6 +1,6 @@
 # Phase 1: Critical Foundation -- Task List
 
-**Status:** In progress (Stages 1.1-1.3 code complete, pending PR/merge/tag)
+**Status:** Complete (merged to master via PR #8)
 **Blocks:** All Phase 2 and Phase 3 work
 **Reference:** [PROJECT_PLAN.md](PROJECT_PLAN.md) | [TASKS.md](TASKS.md) (authoritative task register)
 
@@ -60,7 +60,8 @@
   - Branch PR to master
   - CodeRabbit AI review + manual review
 
-- [ ] **TASK-009** Merge to main and tag `v0.2.0-stage1`
+- [x] **TASK-009** Merge to main and tag `v0.2.0-stage1` -- 2026-02-06
+  - Merged via PR #8; tag pending
 
 **Stage 1.1 gate:** All unit + integration tests pass, security scan clean,
 PR approved.
@@ -94,8 +95,8 @@ PR approved.
   - SQLite in-memory `:memory:` -- all pass
   - PostgreSQL and MySQL require Docker; deferred to CI environment
 
-- [ ] **TASK-016** Security scan and merge; tag `v0.2.0-stage2`
-  - Part of overall PR
+- [x] **TASK-016** Security scan and merge; tag `v0.2.0-stage2` -- 2026-02-06
+  - Merged via PR #8; tag pending
 
 **Stage 1.2 gate:** Integration tests pass on SQLite. No new vulnerabilities.
 
@@ -119,7 +120,8 @@ PR approved.
 - [x] **TASK-019** Full test suite with race detection -- 2026-02-06
   - `go test -tags=integration ./... -v -race` -- all pass
 
-- [ ] **TASK-020** Merge and tag `v0.2.0-stage3`
+- [x] **TASK-020** Merge and tag `v0.2.0-stage3` -- 2026-02-06
+  - Merged via PR #8; tag pending
 
 **Stage 1.3 gate:** All deps current, race detector clean, all tests pass.
 
@@ -132,8 +134,9 @@ PR approved.
 - [x] All transitive dependencies current
 - [x] Zero gosec issues
 - [x] All tests pass with `-race` flag
-- [ ] PR reviewed and merged (TASK-008, TASK-009)
+- [x] PR reviewed and merged (TASK-008, TASK-009) -- PR #8 merged 2026-02-06
 - [ ] Stage tags created: `v0.2.0-stage1`, `v0.2.0-stage2`, `v0.2.0-stage3`
+  - Tags deferred; all stages merged together in PR #8
 
 When Phase 1 is complete, update:
 1. `README.md` -- Phase 1 status to "Complete", GORM Version to current
