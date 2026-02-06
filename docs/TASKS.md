@@ -36,8 +36,8 @@ Referenced by [PROJECT_PLAN.md](PROJECT_PLAN.md) and
 | TASK-005 | Create `auth_store_integration_test.go` (CRUD round-trip, build-tag gated) | done | 2026-02-06 | TASK-004 | TASK-006 |
 | TASK-006 | Run full test suite with `-race` | done | 2026-02-06 | TASK-005 | TASK-007, TASK-008 |
 | TASK-007 | Security scan (`gosec`, `govulncheck`) | done | 2026-02-06 | TASK-006 | TASK-008 |
-| TASK-008 | Code review and PR creation | pending | | TASK-006, TASK-007 | TASK-009 |
-| TASK-009 | Merge to main; tag `v0.2.0-stage1` | pending | | TASK-008 | TASK-010, TASK-011, TASK-012, TASK-013 |
+| TASK-008 | Code review and PR creation | done | 2026-02-06 | TASK-006, TASK-007 | TASK-009 |
+| TASK-009 | Merge to main; tag `v0.2.0-stage1` | done | 2026-02-06 | TASK-008 | TASK-010, TASK-011, TASK-012, TASK-013 |
 
 ### Stage 1.2 -- Database Driver Upgrades
 
@@ -49,7 +49,7 @@ Referenced by [PROJECT_PLAN.md](PROJECT_PLAN.md) and
 | TASK-013 | Upgrade `github.com/denisenkom/go-mssqldb` to latest | done | 2026-02-06 | TASK-009 | TASK-014 |
 | TASK-014 | Update GORM driver packages (`gorm.io/driver/*`) to latest | done | 2026-02-06 | TASK-010, TASK-011, TASK-012, TASK-013 | TASK-015 |
 | TASK-015 | Integration tests (all databases) | deferred | | TASK-014 | TASK-016 |
-| TASK-016 | Security scan and merge; tag `v0.2.0-stage2` | pending | | TASK-015 | TASK-017 |
+| TASK-016 | Security scan and merge; tag `v0.2.0-stage2` | done | 2026-02-06 | TASK-015 | TASK-017 |
 
 > **TASK-015 note:** SQLite in-memory tests pass. PostgreSQL and MySQL
 > integration tests require Docker and are deferred to the CI environment.
@@ -61,7 +61,7 @@ Referenced by [PROJECT_PLAN.md](PROJECT_PLAN.md) and
 | TASK-017 | Update `golang.org/x/*` packages (crypto v0.47.0, text, image, sync) | done | 2026-02-06 | TASK-016 | TASK-018 |
 | TASK-018 | Review and update all indirect dependencies | done | 2026-02-06 | TASK-017 | TASK-019 |
 | TASK-019 | Full test suite with race detection | done | 2026-02-06 | TASK-018 | TASK-020 |
-| TASK-020 | Merge and tag `v0.2.0-stage3` | pending | | TASK-019 | TASK-021, TASK-022, TASK-023, TASK-024 |
+| TASK-020 | Merge and tag `v0.2.0-stage3` | done | 2026-02-06 | TASK-019 | TASK-021, TASK-022, TASK-023, TASK-024 |
 
 ---
 
@@ -124,11 +124,11 @@ Referenced by [PROJECT_PLAN.md](PROJECT_PLAN.md) and
 
 | Phase | Stage | Tasks | Done | Pending | Deferred |
 |-------|-------|-------|------|---------|----------|
-| 1 | 1.1 GORM v2 Migration | 9 | 7 | 2 | 0 |
-| 1 | 1.2 Database Drivers | 7 | 5 | 1 | 1 |
-| 1 | 1.3 Transitive Deps | 4 | 3 | 1 | 0 |
+| 1 | 1.1 GORM v2 Migration | 9 | 9 | 0 | 0 |
+| 1 | 1.2 Database Drivers | 7 | 6 | 0 | 1 |
+| 1 | 1.3 Transitive Deps | 4 | 4 | 0 | 0 |
 | 2 | 2.1 Security Integration | 7 | 3 | 4 | 0 |
 | 2 | 2.2 Comprehensive Tests | 7 | 0 | 7 | 0 |
 | 3 | 3.1 Production Hardening | 4 | 0 | 4 | 0 |
 | 3 | 3.2 Release v1.0.0 | 6 | 0 | 6 | 0 |
-| **Total** | | **44** | **18** | **25** | **1** |
+| **Total** | | **44** | **22** | **21** | **1** |

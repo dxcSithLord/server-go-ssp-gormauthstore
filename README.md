@@ -11,20 +11,21 @@ SQRL `ssp.AuthStore` implementation using the GORM ORM.
 | **Go Version** | 1.24 | Module initialised with Go 1.24.0 toolchain |
 | **Test Coverage** | ~35% | Target: 70%+. Unit + integration tests pass with SQLite |
 | **CI/CD Pipeline** | Configured | GitHub Actions workflow with lint, security scan, build matrix |
-| **Security Hardening** | Partial | Secure memory clearing implemented; not yet integrated into AuthStore |
+| **Security Hardening** | Partial | Secure memory clearing + ValidateIdk integrated; clearRecord defence-in-depth |
 | **Documentation** | Comprehensive | 10 documents covering requirements, architecture, API, security, and upgrade plan |
 
 ### Overall Progress
 
 | Phase | Description | Tasks | Completed | Status |
 |-------|-------------|-------|-----------|--------|
-| **Phase 1** | Critical Foundation (GORM v2, drivers, deps) | 20 | 16 | In progress |
-| **Phase 2** | Security & Testing | 14 | 0 | Not started |
+| **Phase 1** | Critical Foundation (GORM v2, drivers, deps) | 20 | 19 | Complete (1 deferred) |
+| **Phase 2** | Security & Testing | 14 | 3 | In progress |
 | **Phase 3** | Production Readiness & Release | 10 | 0 | Not started |
 | **Docs & Infra** | Documentation, CI/CD, secure memory | -- | Done | Complete |
-| **TOTAL** | 44 implementation tasks | 44 | 16 | **36%** |
+| **TOTAL** | 44 implementation tasks | 44 | 22 | **50%** |
 
-> **Next milestone:** Phase 2 / Stage 2.1 -- Security Integration.
+> **Next milestone:** Phase 2 / Stage 2.1 -- Security Integration (TASK-024, TASK-025).
+> TASK-021/022/023 (ValidateIdk integration) completed early during Phase 1.
 > See [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) for the full plan.
 
 ---
