@@ -13,7 +13,7 @@
 | Metric | Value | Notes |
 |--------|-------|-------|
 | **GORM Version** | v2 (gorm.io/gorm v1.31.1) | Migrated from deprecated jinzhu/gorm v1.9.16 |
-| **Go Version** | 1.24.0 | go.mod initialised |
+| **Go Version** | 1.24.7 | go.mod min 1.24.0, toolchain go1.24.7 |
 | **Test Coverage** | ~35% | Target: 70%+. Unit + integration tests pass with SQLite |
 | **Security Scans** | CI/CD configured | gosec clean; govulncheck blocked by network |
 | **Secure Memory** | Implemented | ClearIdentity, WipeBytes, SecureIdentityWrapper available |
@@ -41,6 +41,7 @@
 **Priority:** P0 -- CRITICAL
 **Blocks:** All subsequent work
 **Stages:** 3 (GORM migration, driver upgrades, transitive deps)
+**Task register:** [TASKS.md](TASKS.md) (authoritative task IDs and dependencies)
 
 ### Stage 1.1: GORM v2 Migration
 

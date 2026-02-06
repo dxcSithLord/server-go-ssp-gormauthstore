@@ -2,7 +2,7 @@
 
 **Status:** In progress (Stages 1.1-1.3 code complete, pending PR/merge/tag)
 **Blocks:** All Phase 2 and Phase 3 work
-**Reference:** [PROJECT_PLAN.md](PROJECT_PLAN.md)
+**Reference:** [PROJECT_PLAN.md](PROJECT_PLAN.md) | [TASKS.md](TASKS.md) (authoritative task register)
 
 ---
 
@@ -79,21 +79,23 @@ PR approved.
 - [x] **TASK-011** Upgrade `github.com/mattn/go-sqlite3` to latest -- 2026-02-06
   - Upgraded to v1.14.33
 
-- [x] **TASK-012** GORM v2 driver packages available -- 2026-02-06
+- [x] **TASK-012** Upgrade `github.com/go-sql-driver/mysql` to latest -- 2026-02-06
+  - Available via `gorm.io/driver/mysql` v1.6.0 (consumer-facing dependency)
+
+- [x] **TASK-013** Upgrade `github.com/denisenkom/go-mssqldb` to latest -- 2026-02-06
+  - Available via `gorm.io/driver/sqlserver` v1.6.3 (consumer-facing dependency)
+
+- [x] **TASK-014** Update GORM driver packages (`gorm.io/driver/*`) to latest -- 2026-02-06
   - `gorm.io/driver/postgres` v1.6.0, `gorm.io/driver/mysql` v1.6.0,
     `gorm.io/driver/sqlite` v1.6.0, `gorm.io/driver/sqlserver` v1.6.3
   - NOTE: Only sqlite is a direct dependency; others are consumer-facing
 
-- [x] **TASK-013** Integration tests (SQLite) -- 2026-02-06
+- [ ] **TASK-015** Integration tests (all databases) -- deferred
   - SQLite in-memory `:memory:` -- all pass
-
-- [ ] **TASK-014** Multi-database integration tests (deferred)
   - PostgreSQL and MySQL require Docker; deferred to CI environment
 
-- [ ] **TASK-015** Security scan and merge
+- [ ] **TASK-016** Security scan and merge; tag `v0.2.0-stage2`
   - Part of overall PR
-
-- [ ] **TASK-016** Tag `v0.2.0-stage2`
 
 **Stage 1.2 gate:** Integration tests pass on SQLite. No new vulnerabilities.
 
