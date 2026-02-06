@@ -74,8 +74,8 @@ Referenced by [PROJECT_PLAN.md](PROJECT_PLAN.md) and
 | TASK-021 | Integrate `ValidateIdk` into `FindIdentity` | done | 2026-02-06 | TASK-020 | TASK-024, TASK-025 |
 | TASK-022 | Integrate `ValidateIdk` into `SaveIdentity` (+ nil check) | done | 2026-02-06 | TASK-020 | TASK-025 |
 | TASK-023 | Integrate `ValidateIdk` into `DeleteIdentity` | done | 2026-02-06 | TASK-020 | TASK-025 |
-| TASK-024 | Implement `FindIdentitySecure` helper (returns `SecureIdentityWrapper`) | pending | | TASK-021 | TASK-025 |
-| TASK-025 | Security test suite (`auth_store_security_test.go`) | pending | | TASK-021, TASK-022, TASK-023, TASK-024 | TASK-026 |
+| TASK-024 | Implement `FindIdentitySecure` helper (returns `SecureIdentityWrapper`) | done | 2026-02-06 | TASK-021 | TASK-025 |
+| TASK-025 | Security test suite (`auth_store_security_test.go`) | done | 2026-02-06 | TASK-021, TASK-022, TASK-023, TASK-024 | TASK-026 |
 | TASK-026 | Security scan (`gosec` + `govulncheck`) | pending | | TASK-025 | TASK-027 |
 | TASK-027 | Merge and tag `v0.2.0-stage4` | pending | | TASK-026 | TASK-028, TASK-029, TASK-030, TASK-031 |
 
@@ -127,8 +127,8 @@ Referenced by [PROJECT_PLAN.md](PROJECT_PLAN.md) and
 | 1 | 1.1 GORM v2 Migration | 9 | 9 | 0 | 0 |
 | 1 | 1.2 Database Drivers | 7 | 6 | 0 | 1 |
 | 1 | 1.3 Transitive Deps | 4 | 4 | 0 | 0 |
-| 2 | 2.1 Security Integration | 7 | 3 | 4 | 0 |
+| 2 | 2.1 Security Integration | 7 | 5 | 2 | 0 |
 | 2 | 2.2 Comprehensive Tests | 7 | 0 | 7 | 0 |
 | 3 | 3.1 Production Hardening | 4 | 0 | 4 | 0 |
 | 3 | 3.2 Release v1.0.0 | 6 | 0 | 6 | 0 |
-| **Total** | | **44** | **22** | **21** | **1** |
+| **Total** | | **44** | **24** | **19** | **1** |

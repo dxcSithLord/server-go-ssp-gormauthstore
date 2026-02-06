@@ -114,6 +114,24 @@ func (as *AuthStore) SaveIdentity(identity *ssp.SqrlIdentity) error {
 	return err
 }
 
+// FindIdentitySecure retrieves a SQRL identity wrapped in a SecureIdentityWrapper.
+// The wrapper provides RAII-style automatic cleanup of sensitive cryptographic
+// material (Suk, Vuk) when Destroy() is called.
+//
+// Usage:
+//
+//	wrapper, err := store.FindIdentitySecure(idk)
+//	if err != nil { return err }
+//	defer wrapper.Destroy()
+//	identity := wrapper.GetIdentity()
+func (as *AuthStore) FindIdentitySecure(idk string) (*SecureIdentityWrapper, error) {
+	identity, err := as.FindIdentity(idk)
+	if err != nil {
+		return nil, err
+	}
+	return NewSecureIdentityWrapper(identity), nil
+}
+
 // DeleteIdentity implements ssp.AuthStore.
 // Validates the idk before executing the delete.
 // Returns nil (no error) if the key does not exist.

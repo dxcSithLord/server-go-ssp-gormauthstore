@@ -104,30 +104,31 @@ In `README.md`, update:
 - Phase 1 "Status": change from "Not started" to "In progress"
 - TOTAL: recalculate
 
-## Current State (as of 2026-02-05)
+## Current State (as of 2026-02-06)
 
-- **Phase 1 (GORM v2 Migration):** Not started. This blocks all other work.
-- **Phase 2 (Security & Testing):** Not started. Secure memory functions exist
-  but are not yet integrated into AuthStore methods.
+- **Phase 1 (GORM v2 Migration):** Complete (19/20 tasks; 1 deferred).
+- **Phase 2 (Security & Testing):** In progress (5/14 tasks). ValidateIdk
+  integrated, FindIdentitySecure helper implemented, 13 security tests passing.
 - **Phase 3 (Production Readiness):** Not started.
 - **Infrastructure:** CI/CD pipeline, Makefile, golangci-lint, markdownlint,
   secure memory implementation, and comprehensive documentation are all done.
 
 ### What exists in the code
 
-- `auth_store.go` - Core AuthStore using deprecated GORM v1
+- `auth_store.go` - Core AuthStore using GORM v2 with `FindIdentitySecure` helper
 - `errors.go` - Custom validation error types (ErrEmptyIdentityKey, etc.)
 - `secure_memory.go` / `secure_memory_common.go` / `secure_memory_windows.go` -
   Platform-aware secure memory clearing (WipeBytes, ClearIdentity, ScrambleBytes)
 - `secure_memory_test.go` - Comprehensive tests for secure memory
-- `auth_store_test.go` - Basic AuthStore test (needs expansion)
+- `auth_store_test.go` - Basic AuthStore test
+- `auth_store_security_test.go` - 13 security tests (SQL injection, DoS, Unicode, etc.)
+- `auth_store_integration_test.go` - Integration tests (build-tag gated)
 
 ### What needs to be done next
 
-1. **GORM v1 -> v2 migration** in `auth_store.go` (see docs/PROJECT_PLAN.md Phase 1)
-2. Integrate `ValidateIdk()` into AuthStore methods
-3. Expand test suite to 70%+ coverage
-4. Tag v1.0.0 release
+1. Security scan (TASK-026) and merge (TASK-027) to complete Stage 2.1
+2. Comprehensive test suite (Stage 2.2: TASK-028 to TASK-034)
+3. Production hardening and v1.0.0 release (Phase 3)
 
 ## Code Conventions
 
