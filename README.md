@@ -77,7 +77,7 @@ store.AutoMigrate()
 
 ## Project Structure
 
-```
+```text
 .
 ├── auth_store.go                       # Core AuthStore (FindIdentity, SaveIdentity, DeleteIdentity)
 ├── errors.go                           # Sentinel errors (ErrEmptyIdentityKey, ErrNilIdentity, etc.)

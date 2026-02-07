@@ -115,6 +115,12 @@ func BenchmarkFindIdentity_Concurrent(b *testing.B) {
 	if err != nil {
 		b.Fatalf("failed to open database: %v", err)
 	}
+	sqlDB, err := db.DB()
+	if err != nil {
+		b.Fatalf("failed to get underlying sql.DB: %v", err)
+	}
+	sqlDB.SetMaxOpenConns(1)
+	sqlDB.SetMaxIdleConns(1)
 	store := NewAuthStore(db)
 	if err := store.AutoMigrate(); err != nil {
 		b.Fatalf("AutoMigrate failed: %v", err)
