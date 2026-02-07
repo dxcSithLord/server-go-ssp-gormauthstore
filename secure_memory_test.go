@@ -417,10 +417,10 @@ func BenchmarkClearIdentity(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		identity := &ssp.SqrlIdentity{
-			Idk:  "benchmark_idk_value",
-			Suk:  "benchmark_suk_value",
-			Vuk:  "benchmark_vuk_value",
-			Pidk: "benchmark_pidk_value",
+			Idk:  string([]byte("benchmark_idk_value")),
+			Suk:  string([]byte("benchmark_suk_value")),
+			Vuk:  string([]byte("benchmark_vuk_value")),
+			Pidk: string([]byte("benchmark_pidk_value")),
 		}
 		ClearIdentity(identity)
 	}
