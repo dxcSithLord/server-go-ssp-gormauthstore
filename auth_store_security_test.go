@@ -2,6 +2,7 @@ package gormauthstore
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 	"testing"
 
@@ -84,7 +85,7 @@ func TestDoSPrevention_LengthLimits(t *testing.T) {
 
 	lengths := []int{257, 1000, 10000, 100000}
 	for _, length := range lengths {
-		t.Run("ValidateIdk", func(t *testing.T) {
+		t.Run(fmt.Sprintf("ValidateIdk/len_%d", length), func(t *testing.T) {
 			longIdk := strings.Repeat("a", length)
 			err := ValidateIdk(longIdk)
 			if !errors.Is(err, ErrIdentityKeyTooLong) {
@@ -92,7 +93,7 @@ func TestDoSPrevention_LengthLimits(t *testing.T) {
 			}
 		})
 
-		t.Run("FindIdentity", func(t *testing.T) {
+		t.Run(fmt.Sprintf("FindIdentity/len_%d", length), func(t *testing.T) {
 			longIdk := strings.Repeat("a", length)
 			_, err := store.FindIdentity(longIdk)
 			if !errors.Is(err, ErrIdentityKeyTooLong) {
@@ -100,7 +101,7 @@ func TestDoSPrevention_LengthLimits(t *testing.T) {
 			}
 		})
 
-		t.Run("SaveIdentity", func(t *testing.T) {
+		t.Run(fmt.Sprintf("SaveIdentity/len_%d", length), func(t *testing.T) {
 			longIdk := strings.Repeat("a", length)
 			err := store.SaveIdentity(&ssp.SqrlIdentity{Idk: longIdk, Suk: "s", Vuk: "v"})
 			if !errors.Is(err, ErrIdentityKeyTooLong) {
@@ -108,7 +109,7 @@ func TestDoSPrevention_LengthLimits(t *testing.T) {
 			}
 		})
 
-		t.Run("DeleteIdentity", func(t *testing.T) {
+		t.Run(fmt.Sprintf("DeleteIdentity/len_%d", length), func(t *testing.T) {
 			longIdk := strings.Repeat("a", length)
 			err := store.DeleteIdentity(longIdk)
 			if !errors.Is(err, ErrIdentityKeyTooLong) {

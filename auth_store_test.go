@@ -52,12 +52,10 @@ func TestSave(t *testing.T) {
 		t.Fatalf("couldn't delete saved identity: %v", err)
 	}
 
-	readback, err = gas.FindIdentity("someidk")
+	_, err = gas.FindIdentity("someidk")
 	if err == nil {
 		t.Fatalf("should be deleted but isn't")
-	} else {
-		if !errors.Is(err, ssp.ErrNotFound) {
-			t.Fatalf("should be ErrNotFound but got: %v", err)
-		}
+	} else if !errors.Is(err, ssp.ErrNotFound) {
+		t.Fatalf("should be ErrNotFound but got: %v", err)
 	}
 }
