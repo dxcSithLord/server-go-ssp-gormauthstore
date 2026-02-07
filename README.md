@@ -14,7 +14,7 @@ SQRL `ssp.AuthStore` implementation using the GORM ORM.
 |------|--------|--------|
 | **SQRL Protocol Compliance** | **COMPLIANT** | All required storage fields (Idk, Suk, Vuk) plus optional enhancements |
 | **GORM Version** | **CURRENT (v2 -- gorm.io/gorm v1.31.1)** | Migrated from deprecated jinzhu/gorm v1.9.16 |
-| **Go Version** | 1.24 | Module initialised with Go 1.24.0 toolchain |
+| **Go Version** | 1.24 | Module initialized with Go 1.24.0 toolchain |
 | **Test Coverage** | 98.8% | 77 tests passing, 10 benchmarks. Target: 70%+ |
 | **CI/CD Pipeline** | Configured | GitHub Actions workflow with lint, security scan, coverage gate, build matrix |
 | **Security Hardening** | Integrated | Secure memory clearing + ValidateIdk + FindIdentitySecure + 13 security tests |
