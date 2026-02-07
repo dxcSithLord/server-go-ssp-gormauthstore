@@ -267,7 +267,7 @@ func TestMemoryClearing(t *testing.T) {
 	}
 }
 
-// SEC-005b: ClearIdentity is nil-safe
+// SEC-005b: ClearIdentity is nil-safe.
 func TestMemoryClearing_NilSafe(t *testing.T) {
 	// Must not panic
 	ClearIdentity(nil)
@@ -349,7 +349,7 @@ func TestFindIdentitySecure_Success(t *testing.T) {
 	}
 }
 
-// SEC-008: FindIdentitySecure returns error for missing identity
+// SEC-008: FindIdentitySecure returns error for missing identity.
 func TestFindIdentitySecure_NotFound(t *testing.T) {
 	_, store := openSecurityTestDB(t)
 
@@ -362,7 +362,7 @@ func TestFindIdentitySecure_NotFound(t *testing.T) {
 	}
 }
 
-// SEC-009: FindIdentitySecure validates input
+// SEC-009: FindIdentitySecure validates input.
 func TestFindIdentitySecure_InvalidInput(t *testing.T) {
 	_, store := openSecurityTestDB(t)
 
@@ -389,7 +389,7 @@ func TestFindIdentitySecure_InvalidInput(t *testing.T) {
 	}
 }
 
-// SEC-010: SecureIdentityWrapper Destroy is idempotent
+// SEC-010: SecureIdentityWrapper Destroy is idempotent.
 func TestSecureIdentityWrapper_DestroyIdempotent(t *testing.T) {
 	identity := &ssp.SqrlIdentity{
 		Idk: "idempotent-test",
@@ -398,7 +398,7 @@ func TestSecureIdentityWrapper_DestroyIdempotent(t *testing.T) {
 	}
 	wrapper := NewSecureIdentityWrapper(identity)
 
-	// Call Destroy multiple times -- should not panic
+	// Call Destroy multiple times -- should not panic.
 	wrapper.Destroy()
 	wrapper.Destroy()
 	wrapper.Destroy()
@@ -408,7 +408,7 @@ func TestSecureIdentityWrapper_DestroyIdempotent(t *testing.T) {
 	}
 }
 
-// SEC-011: SecureIdentityWrapper nil safety
+// SEC-011: SecureIdentityWrapper nil safety.
 func TestSecureIdentityWrapper_NilSafety(t *testing.T) {
 	// Nil wrapper
 	var wrapper *SecureIdentityWrapper
@@ -422,7 +422,7 @@ func TestSecureIdentityWrapper_NilSafety(t *testing.T) {
 	wrapper.Destroy()
 }
 
-// SEC-012: clearRecord wipes sensitive fields from identityRecord
+// SEC-012: clearRecord wipes sensitive fields from identityRecord.
 func TestClearRecord_WipesSensitiveFields(t *testing.T) {
 	record := &identityRecord{
 		Idk: "test-idk",
@@ -444,7 +444,7 @@ func TestClearRecord_WipesSensitiveFields(t *testing.T) {
 	}
 }
 
-// SEC-013: Valid base64url-safe characters accepted
+// SEC-013: Valid base64url-safe characters accepted.
 func TestValidateIdk_AcceptsValidCharacters(t *testing.T) {
 	// All allowed characters: alphanumeric + / = - _ .
 	validIdks := []string{
