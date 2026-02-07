@@ -78,7 +78,7 @@ func TestScrambleBytes(t *testing.T) {
 	ScrambleBytes(data)
 
 	// Verify data has changed
-	if string(data) == string(original) {
+	if bytes.Equal(data, original) {
 		t.Error("data was not scrambled")
 	}
 
