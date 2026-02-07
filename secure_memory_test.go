@@ -1,13 +1,15 @@
 package gormauthstore
 
 import (
+	"bytes"
+	"errors"
 	"strings"
 	"testing"
 
 	ssp "github.com/dxcSithLord/server-go-ssp"
 )
 
-// TestWipeBytes verifies that byte slices are properly zeroed
+// TestWipeBytes verifies that byte slices are properly zeroed.
 func TestWipeBytes(t *testing.T) {
 	tests := []struct {
 		name  string
@@ -374,7 +376,7 @@ func TestValidateIdk_Invalid(t *testing.T) {
 			if err == nil {
 				t.Error("expected error, got nil")
 			}
-			if err != tt.expectedErr {
+			if !errors.Is(err, tt.expectedErr) {
 				t.Errorf("expected %v, got %v", tt.expectedErr, err)
 			}
 		})
@@ -398,7 +400,7 @@ func TestIsValidIdkChar(t *testing.T) {
 	}
 }
 
-// Benchmark tests
+// Benchmark tests.
 func BenchmarkWipeBytes(b *testing.B) {
 	data := make([]byte, 1024)
 	for i := range data {
