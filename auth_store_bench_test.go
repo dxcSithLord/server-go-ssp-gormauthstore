@@ -95,7 +95,9 @@ func BenchmarkDeleteIdentity(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = store.DeleteIdentity(fmt.Sprintf("bench-del-%d", i))
+		if err := store.DeleteIdentity(fmt.Sprintf("bench-del-%d", i)); err != nil && i == 0 {
+			b.Fatalf("first delete failed: %v", err)
+		}
 	}
 }
 

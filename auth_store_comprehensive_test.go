@@ -1,6 +1,7 @@
 package gormauthstore
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"sync"
@@ -78,7 +79,7 @@ func TestSaveIdentity_Insert(t *testing.T) {
 	}
 }
 
-// TC-005: SaveIdentity updates an existing record (upsert behaviour).
+// TC-005: SaveIdentity updates an existing record (upsert behavior).
 func TestSaveIdentity_Update(t *testing.T) {
 	store := newTestStore(t)
 
@@ -104,7 +105,7 @@ func TestSaveIdentity_NilIdentity(t *testing.T) {
 	store := newTestStore(t)
 
 	err := store.SaveIdentity(nil)
-	if err != ErrNilIdentity {
+	if !errors.Is(err, ErrNilIdentity) {
 		t.Errorf("expected ErrNilIdentity, got %v", err)
 	}
 }
@@ -115,7 +116,7 @@ func TestSaveIdentity_EmptyIdk(t *testing.T) {
 
 	identity := newTestIdentity().withIdk("").build()
 	err := store.SaveIdentity(identity)
-	if err != ErrEmptyIdentityKey {
+	if !errors.Is(err, ErrEmptyIdentityKey) {
 		t.Errorf("expected ErrEmptyIdentityKey, got %v", err)
 	}
 }
@@ -144,7 +145,7 @@ func TestFindIdentity_NotFound_Unit(t *testing.T) {
 	store := newTestStore(t)
 
 	_, err := store.FindIdentity("nonexistent-idk")
-	if err != ssp.ErrNotFound {
+	if !errors.Is(err, ssp.ErrNotFound) {
 		t.Errorf("expected ssp.ErrNotFound, got %v", err)
 	}
 }
@@ -154,7 +155,7 @@ func TestFindIdentity_EmptyIdk(t *testing.T) {
 	store := newTestStore(t)
 
 	_, err := store.FindIdentity("")
-	if err != ErrEmptyIdentityKey {
+	if !errors.Is(err, ErrEmptyIdentityKey) {
 		t.Errorf("expected ErrEmptyIdentityKey, got %v", err)
 	}
 }
@@ -165,7 +166,7 @@ func TestFindIdentity_IdkTooLong(t *testing.T) {
 
 	longIdk := strings.Repeat("a", MaxIdkLength+1)
 	_, err := store.FindIdentity(longIdk)
-	if err != ErrIdentityKeyTooLong {
+	if !errors.Is(err, ErrIdentityKeyTooLong) {
 		t.Errorf("expected ErrIdentityKeyTooLong, got %v", err)
 	}
 }
@@ -175,7 +176,7 @@ func TestFindIdentity_InvalidCharacters(t *testing.T) {
 	store := newTestStore(t)
 
 	_, err := store.FindIdentity("invalid key with spaces")
-	if err != ErrInvalidIdentityKeyFormat {
+	if !errors.Is(err, ErrInvalidIdentityKeyFormat) {
 		t.Errorf("expected ErrInvalidIdentityKeyFormat, got %v", err)
 	}
 }
@@ -192,7 +193,7 @@ func TestDeleteIdentity_Exists(t *testing.T) {
 	}
 
 	_, err := store.FindIdentity("tc013-delete")
-	if err != ssp.ErrNotFound {
+	if !errors.Is(err, ssp.ErrNotFound) {
 		t.Errorf("expected ssp.ErrNotFound after delete, got %v", err)
 	}
 }
@@ -227,7 +228,7 @@ func TestDeleteIdentity_EmptyIdk(t *testing.T) {
 	store := newTestStore(t)
 
 	err := store.DeleteIdentity("")
-	if err != ErrEmptyIdentityKey {
+	if !errors.Is(err, ErrEmptyIdentityKey) {
 		t.Errorf("expected ErrEmptyIdentityKey, got %v", err)
 	}
 }
@@ -361,7 +362,7 @@ func TestSaveIdentity_IdkTooLong(t *testing.T) {
 	longIdk := strings.Repeat("x", MaxIdkLength+1)
 	identity := newTestIdentity().withIdk(longIdk).build()
 	err := store.SaveIdentity(identity)
-	if err != ErrIdentityKeyTooLong {
+	if !errors.Is(err, ErrIdentityKeyTooLong) {
 		t.Errorf("expected ErrIdentityKeyTooLong, got %v", err)
 	}
 }
@@ -372,7 +373,7 @@ func TestSaveIdentity_InvalidIdk(t *testing.T) {
 
 	identity := newTestIdentity().withIdk("invalid key!").build()
 	err := store.SaveIdentity(identity)
-	if err != ErrInvalidIdentityKeyFormat {
+	if !errors.Is(err, ErrInvalidIdentityKeyFormat) {
 		t.Errorf("expected ErrInvalidIdentityKeyFormat, got %v", err)
 	}
 }
@@ -383,7 +384,7 @@ func TestDeleteIdentity_IdkTooLong(t *testing.T) {
 
 	longIdk := strings.Repeat("x", MaxIdkLength+1)
 	err := store.DeleteIdentity(longIdk)
-	if err != ErrIdentityKeyTooLong {
+	if !errors.Is(err, ErrIdentityKeyTooLong) {
 		t.Errorf("expected ErrIdentityKeyTooLong, got %v", err)
 	}
 }
@@ -393,7 +394,7 @@ func TestDeleteIdentity_InvalidIdk(t *testing.T) {
 	store := newTestStore(t)
 
 	err := store.DeleteIdentity("bad key!")
-	if err != ErrInvalidIdentityKeyFormat {
+	if !errors.Is(err, ErrInvalidIdentityKeyFormat) {
 		t.Errorf("expected ErrInvalidIdentityKeyFormat, got %v", err)
 	}
 }
