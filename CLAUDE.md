@@ -58,21 +58,33 @@ make fmt           # gofmt
 
 ```
 .
-├── *.go                          # Go source (auth_store, errors, secure_memory)
-├── *_test.go                     # Go tests
-├── docs/                         # All planning and design documentation
-│   ├── PROJECT_PLAN.md           # Consolidated plan (44 tasks, 3 phases, 7 stages)
+├── auth_store.go                       # Core AuthStore (CRUD + FindIdentitySecure)
+├── errors.go                           # Sentinel errors
+├── secure_memory.go                    # WipeBytes (Unix)
+├── secure_memory_common.go             # WipeString, ClearIdentity, SecureIdentityWrapper, ValidateIdk
+├── secure_memory_windows.go            # WipeBytes (Windows)
+├── auth_store_test.go                  # Basic CRUD test
+├── auth_store_comprehensive_test.go    # 27 unit tests (TC-001 to TC-027)
+├── auth_store_security_test.go         # 13 security tests (SEC-001 to SEC-013)
+├── auth_store_integration_test.go      # 10 integration tests (build-tag: integration)
+├── auth_store_bench_test.go            # 6 benchmarks (PERF-001 to PERF-006)
+├── secure_memory_test.go               # Secure memory + validation tests + benchmarks
+├── test_helpers_test.go                # testIdentityBuilder, newTestStore, seedIdentity
+├── docs_test.go                        # Documentation integrity tests
+├── docs/                               # All planning and design documentation
+│   ├── PROJECT_PLAN.md                 # Consolidated plan (44 tasks, 3 phases, 7 stages)
+│   ├── TASKS.md                        # Authoritative task register
 │   ├── REQUIREMENTS.md
 │   ├── ARCHITECTURE.md
 │   ├── API_SPECIFICATION.md
 │   ├── API_TESTS_SPEC.md
 │   ├── DEPENDENCIES.md
 │   ├── Notice_of_Decisions.md
-│   └── archive/                  # Superseded planning documents
-├── .github/workflows/ci.yml     # GitHub Actions CI pipeline
-├── Makefile                      # Development automation
-├── go.mod / go.sum               # Go module definition
-└── README.md                     # Project overview with progress summary
+│   └── archive/                        # Superseded planning documents
+├── .github/workflows/ci.yml           # GitHub Actions CI pipeline
+├── Makefile                            # Development automation
+├── go.mod / go.sum                     # Go module definition
+└── README.md                           # Project overview with progress summary
 ```
 
 ## Progress Tracking - IMPORTANT
@@ -104,31 +116,34 @@ In `README.md`, update:
 - Phase 1 "Status": change from "Not started" to "In progress"
 - TOTAL: recalculate
 
-## Current State (as of 2026-02-06)
+## Current State (as of 2026-02-07)
 
 - **Phase 1 (GORM v2 Migration):** Complete (19/20 tasks; 1 deferred).
-- **Phase 2 (Security & Testing):** In progress (5/14 tasks). ValidateIdk
-  integrated, FindIdentitySecure helper implemented, 13 security tests passing.
+- **Phase 2 (Security & Testing):** Near complete (13/14 tasks). 77 tests,
+  98.8% coverage, 10 benchmarks, gosec clean. Only TASK-034 (tag) pending.
 - **Phase 3 (Production Readiness):** Not started.
-- **Infrastructure:** CI/CD pipeline, Makefile, golangci-lint, markdownlint,
-  secure memory implementation, and comprehensive documentation are all done.
+- **Infrastructure:** CI/CD pipeline (Go 1.24, 70% coverage gate), Makefile,
+  golangci-lint, markdownlint, secure memory, comprehensive documentation.
 
 ### What exists in the code
 
-- `auth_store.go` - Core AuthStore using GORM v2 with `FindIdentitySecure` helper
-- `errors.go` - Custom validation error types (ErrEmptyIdentityKey, etc.)
+- `auth_store.go` - Core AuthStore using GORM v2 with `FindIdentitySecure`
+- `errors.go` - Sentinel errors (ErrEmptyIdentityKey, ErrNilIdentity, etc.)
 - `secure_memory.go` / `secure_memory_common.go` / `secure_memory_windows.go` -
   Platform-aware secure memory clearing (WipeBytes, ClearIdentity, ScrambleBytes)
-- `secure_memory_test.go` - Comprehensive tests for secure memory
-- `auth_store_test.go` - Basic AuthStore test
-- `auth_store_security_test.go` - 13 security tests (SQL injection, DoS, Unicode, etc.)
-- `auth_store_integration_test.go` - Integration tests (build-tag gated)
+- `secure_memory_test.go` - Secure memory + validation tests + benchmarks
+- `auth_store_test.go` - Basic AuthStore CRUD test
+- `auth_store_comprehensive_test.go` - 27 unit tests (TC-001 to TC-027)
+- `auth_store_security_test.go` - 13 security tests (SQL injection, DoS, Unicode)
+- `auth_store_integration_test.go` - 10 integration tests (build-tag gated)
+- `auth_store_bench_test.go` - 6 benchmarks (PERF-001 to PERF-006)
+- `test_helpers_test.go` - Test builder and DB helpers
 
 ### What needs to be done next
 
-1. Security scan (TASK-026) and merge (TASK-027) to complete Stage 2.1
-2. Comprehensive test suite (Stage 2.2: TASK-028 to TASK-034)
-3. Production hardening and v1.0.0 release (Phase 3)
+1. Tag `v0.3.0-rc1` (TASK-034)
+2. Production hardening (Phase 3: context support, docs, migration guide)
+3. v1.0.0 release (Phase 3: README, CHANGELOG, tag, publish)
 
 ## Code Conventions
 

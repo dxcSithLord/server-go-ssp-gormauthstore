@@ -398,14 +398,6 @@ func TestIsValidIdkChar(t *testing.T) {
 	}
 }
 
-// Helper function for min
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
 // Benchmark tests
 func BenchmarkWipeBytes(b *testing.B) {
 	data := make([]byte, 1024)
