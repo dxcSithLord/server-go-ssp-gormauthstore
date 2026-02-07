@@ -16,7 +16,6 @@ linters:
     - contextcheck
     - durationcheck
     - errorlint
-    - exportloopref
     - forcetypeassert
     - nilerr
     - noctx
@@ -140,7 +139,6 @@ linters-settings:
       - name: unreachable-code
 
   stylecheck:
-    go: "1.23"
     checks: ["all", "-ST1000", "-ST1003", "-ST1016", "-ST1020", "-ST1021", "-ST1022"]
 
 issues:
@@ -176,9 +174,6 @@ run:
   tests: true
   build-tags:
     - integration
-  skip-dirs:
-    - vendor
-    - third_party
   modules-download-mode: readonly
 
 output:
@@ -187,5 +182,4 @@ output:
       path: stdout
   print-issued-lines: true
   print-linter-name: true
-  uniq-by-line: true
   sort-results: true
