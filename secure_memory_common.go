@@ -40,7 +40,7 @@ func ScrambleBytes(b []byte) {
 // This function provides defense-in-depth by:
 // 1. Clearing the string reference (prevents further access via this variable)
 // 2. Wiping a copy of the data (reduces copies in memory)
-// 3. Allowing GC to reclaim the original string memory
+// 3. Allowing GC to reclaim the original string memory.
 func WipeString(s *string) {
 	if s == nil {
 		return
@@ -188,8 +188,8 @@ func isValidIdkChar(c rune) bool {
 		c == '+' || c == '/' || c == '=' || c == '-' || c == '_' || c == '.'
 }
 
-// Constants for validation
+// Constants for validation.
 const (
-	// MaxIdkLength is the maximum allowed length for an Identity Key
+	// MaxIdkLength is the maximum allowed length for an Identity Key.
 	MaxIdkLength = 256
 )

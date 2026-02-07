@@ -1,13 +1,15 @@
 package gormauthstore
 
 import (
+	"bytes"
+	"errors"
 	"strings"
 	"testing"
 
 	ssp "github.com/dxcSithLord/server-go-ssp"
 )
 
-// TestWipeBytes verifies that byte slices are properly zeroed
+// TestWipeBytes verifies that byte slices are properly zeroed.
 func TestWipeBytes(t *testing.T) {
 	tests := []struct {
 		name  string
@@ -78,7 +80,7 @@ func TestScrambleBytes(t *testing.T) {
 	ScrambleBytes(data)
 
 	// Verify data has changed
-	if string(data) == string(original) {
+	if bytes.Equal(data, original) {
 		t.Error("data was not scrambled")
 	}
 
@@ -374,7 +376,7 @@ func TestValidateIdk_Invalid(t *testing.T) {
 			if err == nil {
 				t.Error("expected error, got nil")
 			}
-			if err != tt.expectedErr {
+			if !errors.Is(err, tt.expectedErr) {
 				t.Errorf("expected %v, got %v", tt.expectedErr, err)
 			}
 		})
@@ -398,15 +400,7 @@ func TestIsValidIdkChar(t *testing.T) {
 	}
 }
 
-// Helper function for min
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
-// Benchmark tests
+// Benchmark tests.
 func BenchmarkWipeBytes(b *testing.B) {
 	data := make([]byte, 1024)
 	for i := range data {
@@ -423,10 +417,10 @@ func BenchmarkClearIdentity(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		identity := &ssp.SqrlIdentity{
-			Idk:  "benchmark_idk_value",
-			Suk:  "benchmark_suk_value",
-			Vuk:  "benchmark_vuk_value",
-			Pidk: "benchmark_pidk_value",
+			Idk:  string([]byte("benchmark_idk_value")),
+			Suk:  string([]byte("benchmark_suk_value")),
+			Vuk:  string([]byte("benchmark_vuk_value")),
+			Pidk: string([]byte("benchmark_pidk_value")),
 		}
 		ClearIdentity(identity)
 	}

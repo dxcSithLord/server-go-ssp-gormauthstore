@@ -4,6 +4,8 @@ package gormauthstore
 
 import (
 	"errors"
+	"fmt"
+	"sync"
 	"testing"
 
 	ssp "github.com/dxcSithLord/server-go-ssp"
@@ -25,8 +27,7 @@ func setupTestStore(t *testing.T) *AuthStore {
 	return store
 }
 
-// TestCRUDRoundTrip exercises a full Create-Read-Update-Read-Delete cycle
-// using an in-memory SQLite database to verify GORM v2 compatibility.
+// IT-001: Full Create-Read-Update-Read-Delete cycle.
 func TestCRUDRoundTrip(t *testing.T) {
 	store := setupTestStore(t)
 
@@ -96,8 +97,8 @@ func TestCRUDRoundTrip(t *testing.T) {
 	}
 }
 
-// TestFindIdentity_NotFound verifies ErrNotFound for non-existent keys.
-func TestFindIdentity_NotFound(t *testing.T) {
+// IT-002: FindIdentity returns ErrNotFound for non-existent keys.
+func TestIntegration_FindIdentity_NotFound(t *testing.T) {
 	store := setupTestStore(t)
 
 	_, err := store.FindIdentity("nonexistent-key")
@@ -106,7 +107,7 @@ func TestFindIdentity_NotFound(t *testing.T) {
 	}
 }
 
-// TestSaveIdentity_MultipleRecords verifies storing and retrieving multiple identities.
+// IT-003: Storing and retrieving multiple identities.
 func TestSaveIdentity_MultipleRecords(t *testing.T) {
 	store := setupTestStore(t)
 
@@ -132,7 +133,7 @@ func TestSaveIdentity_MultipleRecords(t *testing.T) {
 		}
 	}
 
-	// Delete one and verify others remain
+	// Delete one and verify others remain.
 	if err := store.DeleteIdentity("idk-bravo"); err != nil {
 		t.Fatalf("DeleteIdentity failed: %v", err)
 	}
@@ -142,7 +143,6 @@ func TestSaveIdentity_MultipleRecords(t *testing.T) {
 		t.Fatalf("expected ErrNotFound for deleted record, got: %v", err)
 	}
 
-	// Others should still exist
 	for _, idk := range []string{"idk-alpha", "idk-charlie"} {
 		if _, err := store.FindIdentity(idk); err != nil {
 			t.Errorf("FindIdentity(%q) should still exist: %v", idk, err)
@@ -150,20 +150,18 @@ func TestSaveIdentity_MultipleRecords(t *testing.T) {
 	}
 }
 
-// TestDeleteIdentity_NonExistent verifies deleting a non-existent key does not error.
-func TestDeleteIdentity_NonExistent(t *testing.T) {
+// IT-004: Deleting a non-existent key is a no-op.
+func TestIntegration_DeleteIdentity_NonExistent(t *testing.T) {
 	store := setupTestStore(t)
 
-	// GORM performs a hard delete because identityRecord does not have a
-	// gorm.DeletedAt field. Deleting a non-existent key is a no-op (no error).
 	err := store.DeleteIdentity("nonexistent-key")
 	if err != nil {
 		t.Fatalf("DeleteIdentity on non-existent key should not error, got: %v", err)
 	}
 }
 
-// TestSaveIdentity_AllFields verifies all SqrlIdentity fields round-trip correctly.
-func TestSaveIdentity_AllFields(t *testing.T) {
+// IT-005: All SqrlIdentity fields round-trip correctly.
+func TestIntegration_SaveIdentity_AllFields(t *testing.T) {
 	store := setupTestStore(t)
 
 	identity := &ssp.SqrlIdentity{
@@ -213,5 +211,210 @@ func TestSaveIdentity_AllFields(t *testing.T) {
 	}
 	if found.Btn != identity.Btn {
 		t.Errorf("Btn: got %d, want %d", found.Btn, identity.Btn)
+	}
+}
+
+// IT-006: Concurrent read/write operations are safe.
+func TestIntegration_ConcurrentReadWrite(t *testing.T) {
+	store := setupTestStore(t)
+
+	// Seed a record for readers.
+	identity := &ssp.SqrlIdentity{Idk: "concurrent-rw", Suk: "suk", Vuk: "vuk"}
+	if err := store.SaveIdentity(identity); err != nil {
+		t.Fatalf("seed failed: %v", err)
+	}
+
+	var wg sync.WaitGroup
+	errs := make(chan error, 20)
+
+	// 10 concurrent readers
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			if _, err := store.FindIdentity("concurrent-rw"); err != nil {
+				errs <- fmt.Errorf("read: %w", err)
+			}
+		}()
+	}
+
+	// 10 concurrent writers to different keys
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go func(idx int) {
+			defer wg.Done()
+			id := &ssp.SqrlIdentity{
+				Idk: fmt.Sprintf("concurrent-w-%d", idx),
+				Suk: "suk",
+				Vuk: "vuk",
+			}
+			if err := store.SaveIdentity(id); err != nil {
+				errs <- fmt.Errorf("write %d: %w", idx, err)
+			}
+		}(i)
+	}
+
+	wg.Wait()
+	close(errs)
+
+	for err := range errs {
+		t.Errorf("concurrent error: %v", err)
+	}
+}
+
+// IT-007: Large dataset — insert and retrieve 1000 records.
+func TestIntegration_LargeDataset(t *testing.T) {
+	store := setupTestStore(t)
+
+	const numIdentities = 1000
+	for i := 0; i < numIdentities; i++ {
+		identity := &ssp.SqrlIdentity{
+			Idk: fmt.Sprintf("large-%04d", i),
+			Suk: "suk",
+			Vuk: "vuk",
+		}
+		if err := store.SaveIdentity(identity); err != nil {
+			t.Fatalf("failed to save identity %d: %v", i, err)
+		}
+	}
+
+	// Spot-check 100 records.
+	for i := 0; i < 100; i++ {
+		idk := fmt.Sprintf("large-%04d", i*10)
+		if _, err := store.FindIdentity(idk); err != nil {
+			t.Errorf("FindIdentity(%q) failed: %v", idk, err)
+		}
+	}
+}
+
+// IT-008: SQRL rekey workflow — Pidk links old and new identities.
+func TestIntegration_RekeyWorkflow(t *testing.T) {
+	store := setupTestStore(t)
+
+	// Original identity.
+	original := &ssp.SqrlIdentity{
+		Idk: "original-idk",
+		Suk: "original-suk",
+		Vuk: "original-vuk",
+	}
+	if err := store.SaveIdentity(original); err != nil {
+		t.Fatalf("save original failed: %v", err)
+	}
+
+	// New identity references old via Pidk.
+	rekeyed := &ssp.SqrlIdentity{
+		Idk:  "new-idk",
+		Suk:  "new-suk",
+		Vuk:  "new-vuk",
+		Pidk: "original-idk",
+	}
+	if err := store.SaveIdentity(rekeyed); err != nil {
+		t.Fatalf("save rekeyed failed: %v", err)
+	}
+
+	// Mark original as rekeyed.
+	original.Rekeyed = "new-idk"
+	if err := store.SaveIdentity(original); err != nil {
+		t.Fatalf("update original failed: %v", err)
+	}
+
+	// Verify linkage.
+	foundOriginal, err := store.FindIdentity("original-idk")
+	if err != nil {
+		t.Fatalf("find original failed: %v", err)
+	}
+	if foundOriginal.Rekeyed != "new-idk" {
+		t.Errorf("Rekeyed: got %q, want %q", foundOriginal.Rekeyed, "new-idk")
+	}
+
+	foundNew, err := store.FindIdentity("new-idk")
+	if err != nil {
+		t.Fatalf("find rekeyed failed: %v", err)
+	}
+	if foundNew.Pidk != "original-idk" {
+		t.Errorf("Pidk: got %q, want %q", foundNew.Pidk, "original-idk")
+	}
+}
+
+// IT-009: FindIdentitySecure returns a wrapper and cleans up on Destroy.
+func TestIntegration_FindIdentitySecure(t *testing.T) {
+	store := setupTestStore(t)
+
+	identity := &ssp.SqrlIdentity{
+		Idk: "secure-integration",
+		Suk: "secure-suk",
+		Vuk: "secure-vuk",
+	}
+	if err := store.SaveIdentity(identity); err != nil {
+		t.Fatalf("save failed: %v", err)
+	}
+
+	wrapper, err := store.FindIdentitySecure("secure-integration")
+	if err != nil {
+		t.Fatalf("FindIdentitySecure failed: %v", err)
+	}
+	if !wrapper.IsValid() {
+		t.Fatal("wrapper should be valid")
+	}
+
+	got := wrapper.GetIdentity()
+	if got.Suk != "secure-suk" {
+		t.Errorf("Suk: got %q, want %q", got.Suk, "secure-suk")
+	}
+
+	wrapper.Destroy()
+	if wrapper.IsValid() {
+		t.Error("wrapper should be invalid after Destroy")
+	}
+}
+
+// IT-010: Boolean field combinations persist correctly.
+func TestIntegration_BooleanCombinations(t *testing.T) {
+	store := setupTestStore(t)
+
+	combos := []struct {
+		idk      string
+		sqrlOnly bool
+		hardlock bool
+		disabled bool
+	}{
+		{"bool-fff", false, false, false},
+		{"bool-tff", true, false, false},
+		{"bool-ftf", false, true, false},
+		{"bool-fft", false, false, true},
+		{"bool-ttt", true, true, true},
+		{"bool-ttf", true, true, false},
+		{"bool-ftt", false, true, true},
+		{"bool-tft", true, false, true},
+	}
+
+	for _, c := range combos {
+		identity := &ssp.SqrlIdentity{
+			Idk:      c.idk,
+			Suk:      "suk",
+			Vuk:      "vuk",
+			SQRLOnly: c.sqrlOnly,
+			Hardlock: c.hardlock,
+			Disabled: c.disabled,
+		}
+		if err := store.SaveIdentity(identity); err != nil {
+			t.Fatalf("save %q failed: %v", c.idk, err)
+		}
+	}
+
+	for _, c := range combos {
+		found, err := store.FindIdentity(c.idk)
+		if err != nil {
+			t.Fatalf("find %q failed: %v", c.idk, err)
+		}
+		if found.SQRLOnly != c.sqrlOnly {
+			t.Errorf("%s SQRLOnly: got %v, want %v", c.idk, found.SQRLOnly, c.sqrlOnly)
+		}
+		if found.Hardlock != c.hardlock {
+			t.Errorf("%s Hardlock: got %v, want %v", c.idk, found.Hardlock, c.hardlock)
+		}
+		if found.Disabled != c.disabled {
+			t.Errorf("%s Disabled: got %v, want %v", c.idk, found.Disabled, c.disabled)
+		}
 	}
 }

@@ -1,6 +1,8 @@
 package gormauthstore
 
 import (
+	"errors"
+	"fmt"
 	"strings"
 	"testing"
 
@@ -83,34 +85,34 @@ func TestDoSPrevention_LengthLimits(t *testing.T) {
 
 	lengths := []int{257, 1000, 10000, 100000}
 	for _, length := range lengths {
-		t.Run("ValidateIdk", func(t *testing.T) {
+		t.Run(fmt.Sprintf("ValidateIdk/len_%d", length), func(t *testing.T) {
 			longIdk := strings.Repeat("a", length)
 			err := ValidateIdk(longIdk)
-			if err != ErrIdentityKeyTooLong {
+			if !errors.Is(err, ErrIdentityKeyTooLong) {
 				t.Errorf("expected ErrIdentityKeyTooLong for length %d, got: %v", length, err)
 			}
 		})
 
-		t.Run("FindIdentity", func(t *testing.T) {
+		t.Run(fmt.Sprintf("FindIdentity/len_%d", length), func(t *testing.T) {
 			longIdk := strings.Repeat("a", length)
 			_, err := store.FindIdentity(longIdk)
-			if err != ErrIdentityKeyTooLong {
+			if !errors.Is(err, ErrIdentityKeyTooLong) {
 				t.Errorf("expected ErrIdentityKeyTooLong for length %d, got: %v", length, err)
 			}
 		})
 
-		t.Run("SaveIdentity", func(t *testing.T) {
+		t.Run(fmt.Sprintf("SaveIdentity/len_%d", length), func(t *testing.T) {
 			longIdk := strings.Repeat("a", length)
 			err := store.SaveIdentity(&ssp.SqrlIdentity{Idk: longIdk, Suk: "s", Vuk: "v"})
-			if err != ErrIdentityKeyTooLong {
+			if !errors.Is(err, ErrIdentityKeyTooLong) {
 				t.Errorf("expected ErrIdentityKeyTooLong for length %d, got: %v", length, err)
 			}
 		})
 
-		t.Run("DeleteIdentity", func(t *testing.T) {
+		t.Run(fmt.Sprintf("DeleteIdentity/len_%d", length), func(t *testing.T) {
 			longIdk := strings.Repeat("a", length)
 			err := store.DeleteIdentity(longIdk)
-			if err != ErrIdentityKeyTooLong {
+			if !errors.Is(err, ErrIdentityKeyTooLong) {
 				t.Errorf("expected ErrIdentityKeyTooLong for length %d, got: %v", length, err)
 			}
 		})
@@ -157,7 +159,7 @@ func TestCharacterInjection_ControlChars(t *testing.T) {
 	for _, tc := range inputs {
 		t.Run(tc.name, func(t *testing.T) {
 			err := ValidateIdk(tc.value)
-			if err != ErrInvalidIdentityKeyFormat {
+			if !errors.Is(err, ErrInvalidIdentityKeyFormat) {
 				t.Errorf("expected ErrInvalidIdentityKeyFormat for %q, got: %v", tc.name, err)
 			}
 		})
@@ -265,7 +267,7 @@ func TestMemoryClearing(t *testing.T) {
 	}
 }
 
-// SEC-005b: ClearIdentity is nil-safe
+// SEC-005b: ClearIdentity is nil-safe.
 func TestMemoryClearing_NilSafe(t *testing.T) {
 	// Must not panic
 	ClearIdentity(nil)
@@ -294,14 +296,14 @@ func TestUnicodeNormalizationAttacks(t *testing.T) {
 	for _, tc := range inputs {
 		t.Run(tc.name, func(t *testing.T) {
 			err := ValidateIdk(tc.value)
-			if err != ErrInvalidIdentityKeyFormat {
+			if !errors.Is(err, ErrInvalidIdentityKeyFormat) {
 				t.Errorf("expected ErrInvalidIdentityKeyFormat for %q, got: %v", tc.name, err)
 			}
 		})
 	}
 }
 
-// SEC-007: FindIdentitySecure wrapper behaviour
+// SEC-007: FindIdentitySecure wrapper behavior
 // Verifies that FindIdentitySecure returns a valid wrapper that provides
 // access to the identity and properly cleans up on Destroy().
 func TestFindIdentitySecure_Success(t *testing.T) {
@@ -347,12 +349,12 @@ func TestFindIdentitySecure_Success(t *testing.T) {
 	}
 }
 
-// SEC-008: FindIdentitySecure returns error for missing identity
+// SEC-008: FindIdentitySecure returns error for missing identity.
 func TestFindIdentitySecure_NotFound(t *testing.T) {
 	_, store := openSecurityTestDB(t)
 
 	wrapper, err := store.FindIdentitySecure("nonexistent-idk")
-	if err != ssp.ErrNotFound {
+	if !errors.Is(err, ssp.ErrNotFound) {
 		t.Errorf("expected ssp.ErrNotFound, got: %v", err)
 	}
 	if wrapper != nil {
@@ -360,7 +362,7 @@ func TestFindIdentitySecure_NotFound(t *testing.T) {
 	}
 }
 
-// SEC-009: FindIdentitySecure validates input
+// SEC-009: FindIdentitySecure validates input.
 func TestFindIdentitySecure_InvalidInput(t *testing.T) {
 	_, store := openSecurityTestDB(t)
 
@@ -377,7 +379,7 @@ func TestFindIdentitySecure_InvalidInput(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			wrapper, err := store.FindIdentitySecure(tc.idk)
-			if err != tc.err {
+			if !errors.Is(err, tc.err) {
 				t.Errorf("expected %v, got: %v", tc.err, err)
 			}
 			if wrapper != nil {
@@ -387,7 +389,7 @@ func TestFindIdentitySecure_InvalidInput(t *testing.T) {
 	}
 }
 
-// SEC-010: SecureIdentityWrapper Destroy is idempotent
+// SEC-010: SecureIdentityWrapper Destroy is idempotent.
 func TestSecureIdentityWrapper_DestroyIdempotent(t *testing.T) {
 	identity := &ssp.SqrlIdentity{
 		Idk: "idempotent-test",
@@ -396,7 +398,7 @@ func TestSecureIdentityWrapper_DestroyIdempotent(t *testing.T) {
 	}
 	wrapper := NewSecureIdentityWrapper(identity)
 
-	// Call Destroy multiple times -- should not panic
+	// Call Destroy multiple times -- should not panic.
 	wrapper.Destroy()
 	wrapper.Destroy()
 	wrapper.Destroy()
@@ -406,7 +408,7 @@ func TestSecureIdentityWrapper_DestroyIdempotent(t *testing.T) {
 	}
 }
 
-// SEC-011: SecureIdentityWrapper nil safety
+// SEC-011: SecureIdentityWrapper nil safety.
 func TestSecureIdentityWrapper_NilSafety(t *testing.T) {
 	// Nil wrapper
 	var wrapper *SecureIdentityWrapper
@@ -420,7 +422,7 @@ func TestSecureIdentityWrapper_NilSafety(t *testing.T) {
 	wrapper.Destroy()
 }
 
-// SEC-012: clearRecord wipes sensitive fields from identityRecord
+// SEC-012: clearRecord wipes sensitive fields from identityRecord.
 func TestClearRecord_WipesSensitiveFields(t *testing.T) {
 	record := &identityRecord{
 		Idk: "test-idk",
@@ -442,7 +444,7 @@ func TestClearRecord_WipesSensitiveFields(t *testing.T) {
 	}
 }
 
-// SEC-013: Valid base64url-safe characters accepted
+// SEC-013: Valid base64url-safe characters accepted.
 func TestValidateIdk_AcceptsValidCharacters(t *testing.T) {
 	// All allowed characters: alphanumeric + / = - _ .
 	validIdks := []string{

@@ -1,3 +1,5 @@
+// Package gormauthstore implements the ssp.AuthStore interface for persisting
+// SQRL authentication identities via the GORM ORM.
 package gormauthstore
 
 import (
@@ -9,7 +11,7 @@ import (
 
 // identityRecord is a GORM v2 compatible model mirroring ssp.SqrlIdentity.
 // The upstream SqrlIdentity struct uses legacy GORM v1 sql:"" tags (e.g.
-// sql:"primary_key", sql:"-") that GORM v2 does not recognise. This model
+// sql:"primary_key", sql:"-") that GORM v2 does not recognize. This model
 // provides the correct GORM v2 tags while keeping the same database schema.
 type identityRecord struct {
 	Idk      string `gorm:"column:idk;primaryKey"`
@@ -65,17 +67,17 @@ func clearRecord(record *identityRecord) {
 	WipeString(&record.Vuk)
 }
 
-// AuthStore is an ssp.AuthStore implementation using the gorm ORM
+// AuthStore is an ssp.AuthStore implementation using the gorm ORM.
 type AuthStore struct {
 	db *gorm.DB
 }
 
-// NewAuthStore creates a AuthStore using the passed in gorm instance
+// NewAuthStore creates an AuthStore using the passed in gorm instance.
 func NewAuthStore(db *gorm.DB) *AuthStore {
 	return &AuthStore{db}
 }
 
-// AutoMigrate uses gorm AutoMigrate to create/update the table holding the ssp.SqrlIdentity
+// AutoMigrate uses gorm AutoMigrate to create/update the table holding the ssp.SqrlIdentity.
 func (as *AuthStore) AutoMigrate() error {
 	return as.db.AutoMigrate(&identityRecord{})
 }

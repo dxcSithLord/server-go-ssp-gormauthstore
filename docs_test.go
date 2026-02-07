@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-// TestDocumentationExists verifies that all critical documentation files exist
+// TestDocumentationExists verifies that all critical documentation files exist.
 func TestDocumentationExists(t *testing.T) {
 	requiredDocs := []string{
 		"README.md",
@@ -33,7 +33,7 @@ func TestDocumentationExists(t *testing.T) {
 	}
 }
 
-// TestArchiveDocumentationExists verifies archived documentation
+// TestArchiveDocumentationExists verifies archived documentation.
 func TestArchiveDocumentationExists(t *testing.T) {
 	archiveDocs := []string{
 		"docs/archive/SECURITY_REVIEW_AND_UPGRADE_PLAN.md",
@@ -51,7 +51,7 @@ func TestArchiveDocumentationExists(t *testing.T) {
 	}
 }
 
-// TestMarkdownLinkIntegrity checks that internal markdown links point to existing files
+// TestMarkdownLinkIntegrity checks that internal markdown links point to existing files.
 func TestMarkdownLinkIntegrity(t *testing.T) {
 	// Regex to match markdown links: [text](path) or [text](path#anchor)
 	linkRegex := regexp.MustCompile(`\[([^\]]+)\]\(([^)]+)\)`)
@@ -120,7 +120,7 @@ func TestMarkdownLinkIntegrity(t *testing.T) {
 	}
 }
 
-// TestREADMEContent verifies README.md has essential sections
+// TestREADMEContent verifies README.md has essential sections.
 func TestREADMEContent(t *testing.T) {
 	content, err := os.ReadFile("README.md")
 	if err != nil {
@@ -159,7 +159,7 @@ func TestREADMEContent(t *testing.T) {
 	}
 }
 
-// TestCLAUDEInstructions verifies CLAUDE.md has key sections
+// TestCLAUDEInstructions verifies CLAUDE.md has key sections.
 func TestCLAUDEInstructions(t *testing.T) {
 	content, err := os.ReadFile("CLAUDE.md")
 	if err != nil {
@@ -196,7 +196,7 @@ func TestCLAUDEInstructions(t *testing.T) {
 	}
 }
 
-// TestProjectPlanStructure verifies PROJECT_PLAN.md structure
+// TestProjectPlanStructure verifies PROJECT_PLAN.md structure.
 func TestProjectPlanStructure(t *testing.T) {
 	content, err := os.ReadFile("docs/PROJECT_PLAN.md")
 	if err != nil {
@@ -236,7 +236,7 @@ func TestProjectPlanStructure(t *testing.T) {
 	}
 }
 
-// TestArchitectureDocument verifies ARCHITECTURE.md has required content
+// TestArchitectureDocument verifies ARCHITECTURE.md has required content.
 func TestArchitectureDocument(t *testing.T) {
 	content, err := os.ReadFile("docs/ARCHITECTURE.md")
 	if err != nil {
@@ -273,7 +273,7 @@ func TestArchitectureDocument(t *testing.T) {
 	}
 }
 
-// TestAPISpecification verifies API_SPECIFICATION.md structure
+// TestAPISpecification verifies API_SPECIFICATION.md structure.
 func TestAPISpecification(t *testing.T) {
 	content, err := os.ReadFile("docs/API_SPECIFICATION.md")
 	if err != nil {
@@ -329,7 +329,7 @@ func TestAPISpecification(t *testing.T) {
 	}
 }
 
-// TestAPITestsSpec verifies API_TESTS_SPEC.md completeness
+// TestAPITestsSpec verifies API_TESTS_SPEC.md completeness.
 func TestAPITestsSpec(t *testing.T) {
 	content, err := os.ReadFile("docs/API_TESTS_SPEC.md")
 	if err != nil {
@@ -368,7 +368,7 @@ func TestAPITestsSpec(t *testing.T) {
 	}
 }
 
-// TestDependenciesDocument verifies DEPENDENCIES.md
+// TestDependenciesDocument verifies DEPENDENCIES.md.
 func TestDependenciesDocument(t *testing.T) {
 	content, err := os.ReadFile("docs/DEPENDENCIES.md")
 	if err != nil {
@@ -404,7 +404,7 @@ func TestDependenciesDocument(t *testing.T) {
 	}
 }
 
-// TestNoticeOfDecisions verifies decision documentation
+// TestNoticeOfDecisions verifies decision documentation.
 func TestNoticeOfDecisions(t *testing.T) {
 	content, err := os.ReadFile("docs/Notice_of_Decisions.md")
 	if err != nil {
@@ -437,7 +437,7 @@ func TestNoticeOfDecisions(t *testing.T) {
 	}
 }
 
-// TestPhase1Tasks verifies PHASE1_TASKS.md completeness
+// TestPhase1Tasks verifies PHASE1_TASKS.md completeness.
 func TestPhase1Tasks(t *testing.T) {
 	content, err := os.ReadFile("docs/PHASE1_TASKS.md")
 	if err != nil {
@@ -470,7 +470,7 @@ func TestPhase1Tasks(t *testing.T) {
 	}
 }
 
-// TestRequirementsDocument verifies REQUIREMENTS.md structure
+// TestRequirementsDocument verifies REQUIREMENTS.md structure.
 func TestRequirementsDocument(t *testing.T) {
 	content, err := os.ReadFile("docs/REQUIREMENTS.md")
 	if err != nil {
@@ -510,7 +510,7 @@ func TestRequirementsDocument(t *testing.T) {
 	}
 }
 
-// TestDocumentationConsistency verifies cross-document consistency
+// TestDocumentationConsistency verifies cross-document consistency.
 func TestDocumentationConsistency(t *testing.T) {
 	// Read key documents
 	readme, err := os.ReadFile("README.md")
@@ -561,7 +561,7 @@ func TestDocumentationConsistency(t *testing.T) {
 	})
 }
 
-// TestArchiveDocumentationMarked verifies archived docs have deprecation notice
+// TestArchiveDocumentationMarked verifies archived docs have deprecation notice.
 func TestArchiveDocumentationMarked(t *testing.T) {
 	archiveDocs := []string{
 		"docs/archive/SECURITY_REVIEW_AND_UPGRADE_PLAN.md",
@@ -594,7 +594,7 @@ func TestArchiveDocumentationMarked(t *testing.T) {
 	}
 }
 
-// TestNoHardcodedPasswords ensures no passwords or secrets in documentation
+// TestNoHardcodedPasswords ensures no passwords or secrets in documentation.
 func TestNoHardcodedPasswords(t *testing.T) {
 	docs := []string{
 		"README.md",
@@ -646,7 +646,7 @@ func TestNoHardcodedPasswords(t *testing.T) {
 	}
 }
 
-// TestMermaidDiagramSyntax performs basic validation of mermaid diagrams
+// TestMermaidDiagramSyntax performs basic validation of mermaid diagrams.
 func TestMermaidDiagramSyntax(t *testing.T) {
 	docsWithDiagrams := []string{
 		"docs/ARCHITECTURE.md",
