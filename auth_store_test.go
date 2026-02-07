@@ -1,6 +1,7 @@
 package gormauthstore
 
 import (
+	"errors"
 	"testing"
 
 	ssp "github.com/dxcSithLord/server-go-ssp"
@@ -55,7 +56,7 @@ func TestSave(t *testing.T) {
 	if err == nil {
 		t.Fatalf("should be deleted but isn't")
 	} else {
-		if err != ssp.ErrNotFound {
+		if !errors.Is(err, ssp.ErrNotFound) {
 			t.Fatalf("should be ErrNotFound but got: %v", err)
 		}
 	}

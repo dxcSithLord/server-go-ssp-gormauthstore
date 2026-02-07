@@ -423,7 +423,7 @@ func TestMultipleIdentities(t *testing.T) {
 	if err := store.DeleteIdentity("multi-bravo"); err != nil {
 		t.Fatalf("DeleteIdentity failed: %v", err)
 	}
-	if _, err := store.FindIdentity("multi-bravo"); err != ssp.ErrNotFound {
+	if _, err := store.FindIdentity("multi-bravo"); !errors.Is(err, ssp.ErrNotFound) {
 		t.Errorf("expected ErrNotFound for deleted key, got %v", err)
 	}
 	for _, idk := range []string{"multi-alpha", "multi-charlie"} {

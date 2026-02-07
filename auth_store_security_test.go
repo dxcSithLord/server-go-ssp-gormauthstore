@@ -1,6 +1,7 @@
 package gormauthstore
 
 import (
+	"errors"
 	"strings"
 	"testing"
 
@@ -86,7 +87,7 @@ func TestDoSPrevention_LengthLimits(t *testing.T) {
 		t.Run("ValidateIdk", func(t *testing.T) {
 			longIdk := strings.Repeat("a", length)
 			err := ValidateIdk(longIdk)
-			if err != ErrIdentityKeyTooLong {
+			if !errors.Is(err, ErrIdentityKeyTooLong) {
 				t.Errorf("expected ErrIdentityKeyTooLong for length %d, got: %v", length, err)
 			}
 		})
@@ -94,7 +95,7 @@ func TestDoSPrevention_LengthLimits(t *testing.T) {
 		t.Run("FindIdentity", func(t *testing.T) {
 			longIdk := strings.Repeat("a", length)
 			_, err := store.FindIdentity(longIdk)
-			if err != ErrIdentityKeyTooLong {
+			if !errors.Is(err, ErrIdentityKeyTooLong) {
 				t.Errorf("expected ErrIdentityKeyTooLong for length %d, got: %v", length, err)
 			}
 		})
@@ -102,7 +103,7 @@ func TestDoSPrevention_LengthLimits(t *testing.T) {
 		t.Run("SaveIdentity", func(t *testing.T) {
 			longIdk := strings.Repeat("a", length)
 			err := store.SaveIdentity(&ssp.SqrlIdentity{Idk: longIdk, Suk: "s", Vuk: "v"})
-			if err != ErrIdentityKeyTooLong {
+			if !errors.Is(err, ErrIdentityKeyTooLong) {
 				t.Errorf("expected ErrIdentityKeyTooLong for length %d, got: %v", length, err)
 			}
 		})
@@ -110,7 +111,7 @@ func TestDoSPrevention_LengthLimits(t *testing.T) {
 		t.Run("DeleteIdentity", func(t *testing.T) {
 			longIdk := strings.Repeat("a", length)
 			err := store.DeleteIdentity(longIdk)
-			if err != ErrIdentityKeyTooLong {
+			if !errors.Is(err, ErrIdentityKeyTooLong) {
 				t.Errorf("expected ErrIdentityKeyTooLong for length %d, got: %v", length, err)
 			}
 		})
@@ -157,7 +158,7 @@ func TestCharacterInjection_ControlChars(t *testing.T) {
 	for _, tc := range inputs {
 		t.Run(tc.name, func(t *testing.T) {
 			err := ValidateIdk(tc.value)
-			if err != ErrInvalidIdentityKeyFormat {
+			if !errors.Is(err, ErrInvalidIdentityKeyFormat) {
 				t.Errorf("expected ErrInvalidIdentityKeyFormat for %q, got: %v", tc.name, err)
 			}
 		})
@@ -294,14 +295,14 @@ func TestUnicodeNormalizationAttacks(t *testing.T) {
 	for _, tc := range inputs {
 		t.Run(tc.name, func(t *testing.T) {
 			err := ValidateIdk(tc.value)
-			if err != ErrInvalidIdentityKeyFormat {
+			if !errors.Is(err, ErrInvalidIdentityKeyFormat) {
 				t.Errorf("expected ErrInvalidIdentityKeyFormat for %q, got: %v", tc.name, err)
 			}
 		})
 	}
 }
 
-// SEC-007: FindIdentitySecure wrapper behaviour
+// SEC-007: FindIdentitySecure wrapper behavior
 // Verifies that FindIdentitySecure returns a valid wrapper that provides
 // access to the identity and properly cleans up on Destroy().
 func TestFindIdentitySecure_Success(t *testing.T) {
@@ -352,7 +353,7 @@ func TestFindIdentitySecure_NotFound(t *testing.T) {
 	_, store := openSecurityTestDB(t)
 
 	wrapper, err := store.FindIdentitySecure("nonexistent-idk")
-	if err != ssp.ErrNotFound {
+	if !errors.Is(err, ssp.ErrNotFound) {
 		t.Errorf("expected ssp.ErrNotFound, got: %v", err)
 	}
 	if wrapper != nil {
@@ -377,7 +378,7 @@ func TestFindIdentitySecure_InvalidInput(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			wrapper, err := store.FindIdentitySecure(tc.idk)
-			if err != tc.err {
+			if !errors.Is(err, tc.err) {
 				t.Errorf("expected %v, got: %v", tc.err, err)
 			}
 			if wrapper != nil {
