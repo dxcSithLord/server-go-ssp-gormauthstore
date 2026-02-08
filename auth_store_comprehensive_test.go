@@ -79,7 +79,7 @@ func TestSaveIdentity_Insert(t *testing.T) {
 	}
 }
 
-// TC-005: SaveIdentity updates an existing record (upsert behavior).
+// TC-005: SaveIdentity updates an existing record (upsert behaviour).
 func TestSaveIdentity_Update(t *testing.T) {
 	store := newTestStore(t)
 
