@@ -376,12 +376,11 @@ func TestDependenciesDocument(t *testing.T) {
 
 	deps := string(content)
 
-	// Verify key dependencies are documented
+	// Verify key dependencies are documented (must match go.mod)
 	keyDeps := []string{
 		"gorm.io/gorm",
-		"github.com/lib/pq",
+		"gorm.io/driver/sqlite",
 		"github.com/mattn/go-sqlite3",
-		"golang.org/x/crypto",
 	}
 
 	for _, dep := range keyDeps {
@@ -392,9 +391,9 @@ func TestDependenciesDocument(t *testing.T) {
 		})
 	}
 
-	// Verify GORM v2 migration is discussed
-	if !strings.Contains(deps, "GORM v1") && !strings.Contains(deps, "GORM v2") {
-		t.Error("DEPENDENCIES.md missing GORM migration discussion")
+	// Verify GORM v2 is documented
+	if !strings.Contains(deps, "GORM v2") {
+		t.Error("DEPENDENCIES.md missing GORM v2 reference")
 	}
 
 	// Verify security section

@@ -1,9 +1,9 @@
 # API Test Specification
 ## Comprehensive Test Suite for SQRL GORM Authentication Store
 
-**Version:** 1.0.0
-**Date:** November 18, 2025
-**Coverage Target:** ≥70% overall, ≥80% for auth_store.go
+**Version:** 2.0.0
+**Date:** February 8, 2026
+**Coverage Target:** ≥70% overall (currently 100%)
 
 ---
 
@@ -26,10 +26,10 @@
 ```mermaid
 graph TB
     subgraph "Test Pyramid"
-        PERF[Performance Tests<br/>5 benchmarks]
-        SEC[Security Tests<br/>10 test cases]
-        INT[Integration Tests<br/>15 test cases]
-        UNIT[Unit Tests<br/>40+ test cases]
+        PERF[Performance Tests<br/>10 benchmarks]
+        SEC[Security Tests<br/>14 test cases]
+        INT[Integration Tests<br/>10 test cases]
+        UNIT[Unit Tests<br/>76 test cases]
     end
 
     UNIT --> INT
@@ -1117,20 +1117,28 @@ jobs:
 
 ### Test Count Summary
 
-| Category | Target Count | Current Count | Gap |
-|----------|--------------|---------------|-----|
-| Unit Tests | 40 | 1 (TestSave) | **+39 needed** |
-| Integration Tests | 15 | 0 | **+15 needed** |
-| Security Tests | 10 | 0 | **+10 needed** |
-| Benchmark Tests | 6 | 0 | **+6 needed** |
-| **TOTAL** | **71** | **1** | **+70 needed** |
+| Category | Count | Files |
+|----------|-------|-------|
+| Unit Tests (TC-001 to TC-027) | 27 | `auth_store_comprehensive_test.go` |
+| Context Tests (CTX-001 to CTX-013) | 13 | `auth_store_context_test.go` |
+| Security Tests (SEC-001 to SEC-014) | 14 | `auth_store_security_test.go` |
+| Integration Tests (build-tag gated)¹ | 10 | `auth_store_integration_test.go` |
+| Secure Memory Tests² | 18 | `secure_memory_test.go` |
+| Documentation Tests | 17 | `docs_test.go` |
+| Basic CRUD Test | 1 | `auth_store_test.go` |
+| Benchmarks (PERF-001 to PERF-006 + 4)² | 10 | `auth_store_bench_test.go`, `secure_memory_test.go` |
+| **TOTAL** | **100 tests + 10 benchmarks** | **8 test files** |
+
+¹ Integration tests require `go test -tags=integration ./...` and are excluded
+from the default `go test ./...` run (90 tests run by default).
+
+² `secure_memory_test.go` contains both 18 test functions and 4 benchmarks.
 
 ---
 
 **Document Control:**
-- Version: 1.0.0
-- Last Updated: 2025-11-18
-- Next Review: After test implementation
-- Owner: QA Team
+- Version: 2.0.0
+- Last Updated: 2026-02-08
+- Next Review: Before v1.0.0 release
 
 **END OF API TEST SPECIFICATION**

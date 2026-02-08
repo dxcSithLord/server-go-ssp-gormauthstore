@@ -66,7 +66,7 @@ make fmt           # gofmt
 ├── auth_store_test.go                  # Basic CRUD test
 ├── auth_store_comprehensive_test.go    # 27 unit tests (TC-001 to TC-027)
 ├── auth_store_context_test.go          # 13 context support tests (CTX-001 to CTX-013)
-├── auth_store_security_test.go         # 13 security tests (SEC-001 to SEC-013)
+├── auth_store_security_test.go         # 14 security tests (SEC-001 to SEC-014)
 ├── auth_store_integration_test.go      # 10 integration tests (build-tag: integration)
 ├── auth_store_bench_test.go            # 6 benchmarks (PERF-001 to PERF-006)
 ├── secure_memory_test.go               # Secure memory + validation tests + benchmarks
