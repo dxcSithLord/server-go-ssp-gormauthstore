@@ -152,7 +152,7 @@ sqlDB.SetConnMaxIdleTime(3 * time.Minute)
 
 **PostgreSQL:**
 
-```
+```text
 sslmode=verify-full
 sslrootcert=/etc/ssl/certs/ca.pem
 sslcert=/etc/ssl/certs/client.pem
