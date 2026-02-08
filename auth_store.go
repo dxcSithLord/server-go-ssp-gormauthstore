@@ -12,7 +12,7 @@ import (
 
 // identityRecord is a GORM v2 compatible model mirroring ssp.SqrlIdentity.
 // The upstream SqrlIdentity struct uses legacy GORM v1 sql:"" tags (e.g.
-// sql:"primary_key", sql:"-") that GORM v2 does not recognize. This model
+// sql:"primary_key", sql:"-") that GORM v2 does not recognise. This model
 // provides the correct GORM v2 tags while keeping the same database schema.
 type identityRecord struct {
 	Idk      string `gorm:"column:idk;primaryKey"`
