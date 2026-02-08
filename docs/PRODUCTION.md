@@ -30,6 +30,7 @@ flowchart LR
 SQL Server)`"]
   App --> Monitoring["Metrics/Alerts"]
 ```
+
 ## Prerequisites
 
 - **Go:** 1.24 or later
