@@ -2,7 +2,7 @@
 
 ![Tests](https://img.shields.io/badge/tests-90%20passing-brightgreen)
 ![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
-![Tasks](https://img.shields.io/badge/tasks-42%2F44%20(95%25)-blue)
+![Tasks](https://img.shields.io/badge/tasks-39%2F44%20(89%25)-blue)
 ![Go Version](https://img.shields.io/badge/go-1.24%2B-00ADD8)
 ![GORM](https://img.shields.io/badge/gorm-v2-orange)
 
@@ -23,18 +23,14 @@ SQRL `ssp.AuthStore` implementation using the GORM ORM.
 
 ### Overall Progress
 
-| Phase | Description | Tasks | Completed | Status |
-|-------|-------------|-------|-----------|--------|
-| **Phase 1** | Critical Foundation (GORM v2, drivers, deps) | 20 | 19 | Complete (1 deferred) |
-| **Phase 2** | Security & Testing | 14 | 13 | Near complete (TASK-034 pending) |
-| **Phase 3** | Production Readiness & Release | 10 | 8 | In progress (TASK-041-044 pending) |
-| **Docs & Infra** | Documentation, CI/CD, secure memory | -- | Done | Complete |
-| **TOTAL** | 44 implementation tasks | 44 | 40 | **91%** |
+**39 of 44 tasks complete (89%).** Phase 1 (foundation) and Phase 2
+(security/testing) done. Phase 3 production hardening done; release tasks
+remaining.
 
-> **Next milestone:** Phase 3 / Stage 3.2 -- Tag `v1.0.0` (TASK-041).
-> Phase 3 production hardening complete: context support, production docs, migration guide, security audit.
-> 90 tests, 100% coverage, 10 benchmarks, gosec clean.
-> See [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) for the full plan.
+> **Next milestone:** Tag `v1.0.0` (TASK-041).
+>
+> Authoritative task status: [docs/TASKS.md](docs/TASKS.md) |
+> Full plan: [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md)
 
 ---
 

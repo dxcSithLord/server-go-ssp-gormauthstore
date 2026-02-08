@@ -92,7 +92,7 @@ Referenced by [PROJECT_PLAN.md](PROJECT_PLAN.md) and
 | TASK-031 | Test data helpers (`testIdentityBuilder` pattern) | done | 2026-02-07 | TASK-027 | TASK-028, TASK-029 |
 | TASK-032 | Measure and verify coverage (98.8% overall, 90.9%+ `auth_store.go`) | done | 2026-02-07 | TASK-028, TASK-029, TASK-030 | TASK-033 |
 | TASK-033 | CI test workflow (coverage gate, Go 1.24 update) | done | 2026-02-07 | TASK-032 | TASK-034 |
-| TASK-034 | Merge and tag `v0.3.0-rc1` | pending | | TASK-032, TASK-033 | TASK-035, TASK-036, TASK-037 |
+| TASK-034 | Merge and tag `v0.3.0-rc1` | done | 2026-02-08 | TASK-032, TASK-033 | TASK-035, TASK-036, TASK-037 |
 
 ---
 
@@ -128,7 +128,7 @@ Referenced by [PROJECT_PLAN.md](PROJECT_PLAN.md) and
 | 1 | 1.2 Database Drivers | 7 | 6 | 0 | 1 |
 | 1 | 1.3 Transitive Deps | 4 | 4 | 0 | 0 |
 | 2 | 2.1 Security Integration | 7 | 7 | 0 | 0 |
-| 2 | 2.2 Comprehensive Tests | 7 | 6 | 1 | 0 |
+| 2 | 2.2 Comprehensive Tests | 7 | 7 | 0 | 0 |
 | 3 | 3.1 Production Hardening | 4 | 4 | 0 | 0 |
 | 3 | 3.2 Release v1.0.0 | 6 | 2 | 4 | 0 |
-| **Total** | | **44** | **38** | **5** | **1** |
+| **Total** | | **44** | **39** | **4** | **1** |

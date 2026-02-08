@@ -92,38 +92,31 @@ make fmt           # gofmt
 
 ## Progress Tracking - IMPORTANT
 
-**After completing any task from the project plan, you MUST update the
-progress tables in `README.md`.**
+**After completing any task, you MUST update the authoritative task register
+at `docs/TASKS.md`.** This is the single source of truth for task status.
 
-Specifically, update the following sections:
+Specifically:
 
-1. **TL;DR - Project Status** table at the top of `README.md`:
-   - Update the "Status" and "Detail" columns for any area that changed
+1. **`docs/TASKS.md`** (source of truth):
+   - Mark the task as `done` with the completion date
+   - Update the Summary table counts at the bottom
+
+2. **`README.md`** badge and summary line:
+   - Update the tasks badge count (e.g., `39/44`)
+   - Update the one-line summary under "Overall Progress"
+
+3. **`README.md` TL;DR table** (if applicable):
+   - Update "Status" and "Detail" columns for any area that changed
    - Update "Test Coverage" if new tests were added
-   - Update "GORM Version" when the migration is done
-   - Update "Security Hardening" as features are integrated
 
-2. **Overall Progress** table in `README.md`:
-   - Increment the "Completed" column for the relevant phase
-   - Update the "Status" column (e.g., "Not started" -> "In progress" -> "Complete")
-   - Recalculate the TOTAL percentage
+Do **not** duplicate per-phase breakdowns in README.md. The README links
+to `docs/TASKS.md` and `docs/PROJECT_PLAN.md` for detailed status.
 
-3. **docs/PROJECT_PLAN.md** task status:
-   - Mark completed tasks with their completion date
-
-### Example: After completing GORM v2 migration
-
-In `README.md`, update:
-- "GORM Version" row: change status from "DEPRECATED (v1.9.16)" to "CURRENT (v2.x.x)"
-- Phase 1 "Completed" count: increment by the number of tasks finished
-- Phase 1 "Status": change from "Not started" to "In progress"
-- TOTAL: recalculate
-
-## Current State (as of 2026-02-07)
+## Current State (as of 2026-02-08)
 
 - **Phase 1 (GORM v2 Migration):** Complete (19/20 tasks; 1 deferred).
-- **Phase 2 (Security & Testing):** Near complete (13/14 tasks). Only
-  TASK-034 (tag) pending.
+- **Phase 2 (Security & Testing):** Complete (14/14 tasks). Tag
+  `v0.3.0-rc1` exists.
 - **Phase 3 (Production Readiness):** Stage 3.1 complete (TASK-035 to
   TASK-040 done). 90 tests, 100% coverage, 10 benchmarks, gosec clean.
   Remaining: TASK-041 to TASK-044 (tag, release, module path, pkg.go.dev).
