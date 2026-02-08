@@ -14,6 +14,14 @@ v1.0.0 is a major upgrade that migrates from the deprecated GORM v1
 interface contract is preserved -- all three methods (`FindIdentity`,
 `SaveIdentity`, `DeleteIdentity`) retain their original signatures.
 
+```mermaid
+flowchart LR
+  V0["v0.x (GORM v1)"] --> UpdateGo["Update Go 1.24+"]
+  UpdateGo --> UpdateImports["Update GORM imports/driver"]
+  UpdateImports --> UpdateConn["Update gorm.Open"]
+  UpdateConn --> V1["v1.0.0 (GORM v2)"]
+```
+
 ### What Changed
 
 | Area | v0.x (GORM v1) | v1.0.0 (GORM v2) |
