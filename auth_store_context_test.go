@@ -19,6 +19,7 @@ func TestFindIdentityWithContext_ValidContext(t *testing.T) {
 	if err != nil {
 		t.Fatalf("FindIdentityWithContext failed: %v", err)
 	}
+	defer ClearIdentity(result)
 	if result.Idk != "ctx-find-idk" {
 		t.Fatalf("expected idk %q, got %q", "ctx-find-idk", result.Idk)
 	}
@@ -42,6 +43,7 @@ func TestSaveIdentityWithContext_ValidContext(t *testing.T) {
 	if err != nil {
 		t.Fatalf("FindIdentity after save failed: %v", err)
 	}
+	defer ClearIdentity(result)
 	if result.Suk != "save-suk" {
 		t.Fatalf("expected suk %q, got %q", "save-suk", result.Suk)
 	}
@@ -273,6 +275,7 @@ func TestWithContext_CRUDRoundTrip(t *testing.T) {
 	if !result.SQRLOnly {
 		t.Fatal("expected SQRLOnly to be true")
 	}
+	ClearIdentity(result)
 
 	// Update.
 	identity.Suk = "updated-suk"
@@ -287,6 +290,7 @@ func TestWithContext_CRUDRoundTrip(t *testing.T) {
 	if result.Suk != "updated-suk" {
 		t.Fatalf("expected updated suk %q, got %q", "updated-suk", result.Suk)
 	}
+	ClearIdentity(result)
 
 	// Delete.
 	err = store.DeleteIdentityWithContext(ctx, "ctx-crud-idk")

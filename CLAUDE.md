@@ -112,16 +112,21 @@ Specifically:
 Do **not** duplicate per-phase breakdowns in README.md. The README links
 to `docs/TASKS.md` and `docs/PROJECT_PLAN.md` for detailed status.
 
-## Current State (as of 2026-02-08)
+## Current State
 
-- **Phase 1 (GORM v2 Migration):** Complete (19/20 tasks; 1 deferred).
-- **Phase 2 (Security & Testing):** Complete (14/14 tasks). Tag
-  `v0.3.0-rc1` exists.
-- **Phase 3 (Production Readiness):** Stage 3.1 complete (TASK-035 to
-  TASK-040 done). 90 tests, 100% coverage, 10 benchmarks, gosec clean.
-  Remaining: TASK-041 to TASK-044 (tag, release, module path, pkg.go.dev).
-- **Infrastructure:** CI/CD pipeline (Go 1.24, 70% coverage gate), Makefile,
-  golangci-lint, markdownlint, secure memory, comprehensive documentation.
+For authoritative task status, read [`docs/TASKS.md`](docs/TASKS.md).
+For the full plan (phases, stages, decisions), read
+[`docs/PROJECT_PLAN.md`](docs/PROJECT_PLAN.md).
+
+### Key documents to consult
+
+| When you need | Read |
+|---------------|------|
+| Task status (source of truth) | [`docs/TASKS.md`](docs/TASKS.md) |
+| Plan, phases, decision points | [`docs/PROJECT_PLAN.md`](docs/PROJECT_PLAN.md) |
+| Requirements | [`docs/REQUIREMENTS.md`](docs/REQUIREMENTS.md) |
+| Architecture | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
+| Decision log | [`docs/Notice_of_Decisions.md`](docs/Notice_of_Decisions.md) |
 
 ### What exists in the code
 
@@ -130,21 +135,6 @@ to `docs/TASKS.md` and `docs/PROJECT_PLAN.md` for detailed status.
 - `errors.go` - Sentinel errors (ErrEmptyIdentityKey, ErrNilIdentity, etc.)
 - `secure_memory.go` / `secure_memory_common.go` / `secure_memory_windows.go` -
   Platform-aware secure memory clearing (WipeBytes, ClearIdentity, ScrambleBytes)
-- `secure_memory_test.go` - Secure memory + validation tests + benchmarks
-- `auth_store_test.go` - Basic AuthStore CRUD test
-- `auth_store_comprehensive_test.go` - 27 unit tests (TC-001 to TC-027)
-- `auth_store_security_test.go` - 13 security tests (SQL injection, DoS, Unicode)
-- `auth_store_integration_test.go` - 10 integration tests (build-tag gated)
-- `auth_store_bench_test.go` - 6 benchmarks (PERF-001 to PERF-006)
-- `test_helpers_test.go` - Test builder and DB helpers
-
-### What needs to be done next
-
-1. Tag `v0.3.0-rc1` (TASK-034)
-2. Tag `v1.0.0` (TASK-041)
-3. GitHub Release (TASK-042)
-4. Revert module path to sqrldev (TASK-043)
-5. Submit to pkg.go.dev (TASK-044)
 
 ## Code Conventions
 

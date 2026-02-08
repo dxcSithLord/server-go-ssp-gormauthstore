@@ -1,8 +1,7 @@
 # Task Register
 
 **Source of truth** for all implementation tasks across all phases.
-Referenced by [PROJECT_PLAN.md](PROJECT_PLAN.md) and
-[PHASE1_TASKS.md](PHASE1_TASKS.md).
+Referenced by [PROJECT_PLAN.md](PROJECT_PLAN.md).
 
 > Task IDs are authoritative here. If a stage-level document diverges,
 > update it to match this register.

@@ -21,7 +21,6 @@ func TestDocumentationExists(t *testing.T) {
 		"docs/API_TESTS_SPEC.md",
 		"docs/DEPENDENCIES.md",
 		"docs/Notice_of_Decisions.md",
-		"docs/PHASE1_TASKS.md",
 	}
 
 	for _, doc := range requiredDocs {
@@ -40,6 +39,7 @@ func TestArchiveDocumentationExists(t *testing.T) {
 		"docs/archive/STAGED_UPGRADE_PLAN.md",
 		"docs/archive/TODO.md",
 		"docs/archive/UNIFIED_TODO.md",
+		"docs/archive/PHASE1_TASKS.md",
 	}
 
 	for _, doc := range archiveDocs {
@@ -66,7 +66,6 @@ func TestMarkdownLinkIntegrity(t *testing.T) {
 		"docs/API_TESTS_SPEC.md",
 		"docs/DEPENDENCIES.md",
 		"docs/Notice_of_Decisions.md",
-		"docs/PHASE1_TASKS.md",
 	}
 
 	for _, doc := range docs {
@@ -437,11 +436,11 @@ func TestNoticeOfDecisions(t *testing.T) {
 	}
 }
 
-// TestPhase1Tasks verifies PHASE1_TASKS.md completeness.
+// TestPhase1Tasks verifies PHASE1_TASKS.md completeness (archived).
 func TestPhase1Tasks(t *testing.T) {
-	content, err := os.ReadFile("docs/PHASE1_TASKS.md")
+	content, err := os.ReadFile("docs/archive/PHASE1_TASKS.md")
 	if err != nil {
-		t.Fatalf("Cannot read PHASE1_TASKS.md: %v", err)
+		t.Fatalf("Cannot read archive/PHASE1_TASKS.md: %v", err)
 	}
 
 	tasks := string(content)

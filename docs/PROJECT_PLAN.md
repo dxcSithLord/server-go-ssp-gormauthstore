@@ -194,7 +194,7 @@ v1.0.0 tagged, GitHub release created, available on pkg.go.dev.
 
 ---
 
-## Decision Points (3 open, 1 resolved)
+## Decision Points (2 open, 2 resolved)
 
 ### DP-001: MemGuard vs Custom Secure Memory
 

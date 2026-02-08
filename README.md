@@ -122,7 +122,6 @@ defer gormauthstore.ClearIdentity(identity)
 │   ├── API_SPECIFICATION.md            # Go interface specification
 │   ├── API_TESTS_SPEC.md              # 70+ test case specifications
 │   ├── DEPENDENCIES.md                 # Dependency management guide
-│   ├── PHASE1_TASKS.md                # Phase 1 task detail
 │   ├── DOCUMENTATION_TESTS.md          # Documentation test descriptions
 │   ├── PRODUCTION.md                   # Production deployment guide
 │   ├── UPGRADE_FROM_V0.md              # Migration guide (v0.x to v1.0.0)
@@ -133,20 +132,48 @@ defer gormauthstore.ClearIdentity(identity)
 
 ## Documentation
 
-All project documentation lives in the [`docs/`](docs/) directory:
+All project documentation lives in the [`docs/`](docs/) directory.
+For task status and planning detail, see the linked documents below.
+
+```mermaid
+flowchart TD
+  README["README.md<br/>(entry point)"]
+  TASKS["TASKS.md<br/>(task status &#8212; source of truth)"]
+  PLAN["PROJECT_PLAN.md<br/>(phases, stages, decisions)"]
+  REQ["REQUIREMENTS.md"]
+  ARCH["ARCHITECTURE.md"]
+  API["API_SPECIFICATION.md"]
+  TESTS["API_TESTS_SPEC.md"]
+  DEPS["DEPENDENCIES.md"]
+  PROD["PRODUCTION.md"]
+  UPG["UPGRADE_FROM_V0.md"]
+  DEC["Notice_of_Decisions.md"]
+
+  README --> TASKS
+  README --> PLAN
+  README --> REQ
+  README --> ARCH
+  README --> API
+  README --> TESTS
+  README --> DEPS
+  README --> PROD
+  README --> UPG
+  README --> DEC
+  PLAN --> TASKS
+```
 
 | Document | Purpose |
 |----------|---------|
-| [PROJECT_PLAN.md](docs/PROJECT_PLAN.md) | Consolidated project plan (44 tasks, 3 phases, 6 stages) |
-| [REQUIREMENTS.md](docs/REQUIREMENTS.md) | Reverse-engineered functional and non-functional requirements |
+| [TASKS.md](docs/TASKS.md) | Authoritative task register (source of truth for status) |
+| [PROJECT_PLAN.md](docs/PROJECT_PLAN.md) | Phases, stages, decision points, and milestones |
+| [REQUIREMENTS.md](docs/REQUIREMENTS.md) | Functional and non-functional requirements |
 | [ARCHITECTURE.md](docs/ARCHITECTURE.md) | TOGAF-aligned architecture views |
-| [API_SPECIFICATION.md](docs/API_SPECIFICATION.md) | OpenAPI-style Go interface specification |
-| [API_TESTS_SPEC.md](docs/API_TESTS_SPEC.md) | 70+ test case specifications |
+| [API_SPECIFICATION.md](docs/API_SPECIFICATION.md) | Go interface specification |
+| [API_TESTS_SPEC.md](docs/API_TESTS_SPEC.md) | Test case specifications |
 | [DEPENDENCIES.md](docs/DEPENDENCIES.md) | Dependency management and local build setup |
-| [PRODUCTION.md](docs/PRODUCTION.md) | Production deployment guide (DB config, TLS, pools, timeouts) |
-| [UPGRADE_FROM_V0.md](docs/UPGRADE_FROM_V0.md) | Migration guide from v0.x (GORM v1) to v1.0.0 (GORM v2) |
-| [Notice_of_Decisions.md](docs/Notice_of_Decisions.md) | Decision log with SQRL protocol compliance analysis |
-| [archive/](docs/archive/) | Superseded planning documents (TODO, UNIFIED_TODO, STAGED_UPGRADE_PLAN, SECURITY_REVIEW) |
+| [PRODUCTION.md](docs/PRODUCTION.md) | Production deployment guide |
+| [UPGRADE_FROM_V0.md](docs/UPGRADE_FROM_V0.md) | Migration guide (v0.x to v1.0.0) |
+| [Notice_of_Decisions.md](docs/Notice_of_Decisions.md) | Decision log and SQRL protocol compliance |
 
 ## Development
 
