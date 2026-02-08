@@ -8,7 +8,7 @@ import (
 	ssp "github.com/dxcSithLord/server-go-ssp"
 )
 
-// CTX-001: FindIdentityWithContext returns identity with valid context
+// CTX-001: FindIdentityWithContext returns identity with valid context.
 func TestFindIdentityWithContext_ValidContext(t *testing.T) {
 	store := newTestStore(t)
 	identity := newTestIdentity().withIdk("ctx-find-idk").withSuk("ctx-suk").withVuk("ctx-vuk").build()
@@ -27,7 +27,7 @@ func TestFindIdentityWithContext_ValidContext(t *testing.T) {
 	}
 }
 
-// CTX-002: SaveIdentityWithContext persists with valid context
+// CTX-002: SaveIdentityWithContext persists with valid context.
 func TestSaveIdentityWithContext_ValidContext(t *testing.T) {
 	store := newTestStore(t)
 	identity := newTestIdentity().withIdk("ctx-save-idk").withSuk("save-suk").build()
@@ -47,7 +47,7 @@ func TestSaveIdentityWithContext_ValidContext(t *testing.T) {
 	}
 }
 
-// CTX-003: DeleteIdentityWithContext deletes with valid context
+// CTX-003: DeleteIdentityWithContext deletes with valid context.
 func TestDeleteIdentityWithContext_ValidContext(t *testing.T) {
 	store := newTestStore(t)
 	identity := newTestIdentity().withIdk("ctx-del-idk").build()
@@ -65,7 +65,7 @@ func TestDeleteIdentityWithContext_ValidContext(t *testing.T) {
 	}
 }
 
-// CTX-004: FindIdentitySecureWithContext returns wrapper with valid context
+// CTX-004: FindIdentitySecureWithContext returns wrapper with valid context.
 func TestFindIdentitySecureWithContext_ValidContext(t *testing.T) {
 	store := newTestStore(t)
 	identity := newTestIdentity().withIdk("ctx-secure-idk").withSuk("sec-suk").withVuk("sec-vuk").build()
@@ -87,7 +87,7 @@ func TestFindIdentitySecureWithContext_ValidContext(t *testing.T) {
 	}
 }
 
-// CTX-005: AutoMigrateWithContext succeeds with valid context
+// CTX-005: AutoMigrateWithContext succeeds with valid context.
 func TestAutoMigrateWithContext_ValidContext(t *testing.T) {
 	// AutoMigrateWithContext is already tested implicitly by newTestStore,
 	// but test it explicitly with a fresh DB.
@@ -101,21 +101,21 @@ func TestAutoMigrateWithContext_ValidContext(t *testing.T) {
 		t.Fatalf("AutoMigrateWithContext failed: %v", err)
 	}
 
-	// Verify table exists by saving an identity
+	// Verify table exists by saving an identity.
 	identity := newTestIdentity().withIdk("ctx-migrate-idk").build()
 	if err := store.SaveIdentity(identity); err != nil {
 		t.Fatalf("SaveIdentity after AutoMigrateWithContext failed: %v", err)
 	}
 }
 
-// CTX-006: FindIdentityWithContext with cancelled context returns error
+// CTX-006: FindIdentityWithContext with cancelled context returns error.
 func TestFindIdentityWithContext_CancelledContext(t *testing.T) {
 	store := newTestStore(t)
 	identity := newTestIdentity().withIdk("ctx-cancel-find").build()
 	seedIdentity(t, store, identity)
 
 	ctx, cancel := context.WithCancel(context.Background())
-	cancel() // cancel immediately
+	cancel() // cancel immediately.
 
 	_, err := store.FindIdentityWithContext(ctx, "ctx-cancel-find")
 	if err == nil {
@@ -123,13 +123,13 @@ func TestFindIdentityWithContext_CancelledContext(t *testing.T) {
 	}
 }
 
-// CTX-007: SaveIdentityWithContext with cancelled context returns error
+// CTX-007: SaveIdentityWithContext with cancelled context returns error.
 func TestSaveIdentityWithContext_CancelledContext(t *testing.T) {
 	store := newTestStore(t)
 	identity := newTestIdentity().withIdk("ctx-cancel-save").build()
 
 	ctx, cancel := context.WithCancel(context.Background())
-	cancel() // cancel immediately
+	cancel() // cancel immediately.
 
 	err := store.SaveIdentityWithContext(ctx, identity)
 	if err == nil {
@@ -137,14 +137,14 @@ func TestSaveIdentityWithContext_CancelledContext(t *testing.T) {
 	}
 }
 
-// CTX-008: DeleteIdentityWithContext with cancelled context returns error
+// CTX-008: DeleteIdentityWithContext with cancelled context returns error.
 func TestDeleteIdentityWithContext_CancelledContext(t *testing.T) {
 	store := newTestStore(t)
 	identity := newTestIdentity().withIdk("ctx-cancel-del").build()
 	seedIdentity(t, store, identity)
 
 	ctx, cancel := context.WithCancel(context.Background())
-	cancel() // cancel immediately
+	cancel() // cancel immediately.
 
 	err := store.DeleteIdentityWithContext(ctx, "ctx-cancel-del")
 	if err == nil {
@@ -152,12 +152,12 @@ func TestDeleteIdentityWithContext_CancelledContext(t *testing.T) {
 	}
 }
 
-// CTX-009: WithContext methods validate idk same as originals
+// CTX-009: WithContext methods validate idk same as originals.
 func TestWithContextMethods_ValidateIdk(t *testing.T) {
 	store := newTestStore(t)
 	ctx := context.Background()
 
-	// Empty idk
+	// Empty idk.
 	_, err := store.FindIdentityWithContext(ctx, "")
 	if !errors.Is(err, ErrEmptyIdentityKey) {
 		t.Fatalf("FindIdentityWithContext: expected ErrEmptyIdentityKey, got %v", err)
@@ -168,20 +168,20 @@ func TestWithContextMethods_ValidateIdk(t *testing.T) {
 		t.Fatalf("DeleteIdentityWithContext: expected ErrEmptyIdentityKey, got %v", err)
 	}
 
-	// Nil identity
+	// Nil identity.
 	err = store.SaveIdentityWithContext(ctx, nil)
 	if !errors.Is(err, ErrNilIdentity) {
 		t.Fatalf("SaveIdentityWithContext: expected ErrNilIdentity, got %v", err)
 	}
 
-	// Invalid characters
+	// Invalid characters.
 	_, err = store.FindIdentityWithContext(ctx, "bad<idk>")
 	if !errors.Is(err, ErrInvalidIdentityKeyFormat) {
 		t.Fatalf("FindIdentityWithContext: expected ErrInvalidIdentityKeyFormat, got %v", err)
 	}
 }
 
-// CTX-010: FindIdentityWithContext not found returns ssp.ErrNotFound
+// CTX-010: FindIdentityWithContext not found returns ssp.ErrNotFound.
 func TestFindIdentityWithContext_NotFound(t *testing.T) {
 	store := newTestStore(t)
 	ctx := context.Background()
@@ -192,17 +192,17 @@ func TestFindIdentityWithContext_NotFound(t *testing.T) {
 	}
 }
 
-// CTX-011: Original methods still work (backward compatibility)
+// CTX-011: Original methods still work (backward compatibility).
 func TestOriginalMethods_BackwardCompatibility(t *testing.T) {
 	store := newTestStore(t)
 
-	// Save
+	// Save.
 	identity := newTestIdentity().withIdk("compat-idk").withSuk("compat-suk").build()
 	if err := store.SaveIdentity(identity); err != nil {
 		t.Fatalf("SaveIdentity failed: %v", err)
 	}
 
-	// Find
+	// Find.
 	result, err := store.FindIdentity("compat-idk")
 	if err != nil {
 		t.Fatalf("FindIdentity failed: %v", err)
@@ -211,14 +211,14 @@ func TestOriginalMethods_BackwardCompatibility(t *testing.T) {
 		t.Fatalf("expected suk %q, got %q", "compat-suk", result.Suk)
 	}
 
-	// FindSecure
+	// FindSecure.
 	wrapper, err := store.FindIdentitySecure("compat-idk")
 	if err != nil {
 		t.Fatalf("FindIdentitySecure failed: %v", err)
 	}
 	wrapper.Destroy()
 
-	// Delete
+	// Delete.
 	if err := store.DeleteIdentity("compat-idk"); err != nil {
 		t.Fatalf("DeleteIdentity failed: %v", err)
 	}
@@ -229,7 +229,7 @@ func TestOriginalMethods_BackwardCompatibility(t *testing.T) {
 	}
 }
 
-// CTX-012: FindIdentitySecureWithContext with cancelled context returns error
+// CTX-012: FindIdentitySecureWithContext with cancelled context returns error.
 func TestFindIdentitySecureWithContext_CancelledContext(t *testing.T) {
 	store := newTestStore(t)
 	identity := newTestIdentity().withIdk("ctx-cancel-secure").build()
@@ -240,16 +240,16 @@ func TestFindIdentitySecureWithContext_CancelledContext(t *testing.T) {
 
 	_, err := store.FindIdentitySecureWithContext(ctx, "ctx-cancel-secure")
 	if err == nil {
-		t.Fatal("expected error with cancelled context, got nil")
+		t.Fatal("expected error with canceled context, got nil")
 	}
 }
 
-// CTX-013: Full CRUD round-trip using WithContext methods
+// CTX-013: Full CRUD round-trip using WithContext methods.
 func TestWithContext_CRUDRoundTrip(t *testing.T) {
 	store := newTestStore(t)
 	ctx := context.Background()
 
-	// Create
+	// Create.
 	identity := newTestIdentity().
 		withIdk("ctx-crud-idk").
 		withSuk("crud-suk").
@@ -263,7 +263,7 @@ func TestWithContext_CRUDRoundTrip(t *testing.T) {
 		t.Fatalf("SaveIdentityWithContext failed: %v", err)
 	}
 
-	// Read
+	// Read.
 	result, err := store.FindIdentityWithContext(ctx, "ctx-crud-idk")
 	if err != nil {
 		t.Fatalf("FindIdentityWithContext failed: %v", err)
@@ -275,7 +275,7 @@ func TestWithContext_CRUDRoundTrip(t *testing.T) {
 		t.Fatal("expected SQRLOnly to be true")
 	}
 
-	// Update
+	// Update.
 	identity.Suk = "updated-suk"
 	err = store.SaveIdentityWithContext(ctx, identity)
 	if err != nil {
@@ -289,7 +289,7 @@ func TestWithContext_CRUDRoundTrip(t *testing.T) {
 		t.Fatalf("expected updated suk %q, got %q", "updated-suk", result.Suk)
 	}
 
-	// Delete
+	// Delete.
 	err = store.DeleteIdentityWithContext(ctx, "ctx-crud-idk")
 	if err != nil {
 		t.Fatalf("DeleteIdentityWithContext failed: %v", err)
