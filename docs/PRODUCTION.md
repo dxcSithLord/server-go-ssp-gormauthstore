@@ -171,7 +171,10 @@ import (
 )
 
 rootCertPool := x509.NewCertPool()
-pem, _ := os.ReadFile("/etc/ssl/certs/ca.pem")
+pem, err := os.ReadFile("/etc/ssl/certs/ca.pem")
+if err != nil {
+    log.Fatalf("failed to read CA certificate: %v", err)
+}
 rootCertPool.AppendCertsFromPEM(pem)
 
 mysqldriver.RegisterTLSConfig("custom", &tls.Config{
@@ -314,7 +317,10 @@ func healthCheck(db *gorm.DB) error {
 ### Connection Pool Metrics
 
 ```go
-sqlDB, _ := db.DB()
+sqlDB, err := db.DB()
+if err != nil {
+    log.Fatalf("failed to get sql.DB: %v", err)
+}
 stats := sqlDB.Stats()
 
 // Key metrics to monitor:
@@ -408,7 +414,10 @@ func main() {
     }
 
     // 2. Configure connection pool
-    sqlDB, _ := db.DB()
+    sqlDB, err := db.DB()
+    if err != nil {
+        log.Fatalf("failed to get sql.DB: %v", err)
+    }
     sqlDB.SetMaxOpenConns(25)
     sqlDB.SetMaxIdleConns(10)
     sqlDB.SetConnMaxLifetime(5 * time.Minute)

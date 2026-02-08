@@ -91,7 +91,6 @@ func TestFindIdentitySecureWithContext_ValidContext(t *testing.T) {
 func TestAutoMigrateWithContext_ValidContext(t *testing.T) {
 	// AutoMigrateWithContext is already tested implicitly by newTestStore,
 	// but test it explicitly with a fresh DB.
-	t.Helper()
 	db := openTestDB(t)
 	store := NewAuthStore(db)
 
