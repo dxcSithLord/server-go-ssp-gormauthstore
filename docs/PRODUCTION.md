@@ -22,6 +22,14 @@
 
 ---
 
+```mermaid
+flowchart LR
+  App["App (SQRL Server)"] --> AuthStore["gormauthstore"]
+  AuthStore --> DB["`Database
+(PostgreSQL/MySQL/
+SQL Server)`"]
+  App --> Monitoring["Metrics/Alerts"]
+```
 ## Prerequisites
 
 - **Go:** 1.24 or later
