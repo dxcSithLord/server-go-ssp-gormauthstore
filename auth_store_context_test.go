@@ -240,7 +240,7 @@ func TestFindIdentitySecureWithContext_CancelledContext(t *testing.T) {
 
 	_, err := store.FindIdentitySecureWithContext(ctx, "ctx-cancel-secure")
 	if err == nil {
-		t.Fatal("expected error with canceled context, got nil")
+		t.Fatal("expected error with cancelled context, got nil")
 	}
 }
 
