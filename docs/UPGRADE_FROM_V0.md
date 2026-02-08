@@ -16,7 +16,7 @@ interface contract is preserved -- all three methods (`FindIdentity`,
 
 ```mermaid
 flowchart LR
-  V0["v0.x (GORM v1)"] --> UpdateGo["Update Go 1.24+"]
+  V0["v0.x (GORM v1)"] --> UpdateGo["Update Go 1.25+"]
   UpdateGo --> UpdateImports["Update GORM imports/driver"]
   UpdateImports --> UpdateConn["Update gorm.Open"]
   UpdateConn --> V1["v1.0.0 (GORM v2)"]
@@ -27,7 +27,7 @@ flowchart LR
 | Area | v0.x (GORM v1) | v1.0.0 (GORM v2) |
 |------|----------------|-------------------|
 | **GORM** | `github.com/jinzhu/gorm` v1.9.16 | `gorm.io/gorm` v1.31.1 |
-| **Go version** | 1.13+ | 1.24+ |
+| **Go version** | 1.13+ | 1.25+ |
 | **Database drivers** | Bundled in GORM v1 | Separate packages (`gorm.io/driver/*`) |
 | **Connection API** | `gorm.Open("postgres", dsn)` | `gorm.Open(postgres.Open(dsn), &gorm.Config{})` |
 | **Error handling** | `gorm.IsRecordNotFoundError(err)` | `errors.Is(err, gorm.ErrRecordNotFound)` |
@@ -49,11 +49,11 @@ flowchart LR
 
 ### Step 1: Update Go Version
 
-v1.0.0 requires Go 1.24 or later:
+v1.0.0 requires Go 1.25 or later:
 
 ```bash
-go install golang.org/dl/go1.24.7@latest
-go1.24.7 download
+go install golang.org/dl/go1.25.7@latest
+go1.25.7 download
 ```
 
 ### Step 2: Update Imports
@@ -236,9 +236,9 @@ database:
 go get gorm.io/driver/postgres
 ```
 
-### "go.mod: go 1.24 requires newer version"
+### "go.mod: go 1.25 requires newer version"
 
-v1.0.0 requires Go 1.24+. Update your Go installation.
+v1.0.0 requires Go 1.25+. Update your Go installation.
 
 ---
 

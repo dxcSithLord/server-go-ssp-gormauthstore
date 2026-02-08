@@ -112,10 +112,13 @@ Referenced by [PROJECT_PLAN.md](PROJECT_PLAN.md).
 |----|-------------|--------|------|------------|--------|
 | TASK-039 | Update `README.md` (context support, status tables, docs links) | done | 2026-02-07 | TASK-038 | TASK-041 |
 | TASK-040 | Create `CHANGELOG.md` | done | 2026-02-07 | TASK-038 | TASK-041 |
-| TASK-041 | Tag `v1.0.0` | pending | | TASK-039, TASK-040 | TASK-042, TASK-043, TASK-044 |
+| TASK-041 | Tag `v1.0.0` | done | 2026-02-08 | TASK-039, TASK-040 | TASK-042, TASK-043, TASK-044 |
 | TASK-042 | GitHub Release (release page with changelog) | pending | | TASK-041 | -- |
-| TASK-043 | Revert module path to `sqrldev` | pending | | TASK-041 | TASK-044 |
-| TASK-044 | Submit to pkg.go.dev | pending | | TASK-041, TASK-043 | -- |
+| TASK-043 | Revert module path to `sqrldev` | on-hold | | TASK-041, server-go-ssp updates | TASK-044 |
+| TASK-044 | Submit to pkg.go.dev | on-hold | | TASK-041, TASK-043, server-go-ssp updates | -- |
+
+> **TASK-043/044 note:** On hold pending completion of upstream
+> `server-go-ssp` updates before module path revert can proceed.
 
 ---
 
@@ -142,16 +145,25 @@ These should be performed before each release and quarterly thereafter.
 
 ---
 
+## Post-Release Maintenance
+
+| ID | Description | Status | Date | Depends on | Blocks |
+|----|-------------|--------|------|------------|--------|
+| TASK-054 | Upgrade Go from 1.24 to 1.25 (go.mod, CI, docs, tests) | done | 2026-02-08 | TASK-041 | -- |
+
+---
+
 ## Summary
 
-| Phase | Stage | Tasks | Done | Pending | Deferred |
-|-------|-------|-------|------|---------|----------|
-| 1 | 1.1 GORM v2 Migration | 9 | 9 | 0 | 0 |
-| 1 | 1.2 Database Drivers | 7 | 6 | 0 | 1 |
-| 1 | 1.3 Transitive Deps | 4 | 4 | 0 | 0 |
-| 2 | 2.1 Security Integration | 7 | 7 | 0 | 0 |
-| 2 | 2.2 Comprehensive Tests | 7 | 7 | 0 | 0 |
-| 3 | 3.1 Production Hardening | 4 | 4 | 0 | 0 |
-| 3 | 3.2 Release v1.0.0 | 6 | 2 | 4 | 0 |
-| -- | Doc Maintenance | 9 | 9 | 0 | 0 |
-| **Total** | | **53** | **48** | **4** | **1** |
+| Phase | Stage | Tasks | Done | Pending | On-Hold | Deferred |
+|-------|-------|-------|------|---------|---------|----------|
+| 1 | 1.1 GORM v2 Migration | 9 | 9 | 0 | 0 | 0 |
+| 1 | 1.2 Database Drivers | 7 | 6 | 0 | 0 | 1 |
+| 1 | 1.3 Transitive Deps | 4 | 4 | 0 | 0 | 0 |
+| 2 | 2.1 Security Integration | 7 | 7 | 0 | 0 | 0 |
+| 2 | 2.2 Comprehensive Tests | 7 | 7 | 0 | 0 | 0 |
+| 3 | 3.1 Production Hardening | 4 | 4 | 0 | 0 | 0 |
+| 3 | 3.2 Release v1.0.0 | 6 | 3 | 1 | 2 | 0 |
+| -- | Doc Maintenance | 9 | 9 | 0 | 0 | 0 |
+| -- | Post-Release Maintenance | 1 | 1 | 0 | 0 | 0 |
+| **Total** | | **54** | **50** | **1** | **2** | **1** |

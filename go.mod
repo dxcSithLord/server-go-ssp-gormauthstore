@@ -2,9 +2,9 @@
 // Revert to github.com/sqrldev/server-go-ssp-gormauthstore before pushing to upstream.
 module github.com/dxcSithLord/server-go-ssp-gormauthstore
 
-go 1.24.0
+go 1.25.0
 
-toolchain go1.24.7
+toolchain go1.25.7
 
 require (
 	github.com/dxcSithLord/server-go-ssp v0.0.0-20260202110616-66529f78b7f1

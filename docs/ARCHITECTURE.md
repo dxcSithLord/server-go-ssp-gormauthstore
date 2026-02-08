@@ -380,7 +380,7 @@ flowchart TB
 ```mermaid
 graph TB
     subgraph "Runtime Layer"
-        GO[Go Runtime 1.24+]
+        GO[Go Runtime 1.25+]
     end
 
     subgraph "Application Framework"
