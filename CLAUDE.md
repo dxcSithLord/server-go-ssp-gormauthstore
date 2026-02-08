@@ -65,6 +65,7 @@ make fmt           # gofmt
 ├── secure_memory_windows.go            # WipeBytes (Windows)
 ├── auth_store_test.go                  # Basic CRUD test
 ├── auth_store_comprehensive_test.go    # 27 unit tests (TC-001 to TC-027)
+├── auth_store_context_test.go          # 13 context support tests (CTX-001 to CTX-013)
 ├── auth_store_security_test.go         # 13 security tests (SEC-001 to SEC-013)
 ├── auth_store_integration_test.go      # 10 integration tests (build-tag: integration)
 ├── auth_store_bench_test.go            # 6 benchmarks (PERF-001 to PERF-006)
@@ -79,6 +80,8 @@ make fmt           # gofmt
 │   ├── API_SPECIFICATION.md
 │   ├── API_TESTS_SPEC.md
 │   ├── DEPENDENCIES.md
+│   ├── PRODUCTION.md                   # Production deployment guide
+│   ├── UPGRADE_FROM_V0.md              # Migration guide (v0.x to v1.0.0)
 │   ├── Notice_of_Decisions.md
 │   └── archive/                        # Superseded planning documents
 ├── .github/workflows/ci.yml           # GitHub Actions CI pipeline
@@ -119,15 +122,18 @@ In `README.md`, update:
 ## Current State (as of 2026-02-07)
 
 - **Phase 1 (GORM v2 Migration):** Complete (19/20 tasks; 1 deferred).
-- **Phase 2 (Security & Testing):** Near complete (13/14 tasks). 77 tests,
-  98.8% coverage, 10 benchmarks, gosec clean. Only TASK-034 (tag) pending.
-- **Phase 3 (Production Readiness):** Not started.
+- **Phase 2 (Security & Testing):** Near complete (13/14 tasks). Only
+  TASK-034 (tag) pending.
+- **Phase 3 (Production Readiness):** Stage 3.1 complete (TASK-035 to
+  TASK-040 done). 90 tests, 100% coverage, 10 benchmarks, gosec clean.
+  Remaining: TASK-041 to TASK-044 (tag, release, module path, pkg.go.dev).
 - **Infrastructure:** CI/CD pipeline (Go 1.24, 70% coverage gate), Makefile,
   golangci-lint, markdownlint, secure memory, comprehensive documentation.
 
 ### What exists in the code
 
 - `auth_store.go` - Core AuthStore using GORM v2 with `FindIdentitySecure`
+  and `*WithContext()` variants for all methods
 - `errors.go` - Sentinel errors (ErrEmptyIdentityKey, ErrNilIdentity, etc.)
 - `secure_memory.go` / `secure_memory_common.go` / `secure_memory_windows.go` -
   Platform-aware secure memory clearing (WipeBytes, ClearIdentity, ScrambleBytes)
@@ -142,8 +148,10 @@ In `README.md`, update:
 ### What needs to be done next
 
 1. Tag `v0.3.0-rc1` (TASK-034)
-2. Production hardening (Phase 3: context support, docs, migration guide)
-3. v1.0.0 release (Phase 3: README, CHANGELOG, tag, publish)
+2. Tag `v1.0.0` (TASK-041)
+3. GitHub Release (TASK-042)
+4. Revert module path to sqrldev (TASK-043)
+5. Submit to pkg.go.dev (TASK-044)
 
 ## Code Conventions
 
@@ -155,9 +163,10 @@ In `README.md`, update:
 
 ## Decision Points
 
-There are 3 open decision points documented in `docs/PROJECT_PLAN.md` that
+There are 2 open decision points documented in `docs/PROJECT_PLAN.md` that
 require human input before proceeding:
 
 - **DP-001:** MemGuard vs custom implementation for secure memory
 - **DP-002:** Database driver selection (PostgreSQL-only vs multi-database)
-- **DP-003:** Context API design (new methods vs modify existing signatures)
+- **DP-003:** RESOLVED -- Context API: Option A implemented as `*WithContext()`
+  methods alongside originals for backward compatibility
