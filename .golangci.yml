@@ -107,7 +107,7 @@ linters-settings:
     tab-width: 4
 
   misspell:
-    locale: US
+    locale: UK
 
   nestif:
     min-complexity: 6

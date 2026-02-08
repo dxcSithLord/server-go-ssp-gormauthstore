@@ -37,7 +37,7 @@ func ScrambleBytes(b []byte) {
 // - Use a secure-memory library like github.com/awnumar/memguard
 // - Avoid string conversions which create copies the GC doesn't track
 //
-// This function provides defense-in-depth by:
+// This function provides defence-in-depth by:
 // 1. Clearing the string reference (prevents further access via this variable)
 // 2. Wiping a copy of the data (reduces copies in memory)
 // 3. Allowing GC to reclaim the original string memory.
@@ -60,12 +60,12 @@ func WipeString(s *string) {
 	// The original backing memory will be garbage collected
 	*s = ""
 
-	// Ensure the wiped copy isn't optimized away
+	// Ensure the wiped copy isn't optimised away
 	runtime.KeepAlive(dataCopy)
 }
 
 // ClearIdentity securely wipes all sensitive fields from a SqrlIdentity struct.
-// This function should be called when an identity is no longer needed to minimize
+// This function should be called when an identity is no longer needed to minimise
 // the window of exposure for cryptographic keys in memory.
 //
 // Fields cleared:

@@ -65,6 +65,7 @@ make fmt           # gofmt
 ├── secure_memory_windows.go            # WipeBytes (Windows)
 ├── auth_store_test.go                  # Basic CRUD test
 ├── auth_store_comprehensive_test.go    # 27 unit tests (TC-001 to TC-027)
+├── auth_store_context_test.go          # 13 context support tests (CTX-001 to CTX-013)
 ├── auth_store_security_test.go         # 13 security tests (SEC-001 to SEC-013)
 ├── auth_store_integration_test.go      # 10 integration tests (build-tag: integration)
 ├── auth_store_bench_test.go            # 6 benchmarks (PERF-001 to PERF-006)
@@ -79,6 +80,8 @@ make fmt           # gofmt
 │   ├── API_SPECIFICATION.md
 │   ├── API_TESTS_SPEC.md
 │   ├── DEPENDENCIES.md
+│   ├── PRODUCTION.md                   # Production deployment guide
+│   ├── UPGRADE_FROM_V0.md              # Migration guide (v0.x to v1.0.0)
 │   ├── Notice_of_Decisions.md
 │   └── archive/                        # Superseded planning documents
 ├── .github/workflows/ci.yml           # GitHub Actions CI pipeline
@@ -89,61 +92,49 @@ make fmt           # gofmt
 
 ## Progress Tracking - IMPORTANT
 
-**After completing any task from the project plan, you MUST update the
-progress tables in `README.md`.**
+**After completing any task, you MUST update the authoritative task register
+at `docs/TASKS.md`.** This is the single source of truth for task status.
 
-Specifically, update the following sections:
+Specifically:
 
-1. **TL;DR - Project Status** table at the top of `README.md`:
-   - Update the "Status" and "Detail" columns for any area that changed
+1. **`docs/TASKS.md`** (source of truth):
+   - Mark the task as `done` with the completion date
+   - Update the Summary table counts at the bottom
+
+2. **`README.md`** badge and summary line:
+   - Update the tasks badge count (e.g., `39/44`)
+   - Update the one-line summary under "Overall Progress"
+
+3. **`README.md` TL;DR table** (if applicable):
+   - Update "Status" and "Detail" columns for any area that changed
    - Update "Test Coverage" if new tests were added
-   - Update "GORM Version" when the migration is done
-   - Update "Security Hardening" as features are integrated
 
-2. **Overall Progress** table in `README.md`:
-   - Increment the "Completed" column for the relevant phase
-   - Update the "Status" column (e.g., "Not started" -> "In progress" -> "Complete")
-   - Recalculate the TOTAL percentage
+Do **not** duplicate per-phase breakdowns in README.md. The README links
+to `docs/TASKS.md` and `docs/PROJECT_PLAN.md` for detailed status.
 
-3. **docs/PROJECT_PLAN.md** task status:
-   - Mark completed tasks with their completion date
+## Current State
 
-### Example: After completing GORM v2 migration
+For authoritative task status, read [`docs/TASKS.md`](docs/TASKS.md).
+For the full plan (phases, stages, decisions), read
+[`docs/PROJECT_PLAN.md`](docs/PROJECT_PLAN.md).
 
-In `README.md`, update:
-- "GORM Version" row: change status from "DEPRECATED (v1.9.16)" to "CURRENT (v2.x.x)"
-- Phase 1 "Completed" count: increment by the number of tasks finished
-- Phase 1 "Status": change from "Not started" to "In progress"
-- TOTAL: recalculate
+### Key documents to consult
 
-## Current State (as of 2026-02-07)
-
-- **Phase 1 (GORM v2 Migration):** Complete (19/20 tasks; 1 deferred).
-- **Phase 2 (Security & Testing):** Near complete (13/14 tasks). 77 tests,
-  98.8% coverage, 10 benchmarks, gosec clean. Only TASK-034 (tag) pending.
-- **Phase 3 (Production Readiness):** Not started.
-- **Infrastructure:** CI/CD pipeline (Go 1.24, 70% coverage gate), Makefile,
-  golangci-lint, markdownlint, secure memory, comprehensive documentation.
+| When you need | Read |
+|---------------|------|
+| Task status (source of truth) | [`docs/TASKS.md`](docs/TASKS.md) |
+| Plan, phases, decision points | [`docs/PROJECT_PLAN.md`](docs/PROJECT_PLAN.md) |
+| Requirements | [`docs/REQUIREMENTS.md`](docs/REQUIREMENTS.md) |
+| Architecture | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
+| Decision log | [`docs/Notice_of_Decisions.md`](docs/Notice_of_Decisions.md) |
 
 ### What exists in the code
 
 - `auth_store.go` - Core AuthStore using GORM v2 with `FindIdentitySecure`
+  and `*WithContext()` variants for all methods
 - `errors.go` - Sentinel errors (ErrEmptyIdentityKey, ErrNilIdentity, etc.)
 - `secure_memory.go` / `secure_memory_common.go` / `secure_memory_windows.go` -
   Platform-aware secure memory clearing (WipeBytes, ClearIdentity, ScrambleBytes)
-- `secure_memory_test.go` - Secure memory + validation tests + benchmarks
-- `auth_store_test.go` - Basic AuthStore CRUD test
-- `auth_store_comprehensive_test.go` - 27 unit tests (TC-001 to TC-027)
-- `auth_store_security_test.go` - 13 security tests (SQL injection, DoS, Unicode)
-- `auth_store_integration_test.go` - 10 integration tests (build-tag gated)
-- `auth_store_bench_test.go` - 6 benchmarks (PERF-001 to PERF-006)
-- `test_helpers_test.go` - Test builder and DB helpers
-
-### What needs to be done next
-
-1. Tag `v0.3.0-rc1` (TASK-034)
-2. Production hardening (Phase 3: context support, docs, migration guide)
-3. v1.0.0 release (Phase 3: README, CHANGELOG, tag, publish)
 
 ## Code Conventions
 
@@ -155,9 +146,10 @@ In `README.md`, update:
 
 ## Decision Points
 
-There are 3 open decision points documented in `docs/PROJECT_PLAN.md` that
+There are 2 open decision points documented in `docs/PROJECT_PLAN.md` that
 require human input before proceeding:
 
 - **DP-001:** MemGuard vs custom implementation for secure memory
 - **DP-002:** Database driver selection (PostgreSQL-only vs multi-database)
-- **DP-003:** Context API design (new methods vs modify existing signatures)
+- **DP-003:** RESOLVED -- Context API: Option A implemented as `*WithContext()`
+  methods alongside originals for backward compatibility

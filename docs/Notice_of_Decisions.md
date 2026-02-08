@@ -1,10 +1,10 @@
 # Notice of Decisions
 ## SQRL Protocol Compliance Analysis and Implementation Decisions
 
-**Version:** 2.0 (Updated with SQRL Protocol Research)
-**Date:** November 18, 2025
-**Status:** Protocol Compliance Verified - Awaiting Implementation Decisions
-**Priority:** CRITICAL - Blocks v1.0.0 Release
+**Version:** 3.0 (Decisions Resolved)
+**Date:** February 7, 2026
+**Status:** All Critical Decisions Resolved - Implementation Complete
+**Priority:** RESOLVED
 
 ---
 
@@ -86,10 +86,10 @@ graph TB
 
 | Decision | Protocol Impact | Timeline Impact | v1.0.0 Impact | Urgency |
 |----------|----------------|----------------|---------------|---------|
-| **Context Support** | No protocol requirement | +2-3 hours | Production readiness | **CRITICAL** |
-| **Interface Coordination** | No protocol requirement | +1 week (if fork needed) | Potential blocker | **CRITICAL** |
-| **Field Encryption** | Not required by protocol | +8-12 hours (if now) | Optional security | MEDIUM |
-| **Goauthentik Integration** | Not applicable (SQRL is independent) | N/A | Resolved | LOW |
+| **Context Support** | No protocol requirement | Implemented | Production readiness | ✅ RESOLVED |
+| **Interface Coordination** | No protocol requirement | Upstream pending | Non-blocking | ✅ RESOLVED |
+| **Field Encryption** | Not required by protocol | Deferred to v1.1.0 | Optional security | ✅ RESOLVED |
+| **Goauthentik Integration** | Not applicable (SQRL is independent) | N/A | Resolved | ✅ RESOLVED |
 | **TIF Flag Management** | Required by protocol | Already delegated to ssp | No action needed | ✅ RESOLVED |
 | **Ed25519 Verification** | Required by protocol | Already delegated to ssp | No action needed | ✅ RESOLVED |
 
@@ -571,43 +571,46 @@ graph LR
 
 ---
 
-### DECISION POINT 1: Context Support (UNCHANGED - STILL CRITICAL)
+### DECISION POINT 1: Context Support (RESOLVED)
 
 **Protocol Impact:** ✅ **NO PROTOCOL REQUIREMENT** for context.Context
 
-**Implementation Impact:** ⚠️ **PRODUCTION READINESS CONCERN**
+**Implementation Impact:** ✅ **RESOLVED** - Production readiness achieved
 
-**Analysis:**
-- SQRL protocol does NOT require context.Context
-- SQRL protocol does NOT specify timeout handling
-- However, **production Go applications** typically use context for:
-  - Database query timeouts
-  - Request cancellation
-  - Distributed tracing
+**Decision:** **Option A** - Add context.Context to all methods
 
-**Options:** (Same as before)
-- **Option A (RECOMMENDED):** Add context.Context to all methods
-- **Option B:** Add dual methods (backward compatible)
-- **Option C:** Defer to v2.0.0
+**Implementation:** Added `*WithContext()` variants alongside original methods:
 
-**Updated Recommendation:** **OPTION A** - While not a protocol requirement, context support is a **Go ecosystem best practice** for production libraries.
+- `FindIdentityWithContext(ctx, idk)`
+- `SaveIdentityWithContext(ctx, identity)`
+- `DeleteIdentityWithContext(ctx, idk)`
+- `FindIdentitySecureWithContext(ctx, idk)`
+- `AutoMigrateWithContext(ctx)`
 
-**⚠️ USER INPUT STILL REQUIRED** - See Decision Form below
+Original methods delegate to `*WithContext(context.Background(), ...)`,
+maintaining backward compatibility with `ssp.AuthStore` interface.
+
+**Rationale:** Go ecosystem best practice. Users expect timeout and
+cancellation support in production database libraries.
+
+**Date Resolved:** 2026-02-07
+**Status:** ✅ **IMPLEMENTED**
 
 ---
 
-### DECISION POINT 2: Interface Coordination (UNCHANGED - DEPENDS ON D1)
+### DECISION POINT 2: Interface Coordination (RESOLVED)
 
 **Protocol Impact:** ✅ **NO PROTOCOL REQUIREMENT**
 
-**Analysis:** This decision is about **Go interface design**, not SQRL protocol compliance.
+**Decision:** **Option 2A** - Coordinate with upstream (`dxcSithLord/server-go-ssp`)
 
-**Options:** (Same as before)
-- **Option 2A (PREFERRED):** Coordinate with upstream
-- **Option 2B (FALLBACK):** Fork server-go-ssp
-- **Option 2C:** Abandon context support
+**Implementation:** `*WithContext()` methods added alongside originals.
+The upstream `ssp.AuthStore` interface will be updated to include
+`context.Context` parameters. Until then, the original methods maintain
+interface compliance.
 
-**⚠️ USER INPUT STILL REQUIRED** - See Decision Form below
+**Date Resolved:** 2026-02-07
+**Status:** ✅ **IMPLEMENTED** (upstream coordination pending)
 
 ---
 

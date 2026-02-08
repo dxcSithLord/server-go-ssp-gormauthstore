@@ -1,8 +1,7 @@
 # Task Register
 
 **Source of truth** for all implementation tasks across all phases.
-Referenced by [PROJECT_PLAN.md](PROJECT_PLAN.md) and
-[PHASE1_TASKS.md](PHASE1_TASKS.md).
+Referenced by [PROJECT_PLAN.md](PROJECT_PLAN.md).
 
 > Task IDs are authoritative here. If a stage-level document diverges,
 > update it to match this register.
@@ -92,7 +91,7 @@ Referenced by [PROJECT_PLAN.md](PROJECT_PLAN.md) and
 | TASK-031 | Test data helpers (`testIdentityBuilder` pattern) | done | 2026-02-07 | TASK-027 | TASK-028, TASK-029 |
 | TASK-032 | Measure and verify coverage (98.8% overall, 90.9%+ `auth_store.go`) | done | 2026-02-07 | TASK-028, TASK-029, TASK-030 | TASK-033 |
 | TASK-033 | CI test workflow (coverage gate, Go 1.24 update) | done | 2026-02-07 | TASK-032 | TASK-034 |
-| TASK-034 | Merge and tag `v0.3.0-rc1` | pending | | TASK-032, TASK-033 | TASK-035, TASK-036, TASK-037 |
+| TASK-034 | Merge and tag `v0.3.0-rc1` | done | 2026-02-08 | TASK-032, TASK-033 | TASK-035, TASK-036, TASK-037 |
 
 ---
 
@@ -102,17 +101,17 @@ Referenced by [PROJECT_PLAN.md](PROJECT_PLAN.md) and
 
 | ID | Description | Status | Date | Depends on | Blocks |
 |----|-------------|--------|------|------------|--------|
-| TASK-035 | Context support (DECISION REQUIRED -- DP-003) | pending | | TASK-034 | TASK-038 |
-| TASK-036 | Production deployment documentation (`PRODUCTION.md`) | pending | | TASK-034 | TASK-038 |
-| TASK-037 | Migration guide (`UPGRADE_FROM_V0.md`) | pending | | TASK-034 | TASK-038 |
-| TASK-038 | Final security audit | pending | | TASK-035, TASK-036, TASK-037 | TASK-039, TASK-040 |
+| TASK-035 | Context support (DP-003 resolved: Option A) | done | 2026-02-07 | TASK-034 | TASK-038 |
+| TASK-036 | Production deployment documentation (`docs/PRODUCTION.md`) | done | 2026-02-07 | TASK-034 | TASK-038 |
+| TASK-037 | Migration guide (`docs/UPGRADE_FROM_V0.md`) | done | 2026-02-07 | TASK-034 | TASK-038 |
+| TASK-038 | Final security audit (gosec clean, govulncheck network-blocked) | done | 2026-02-07 | TASK-035, TASK-036, TASK-037 | TASK-039, TASK-040 |
 
 ### Stage 3.2 -- Release v1.0.0
 
 | ID | Description | Status | Date | Depends on | Blocks |
 |----|-------------|--------|------|------------|--------|
-| TASK-039 | Update `README.md` (installation, quick start, API examples) | pending | | TASK-038 | TASK-041 |
-| TASK-040 | Create `CHANGELOG.md` | pending | | TASK-038 | TASK-041 |
+| TASK-039 | Update `README.md` (context support, status tables, docs links) | done | 2026-02-07 | TASK-038 | TASK-041 |
+| TASK-040 | Create `CHANGELOG.md` | done | 2026-02-07 | TASK-038 | TASK-041 |
 | TASK-041 | Tag `v1.0.0` | pending | | TASK-039, TASK-040 | TASK-042, TASK-043, TASK-044 |
 | TASK-042 | GitHub Release (release page with changelog) | pending | | TASK-041 | -- |
 | TASK-043 | Revert module path to `sqrldev` | pending | | TASK-041 | TASK-044 |
@@ -128,7 +127,7 @@ Referenced by [PROJECT_PLAN.md](PROJECT_PLAN.md) and
 | 1 | 1.2 Database Drivers | 7 | 6 | 0 | 1 |
 | 1 | 1.3 Transitive Deps | 4 | 4 | 0 | 0 |
 | 2 | 2.1 Security Integration | 7 | 7 | 0 | 0 |
-| 2 | 2.2 Comprehensive Tests | 7 | 6 | 1 | 0 |
-| 3 | 3.1 Production Hardening | 4 | 0 | 4 | 0 |
-| 3 | 3.2 Release v1.0.0 | 6 | 0 | 6 | 0 |
-| **Total** | | **44** | **32** | **11** | **1** |
+| 2 | 2.2 Comprehensive Tests | 7 | 7 | 0 | 0 |
+| 3 | 3.1 Production Hardening | 4 | 4 | 0 | 0 |
+| 3 | 3.2 Release v1.0.0 | 6 | 2 | 4 | 0 |
+| **Total** | | **44** | **39** | **4** | **1** |

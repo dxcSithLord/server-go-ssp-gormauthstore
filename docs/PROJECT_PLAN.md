@@ -2,9 +2,9 @@
 
 ## Consolidated Implementation Plan for gormauthstore
 
-**Version:** 3.1 (Updated February 7, 2026)
-**Date:** February 7, 2026
-**Status:** Phase 1 complete, Phase 2 near complete (TASK-034 pending), Phase 3 not started
+**Version:** 3.3 (Updated February 8, 2026)
+**Date:** February 8, 2026
+**Status:** Phase 1 complete, Phase 2 complete, Phase 3 Stage 3.1 complete
 
 ---
 
@@ -14,7 +14,7 @@
 |--------|-------|-------|
 | **GORM Version** | v2 (gorm.io/gorm v1.31.1) | Migrated from deprecated jinzhu/gorm v1.9.16 |
 | **Go Version** | 1.24.7 | go.mod min 1.24.0, toolchain go1.24.7 |
-| **Test Coverage** | 98.8% | 77 tests, 10 benchmarks. Target: 70%+ |
+| **Test Coverage** | 100% | 90 tests, 10 benchmarks. Target: 70%+ |
 | **Security Scans** | CI/CD configured | gosec clean, golangci-lint v1.64.2, 13 security tests |
 | **Secure Memory** | Implemented | ClearIdentity, WipeBytes, SecureIdentityWrapper available |
 | **Input Validation** | Integrated | ValidateIdk() called by FindIdentity, SaveIdentity, DeleteIdentity |
@@ -194,7 +194,7 @@ v1.0.0 tagged, GitHub release created, available on pkg.go.dev.
 
 ---
 
-## Decision Points (3 open, 1 resolved)
+## Decision Points (2 open, 2 resolved)
 
 ### DP-001: MemGuard vs Custom Secure Memory
 
@@ -220,18 +220,16 @@ PostgreSQL-only?
 **Recommendation:** A (multi-database) -- matches upstream GORM philosophy.
 **Blocks:** Stage 1.2 scope (TASK-010 to TASK-014).
 
-### DP-003: Context API Design
+### DP-003: Context API Design (RESOLVED)
 
-**Context:** Modern Go expects `context.Context` on I/O methods. Adding it
-changes the `ssp.AuthStore` interface contract.
+**Context:** Modern Go expects `context.Context` on I/O methods.
 
-**Options:**
-- **A.** Add context to existing methods (BREAKING -- requires upstream change)
-- **B.** Add new `*Context()` methods alongside originals (non-breaking)
-- **C.** Defer to v2.0.0
+**Decision:** Option A (add context to all methods), implemented as
+`*WithContext()` variants alongside originals for backward compatibility.
+Upstream interface update (Option 2A) to be coordinated separately.
 
-**Recommendation:** A for v1.0.0 if upstream can be updated.
-**Blocks:** TASK-035 (Phase 3).
+**Status:** RESOLVED -- Implemented 2026-02-07.
+**Blocks:** None (TASK-035 complete).
 
 ### DP-004: Goauthentik Integration (RESOLVED)
 
@@ -316,6 +314,6 @@ The following documents were merged into this plan and moved to
 **Document Control:**
 - Consolidated from: UNIFIED_TODO.md, STAGED_UPGRADE_PLAN.md,
   SECURITY_REVIEW_AND_UPGRADE_PLAN.md, TODO.md
-- Total tasks: 44 (32 done, 11 pending, 1 deferred)
-- Estimated remaining effort: 6-8 hours
-- Decision points: 3 open (DP-001, DP-002, DP-003), 1 resolved (DP-004)
+- Total tasks: 44 (39 done, 4 pending, 1 deferred)
+- Authoritative task status: [TASKS.md](TASKS.md)
+- Decision points: 2 open (DP-001, DP-002), 2 resolved (DP-003, DP-004)

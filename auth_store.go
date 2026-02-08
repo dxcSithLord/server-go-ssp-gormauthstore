@@ -3,6 +3,7 @@
 package gormauthstore
 
 import (
+	"context"
 	"errors"
 
 	ssp "github.com/dxcSithLord/server-go-ssp"
@@ -11,7 +12,7 @@ import (
 
 // identityRecord is a GORM v2 compatible model mirroring ssp.SqrlIdentity.
 // The upstream SqrlIdentity struct uses legacy GORM v1 sql:"" tags (e.g.
-// sql:"primary_key", sql:"-") that GORM v2 does not recognize. This model
+// sql:"primary_key", sql:"-") that GORM v2 does not recognise. This model
 // provides the correct GORM v2 tags while keeping the same database schema.
 type identityRecord struct {
 	Idk      string `gorm:"column:idk;primaryKey"`
@@ -79,17 +80,30 @@ func NewAuthStore(db *gorm.DB) *AuthStore {
 
 // AutoMigrate uses gorm AutoMigrate to create/update the table holding the ssp.SqrlIdentity.
 func (as *AuthStore) AutoMigrate() error {
-	return as.db.AutoMigrate(&identityRecord{})
+	return as.AutoMigrateWithContext(context.Background())
+}
+
+// AutoMigrateWithContext uses gorm AutoMigrate with context support for
+// timeout and cancellation control.
+func (as *AuthStore) AutoMigrateWithContext(ctx context.Context) error {
+	return as.db.WithContext(ctx).AutoMigrate(&identityRecord{})
 }
 
 // FindIdentity implements ssp.AuthStore.
 // Validates the idk before querying the database.
 func (as *AuthStore) FindIdentity(idk string) (*ssp.SqrlIdentity, error) {
+	return as.FindIdentityWithContext(context.Background(), idk)
+}
+
+// FindIdentityWithContext retrieves a SQRL identity by its Identity Key with
+// context support for timeout and cancellation control.
+// Validates the idk before querying the database.
+func (as *AuthStore) FindIdentityWithContext(ctx context.Context, idk string) (*ssp.SqrlIdentity, error) {
 	if err := ValidateIdk(idk); err != nil {
 		return nil, err
 	}
 	record := &identityRecord{}
-	err := as.db.Where("idk = ?", idk).First(record).Error
+	err := as.db.WithContext(ctx).Where("idk = ?", idk).First(record).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, ssp.ErrNotFound
@@ -104,6 +118,13 @@ func (as *AuthStore) FindIdentity(idk string) (*ssp.SqrlIdentity, error) {
 // SaveIdentity implements ssp.AuthStore.
 // Validates the identity and its Idk before persisting.
 func (as *AuthStore) SaveIdentity(identity *ssp.SqrlIdentity) error {
+	return as.SaveIdentityWithContext(context.Background(), identity)
+}
+
+// SaveIdentityWithContext persists a SQRL identity with context support for
+// timeout and cancellation control.
+// Validates the identity and its Idk before persisting.
+func (as *AuthStore) SaveIdentityWithContext(ctx context.Context, identity *ssp.SqrlIdentity) error {
 	if identity == nil {
 		return ErrNilIdentity
 	}
@@ -111,7 +132,7 @@ func (as *AuthStore) SaveIdentity(identity *ssp.SqrlIdentity) error {
 		return err
 	}
 	record := toRecord(identity)
-	err := as.db.Save(record).Error
+	err := as.db.WithContext(ctx).Save(record).Error
 	clearRecord(record)
 	return err
 }
@@ -127,7 +148,22 @@ func (as *AuthStore) SaveIdentity(identity *ssp.SqrlIdentity) error {
 //	defer wrapper.Destroy()
 //	identity := wrapper.GetIdentity()
 func (as *AuthStore) FindIdentitySecure(idk string) (*SecureIdentityWrapper, error) {
-	identity, err := as.FindIdentity(idk)
+	return as.FindIdentitySecureWithContext(context.Background(), idk)
+}
+
+// FindIdentitySecureWithContext retrieves a SQRL identity wrapped in a
+// SecureIdentityWrapper with context support for timeout and cancellation
+// control. The wrapper provides RAII-style automatic cleanup of sensitive
+// cryptographic material (Suk, Vuk) when Destroy() is called.
+//
+// Usage:
+//
+//	wrapper, err := store.FindIdentitySecureWithContext(ctx, idk)
+//	if err != nil { return err }
+//	defer wrapper.Destroy()
+//	identity := wrapper.GetIdentity()
+func (as *AuthStore) FindIdentitySecureWithContext(ctx context.Context, idk string) (*SecureIdentityWrapper, error) {
+	identity, err := as.FindIdentityWithContext(ctx, idk)
 	if err != nil {
 		return nil, err
 	}
@@ -138,8 +174,16 @@ func (as *AuthStore) FindIdentitySecure(idk string) (*SecureIdentityWrapper, err
 // Validates the idk before executing the delete.
 // Returns nil (no error) if the key does not exist.
 func (as *AuthStore) DeleteIdentity(idk string) error {
+	return as.DeleteIdentityWithContext(context.Background(), idk)
+}
+
+// DeleteIdentityWithContext removes a SQRL identity with context support for
+// timeout and cancellation control.
+// Validates the idk before executing the delete.
+// Returns nil (no error) if the key does not exist.
+func (as *AuthStore) DeleteIdentityWithContext(ctx context.Context, idk string) error {
 	if err := ValidateIdk(idk); err != nil {
 		return err
 	}
-	return as.db.Where("idk = ?", idk).Delete(&identityRecord{}).Error
+	return as.db.WithContext(ctx).Where("idk = ?", idk).Delete(&identityRecord{}).Error
 }

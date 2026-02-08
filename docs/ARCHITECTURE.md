@@ -291,7 +291,8 @@ graph TB
         direction TB
         F_CRIT[Suk, Vuk]
         F_SENS[Idk, Pidk, Rekeyed]
-        F_CONF[SQRLOnly, Hardlock,<br/>Disabled, Btn]
+        F_CONF["`SQRLOnly, Hardlock,
+Disabled, Btn`"]
     end
 
     subgraph "Security Controls"
@@ -300,7 +301,7 @@ graph TB
         SC_TLS[TLS Encryption]
         SC_LOG[No Logging]
         SC_ERR[Error Sanitization]
-        SC_ENC[DB Encryption (TDE)]
+        SC_ENC["DB Encryption (TDE)"]
     end
 
     CRIT --> F_CRIT
