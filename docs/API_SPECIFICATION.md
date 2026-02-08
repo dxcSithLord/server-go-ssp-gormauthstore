@@ -2,11 +2,10 @@
 ## SQRL GORM Authentication Store
 ## OpenAPI 3.1-Style Documentation for Go Interface
 
-**Specification Version:** 1.0.0
-**API Version:** v0.1.0 (Pre-production)
-**Target Version:** v1.0.0 (After upgrades)
+**Specification Version:** 2.0.0
+**API Version:** v1.0.0-rc
 **Format:** OpenAPI 3.1 concepts applied to Go interfaces
-**Date:** November 18, 2025
+**Date:** February 8, 2026
 
 ---
 
@@ -55,7 +54,7 @@ externalDocs:
 |----------|----------------|----------------|
 | PostgreSQL | 12.0 | gorm.io/driver/postgres v1.5.9 |
 | MySQL | 8.0 | gorm.io/driver/mysql v1.5.7 |
-| SQLite | 3.35.0 | gorm.io/driver/sqlite v1.5.6 |
+| SQLite | 3.35.0 | gorm.io/driver/sqlite v1.6.0 |
 | SQL Server | 2019 | gorm.io/driver/sqlserver v1.5.3 |
 
 ---
@@ -73,6 +72,13 @@ components:
         - FindIdentity
         - SaveIdentity
         - DeleteIdentity
+      extended_methods:
+        - FindIdentityWithContext
+        - SaveIdentityWithContext
+        - DeleteIdentityWithContext
+        - FindIdentitySecure
+        - FindIdentitySecureWithContext
+        - AutoMigrateWithContext
 
   types:
     AuthStore:
@@ -271,8 +277,9 @@ components:
             - ErrEmptyIdentityKey
             - ErrIdentityKeyTooLong
             - ErrInvalidIdentityKeyFormat
-            - ErrDatabaseConnection
-            - ErrDatabaseQuery
+            - ErrNilIdentity
+            - ErrNilDatabase
+            - ErrWrappedIdentityDestroyed
 
     ValidationError:
       allOf:
@@ -574,7 +581,10 @@ paths:
 | `ErrEmptyIdentityKey` | `gormauthstore.ErrEmptyIdentityKey` | 400 | Idk is empty string |
 | `ErrIdentityKeyTooLong` | `gormauthstore.ErrIdentityKeyTooLong` | 400 | Idk exceeds 256 chars |
 | `ErrInvalidIdentityKeyFormat` | `gormauthstore.ErrInvalidIdentityKeyFormat` | 400 | Idk contains invalid characters |
-| `gorm.ErrRecordNotFound` | `gorm.ErrRecordNotFound` | 404 | Mapped to ssp.ErrNotFound |
+| `ErrNilIdentity` | `gormauthstore.ErrNilIdentity` | 400 | Nil identity passed to SaveIdentity |
+| `ErrNilDatabase` | `gormauthstore.ErrNilDatabase` | 500 | Database connection is nil |
+| `ErrWrappedIdentityDestroyed` | `gormauthstore.ErrWrappedIdentityDestroyed` | 500 | SecureIdentityWrapper already destroyed |
+| `gorm.ErrRecordNotFound` | `gorm.ErrRecordNotFound` | 404 | Mapped to ssp.ErrNotFound internally |
 
 ### Error Handling Pattern
 
@@ -729,7 +739,7 @@ func main() {
 
 ```go
 // Use SecureIdentityWrapper for automatic cleanup
-wrapper, err := store.FindIdentitySecure(idk)  // NOTE: Not yet implemented
+wrapper, err := store.FindIdentitySecure(idk)
 if err != nil {
     return err
 }
@@ -745,6 +755,21 @@ if identity == nil {
 // Automatic cleanup on function return
 ```
 
+### Context-Aware Example
+
+```go
+// Use context for timeout and cancellation control
+ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+defer cancel()
+
+identity, err := store.FindIdentityWithContext(ctx, idk)
+if err != nil {
+    // Handle timeout, cancellation, or database errors
+    return err
+}
+defer gormauthstore.ClearIdentity(identity)
+```
+
 ---
 
 ## Testing Specification
@@ -753,12 +778,11 @@ if identity == nil {
 
 | Component | Target Coverage | Current Coverage |
 |-----------|----------------|------------------|
-| auth_store.go | ≥80% | ~25% (pre-upgrade) |
-| secure_memory_common.go | ≥90% | ~90% |
-| secure_memory.go | ≥95% | ~95% |
-| secure_memory_windows.go | ≥95% | ~95% |
-| errors.go | 100% | ~100% |
-| **Overall** | **≥70%** | **~30%** |
+| auth_store.go | ≥80% | 100% |
+| secure_memory_common.go | ≥90% | 100% |
+| secure_memory.go | ≥95% | 100% |
+| errors.go | 100% | 100% |
+| **Overall** | **≥70%** | **100%** |
 
 ### Test Categories
 
@@ -810,9 +834,10 @@ See the separate API test file: `API_TESTS.md`
 
 | Version | Status | Go Import Path | Breaking Changes |
 |---------|--------|---------------|------------------|
-| v0.1.0 | Current | github.com/sqrldev/... | N/A (initial) |
-| v0.2.0 | Planned | github.com/sqrldev/... | GORM v1 → v2 |
-| v1.0.0 | Target | github.com/sqrldev/... | Stable API |
+| v0.1.0 | Released | github.com/sqrldev/... | N/A (initial) |
+| v0.2.0 | Released | github.com/dxcSithLord/... | GORM v1 → v2, Go 1.24+ |
+| v0.3.0-rc1 | Released | github.com/dxcSithLord/... | None (test + security) |
+| v1.0.0 | Pending | github.com/sqrldev/... | Module path revert |
 
 ### Deprecation Policy
 
@@ -838,9 +863,8 @@ See the separate API test file: `API_TESTS.md`
 ---
 
 **Document Control:**
-- Version: 1.0.0
-- Last Updated: 2025-11-18
-- Next Review: 2026-02-18
-- Owner: API Documentation Team
+- Version: 2.0.0
+- Last Updated: 2026-02-08
+- Next Review: Before v1.0.0 release
 
 **END OF API SPECIFICATION**

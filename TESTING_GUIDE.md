@@ -2,73 +2,117 @@
 
 ## Overview
 
-This project includes comprehensive test suites covering both code and documentation.
+This project has 90 tests achieving 100% code coverage, plus 10 benchmarks,
+across 8 test files.
 
-## Test Categories
+## Test Suites
 
-### 1. Code Tests
+### 1. AuthStore Core Tests
 
-#### Secure Memory Tests
-**File:** `secure_memory_test.go`
-
-Tests for secure memory operations:
-- `TestWipeBytes` - Memory wiping functionality
-- `TestScrambleBytes` - Byte scrambling
-- `TestWipeString` - String wiping
-- `TestClearIdentity` - Identity clearing
-- `TestSecureIdentityWrapper` - Secure wrapper functionality
-- `TestValidateIdk` - Identity key validation
-
-**Coverage:** ~90-95% of secure memory functions
-
-#### AuthStore Tests
 **File:** `auth_store_test.go`
 
-Tests for authentication store operations:
-- `TestSave` - Basic save functionality
+- `TestSave` - Basic CRUD functionality
 
-**Note:** This test suite needs expansion as part of Phase 2 (see PROJECT_PLAN.md)
+### 2. Comprehensive Unit Tests
 
-### 2. Documentation Tests
+**File:** `auth_store_comprehensive_test.go` -- 27 tests (TC-001 to TC-027)
 
-**File:** `docs_test.go`
+Covers FindIdentity, SaveIdentity, DeleteIdentity with all edge cases
+including validation errors, not-found, upsert, concurrent access,
+and field persistence.
 
-Comprehensive documentation validation:
-- **Existence Tests** - Verify all required documentation files exist
-- **Link Integrity Tests** - Validate internal markdown links
-- **Content Structure Tests** - Ensure required sections are present
-- **Consistency Tests** - Check cross-document consistency
-- **Security Tests** - Verify no hardcoded credentials
-- **Diagram Tests** - Validate mermaid diagram syntax
+### 3. Context Support Tests
 
-**Coverage:** 14 documents, 105+ assertions
+**File:** `auth_store_context_test.go` -- 13 tests (CTX-001 to CTX-013)
 
-See [docs/DOCUMENTATION_TESTS.md](docs/DOCUMENTATION_TESTS.md) for detailed documentation.
+Covers all `*WithContext()` methods with valid context, cancelled context,
+validation, backward compatibility, and full CRUD round-trip.
+
+### 4. Security Tests
+
+**File:** `auth_store_security_test.go` -- 13 tests (SEC-001 to SEC-013)
+
+Covers SQL injection prevention, DoS protection, unicode handling,
+memory clearing, error message sanitization, and concurrent access safety.
+
+### 5. Integration Tests
+
+**File:** `auth_store_integration_test.go` -- 10 tests (build-tag gated)
+
+Run with: `go test -tags=integration ./...`
+
+Requires `TEST_DATABASE_URL` environment variable for PostgreSQL.
+
+### 6. Secure Memory Tests
+
+**File:** `secure_memory_test.go` -- 14 tests + 4 benchmarks
+
+Covers WipeBytes, ScrambleBytes, WipeString, ClearIdentity,
+SecureIdentityWrapper, ValidateIdk.
+
+### 7. Documentation Tests
+
+**File:** `docs_test.go` -- 14 test functions
+
+Validates documentation file existence, link integrity, content structure,
+cross-document consistency, security (no hardcoded credentials), and
+mermaid diagram syntax.
+
+### 8. Benchmarks
+
+**File:** `auth_store_bench_test.go` -- 6 benchmarks (PERF-001 to PERF-006)
+
+Covers FindIdentity, SaveIdentity, DeleteIdentity, FindIdentitySecure,
+ValidateIdk, and ClearIdentity performance.
+
+## Test Infrastructure
+
+**File:** `test_helpers_test.go`
+
+Provides reusable test helpers:
+- `testIdentityBuilder` -- fluent builder pattern for test identities
+- `openTestDB(t)` -- creates in-memory SQLite database
+- `newTestStore(t)` -- creates AuthStore with auto-migration
+- `seedIdentity(t, store, identity)` -- inserts test data
+
+```go
+// Example usage
+store := newTestStore(t)
+identity := newTestIdentity().
+    withIdk("test-idk").
+    withSuk("test-suk").
+    withVuk("test-vuk").
+    build()
+seedIdentity(t, store, identity)
+```
 
 ## Running Tests
 
 ### Run All Tests
+
 ```bash
 make test
 # or
-go test ./... -v
+go test -v -race ./...
 ```
 
-### Run Specific Test Suites
+### Run Specific Test Suite
 
-#### Run Only Documentation Tests
 ```bash
+# Comprehensive unit tests
+go test -v -run "^TestTC" ./...
+
+# Context support tests
+go test -v -run "^Test.*WithContext\|^TestWithContext\|^TestOriginalMethods" ./...
+
+# Security tests
+go test -v -run "^TestSEC" ./...
+
+# Documentation tests
 go test -v -run "^Test(Documentation|Archive|Markdown|README|CLAUDE|ProjectPlan|Architecture|API|Dependencies|Notice|Phase1|Requirements|NoHardcoded|Mermaid)" ./...
-```
 
-#### Run Only Secure Memory Tests
-```bash
-go test -v -run "^Test.*Memory" ./...
-```
-
-#### Run Only AuthStore Tests
-```bash
-go test -v -run "^TestSave" ./...
+# Secure memory tests
+go test -v -run "^Test(Wipe|Scramble|Clear|SecureIdentity|Validate)" ./...
 ```
 
 ### Run Tests with Coverage
@@ -85,283 +129,77 @@ go tool cover -html=coverage.out -o coverage.html
 ### Run Tests with Race Detection
 
 ```bash
-# Detect race conditions
 go test -race ./...
 ```
 
-### Run Short Tests (Skip Integration Tests)
+### Run Benchmarks
+
+```bash
+# All benchmarks
+go test -bench=. -benchmem ./...
+
+# Specific benchmark
+go test -bench=BenchmarkFindIdentity -benchmem ./...
+```
+
+### Run Short Tests (Skip Integration)
 
 ```bash
 go test -short ./...
 ```
 
-## Test Output
+## Coverage Summary
 
-### Successful Test Run
-```
-=== RUN   TestDocumentationExists
-=== RUN   TestDocumentationExists/README.md
---- PASS: TestDocumentationExists/README.md (0.00s)
-...
-PASS
-ok      github.com/dxcSithLord/server-go-ssp-gormauthstore    0.023s
-```
+| Component | Coverage |
+|-----------|----------|
+| `auth_store.go` | 100% |
+| `secure_memory.go` | 100% |
+| `secure_memory_common.go` | 100% |
+| `errors.go` | 100% |
+| **Overall** | **100%** |
 
-### Failed Test Run
-```
-=== RUN   TestDocumentationExists
---- FAIL: TestDocumentationExists (0.00s)
-    docs_test.go:25: Required documentation file does not exist: README.md
-FAIL
-```
+**Coverage threshold:** 70% minimum enforced in CI.
 
 ## CI/CD Integration
 
-Tests are automatically run in the CI/CD pipeline:
+Tests run automatically in GitHub Actions CI pipeline:
 
 ```yaml
-# .github/workflows/ci.yml
 - name: Run tests
-  run: go test -v -race -coverprofile=coverage.out ./...
+  run: go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
 
-- name: Check coverage
+- name: Check coverage threshold (70%)
   run: |
     coverage=$(go tool cover -func=coverage.out | grep total | awk '{print $3}')
     echo "Coverage: $coverage"
 ```
 
-## Writing New Tests
-
-### Adding Code Tests
-
-1. Create or update `*_test.go` file
-2. Follow Go testing conventions:
-   ```go
-   func TestFeatureName(t *testing.T) {
-       // Arrange
-       input := "test data"
-
-       // Act
-       result := YourFunction(input)
-
-       // Assert
-       if result != expected {
-           t.Errorf("Expected %v, got %v", expected, result)
-       }
-   }
-   ```
-
-3. Use sub-tests for multiple scenarios:
-   ```go
-   func TestFeature(t *testing.T) {
-       tests := []struct {
-           name     string
-           input    string
-           expected string
-       }{
-           {"case1", "input1", "output1"},
-           {"case2", "input2", "output2"},
-       }
-
-       for _, tt := range tests {
-           t.Run(tt.name, func(t *testing.T) {
-               result := YourFunction(tt.input)
-               if result != tt.expected {
-                   t.Errorf("Expected %v, got %v", tt.expected, result)
-               }
-           })
-       }
-   }
-   ```
-
-### Adding Documentation Tests
-
-1. Update `docs_test.go`
-2. Add document to appropriate test function:
-   ```go
-   func TestDocumentationExists(t *testing.T) {
-       requiredDocs := []string{
-           "README.md",
-           "CLAUDE.md",
-           "docs/YOUR_NEW_DOC.md",  // Add here
-       }
-       // ...
-   }
-   ```
-
-3. Add content validation if needed:
-   ```go
-   func TestYourNewDocument(t *testing.T) {
-       content, err := os.ReadFile("docs/YOUR_NEW_DOC.md")
-       if err != nil {
-           t.Fatalf("Cannot read YOUR_NEW_DOC.md: %v", err)
-       }
-
-       // Validate required sections
-       if !strings.Contains(string(content), "## Required Section") {
-           t.Error("Missing required section")
-       }
-   }
-   ```
-
-## Coverage Goals
-
-| Component | Current | Target | Status |
-|-----------|---------|--------|--------|
-| **secure_memory.go** | ~95% | 95% | ✅ Met |
-| **secure_memory_common.go** | ~90% | 90% | ✅ Met |
-| **secure_memory_windows.go** | ~95% | 95% | ✅ Met |
-| **errors.go** | 100% | 100% | ✅ Met |
-| **auth_store.go** | ~25% | 80% | ⚠️ Phase 2 |
-| **Documentation** | 100% | 100% | ✅ Met |
-| **Overall** | ~30% | 70% | ⚠️ Phase 2 |
-
 ## Test Best Practices
 
 ### DO
-✅ Write clear, descriptive test names
-✅ Use table-driven tests for multiple scenarios
-✅ Test both success and failure cases
-✅ Test edge cases and boundary conditions
-✅ Use sub-tests for better organization
-✅ Clean up resources (use `defer`)
-✅ Keep tests independent and isolated
-✅ Run tests with `-race` flag
+
+- Write clear, descriptive test names
+- Use table-driven tests for multiple scenarios
+- Test both success and failure cases
+- Test edge cases and boundary conditions
+- Clean up resources (use `defer ClearIdentity(result)`)
+- Run tests with `-race` flag
+- Use `testIdentityBuilder` pattern for test data
 
 ### DON'T
-❌ Test implementation details
-❌ Write flaky tests
-❌ Ignore test failures
-❌ Skip tests without good reason
-❌ Use sleep for timing (use proper synchronization)
-❌ Depend on external services in unit tests
-❌ Leave commented-out tests
 
-## Debugging Tests
-
-### Run Single Test
-```bash
-go test -v -run TestSpecificFunction
-```
-
-### Run with Verbose Output
-```bash
-go test -v ./...
-```
-
-### Run with CPU Profiling
-```bash
-go test -cpuprofile=cpu.prof -bench=.
-go tool pprof cpu.prof
-```
-
-### Run with Memory Profiling
-```bash
-go test -memprofile=mem.prof -bench=.
-go tool pprof mem.prof
-```
-
-## Benchmarking
-
-Run performance benchmarks:
-
-```bash
-# Run all benchmarks
-go test -bench=. ./...
-
-# Run specific benchmark
-go test -bench=BenchmarkWipeBytes ./...
-
-# With memory stats
-go test -bench=. -benchmem ./...
-```
-
-## Test Utilities
-
-### Test Helpers
-
-The project includes test helper functions:
-
-**Current GORM v1 syntax (pre-migration):**
-```go
-// setupTestDB creates an in-memory SQLite database for testing
-func setupTestDB(t *testing.T) *gorm.DB {
-    t.Helper()
-    db, err := gorm.Open("sqlite3", ":memory:")
-    if err != nil {
-        t.Fatalf("Failed to open test database: %v", err)
-    }
-    return db
-}
-```
-
-**GORM v2 syntax (post-migration -- Phase 1 complete):**
-```go
-// setupTestDB creates an in-memory SQLite database for testing
-func setupTestDB(t *testing.T) *gorm.DB {
-    t.Helper()
-    db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-    if err != nil {
-        t.Fatalf("Failed to open test database: %v", err)
-    }
-    return db
-}
-```
-
-Use `t.Helper()` to mark functions as test helpers - this improves error reporting.
-
-## Continuous Testing
-
-### Watch Mode (Using External Tool)
-```bash
-# Install gotestsum
-go install gotest.tools/gotestsum@latest
-
-# Run in watch mode
-gotestsum --watch
-```
-
-### Pre-commit Hook
-```bash
-# Add to .git/hooks/pre-commit
-#!/bin/bash
-make test
-```
-
-## Troubleshooting
-
-### Tests Pass Locally but Fail in CI
-
-1. Check Go version consistency
-2. Verify environment variables
-3. Check for race conditions (`-race` flag)
-4. Verify file paths are absolute
-5. Check for timezone dependencies
-
-### Flaky Tests
-
-1. Identify with `go test -count=100`
-2. Check for race conditions
-3. Look for timing dependencies
-4. Verify proper test isolation
-
-### Slow Tests
-
-1. Profile with `-cpuprofile`
-2. Use `-short` flag for quick tests
-3. Consider parallel execution
-4. Move integration tests to separate suite
+- Test implementation details
+- Write flaky tests
+- Log sensitive fields (Idk, Suk, Vuk) in test output
+- Use sleep for timing
+- Depend on external services in unit tests
 
 ## See Also
 
-- [docs/DOCUMENTATION_TESTS.md](docs/DOCUMENTATION_TESTS.md) - Documentation test specification
-- [TEST_RESULTS_SUMMARY.md](TEST_RESULTS_SUMMARY.md) - Latest test results
-- [docs/API_TESTS_SPEC.md](docs/API_TESTS_SPEC.md) - API test specifications
-- [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md) - Phase 2 test expansion plan
+- [docs/API_TESTS_SPEC.md](docs/API_TESTS_SPEC.md) - Test case specifications
+- [TEST_RESULTS_SUMMARY.md](TEST_RESULTS_SUMMARY.md) - Test results summary
+- [docs/DOCUMENTATION_TESTS.md](docs/DOCUMENTATION_TESTS.md) - Documentation test details
 
 ---
 
-**Last Updated:** 2026-02-05
-**Maintainer:** Testing Team
-
-**END OF TESTING GUIDE**
+**Last Updated:** 2026-02-08

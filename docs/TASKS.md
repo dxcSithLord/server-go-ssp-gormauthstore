@@ -119,6 +119,29 @@ Referenced by [PROJECT_PLAN.md](PROJECT_PLAN.md).
 
 ---
 
+## Documentation Maintenance
+
+Recurring tasks for keeping documentation accurate and current.
+These should be performed before each release and quarterly thereafter.
+
+| ID | Description | Status | Date | Frequency |
+|----|-------------|--------|------|-----------|
+| TASK-045 | Review and update docs/DEPENDENCIES.md (versions, upgrade paths, security advisories) | done | 2026-02-08 | Each release |
+| TASK-046 | Review and update docs/API_SPECIFICATION.md (methods, errors, coverage, examples) | done | 2026-02-08 | Each release |
+| TASK-047 | Review and update docs/API_TESTS_SPEC.md (test counts, categories, coverage) | done | 2026-02-08 | Each release |
+| TASK-048 | Review and update TESTING_GUIDE.md (test files, coverage, helpers) | done | 2026-02-08 | Each release |
+| TASK-049 | Review and update docs/REQUIREMENTS.md (versions, features, traceability) | done | 2026-02-08 | Each release |
+| TASK-050 | Review and update docs/ARCHITECTURE.md (versions, components, diagrams) | done | 2026-02-08 | Each release |
+| TASK-051 | Review and update docs/Notice_of_Decisions.md (status tables, next steps) | done | 2026-02-08 | Quarterly |
+| TASK-052 | Review and update TEST_RESULTS_SUMMARY.md, DOCUMENTATION_TESTS.md | done | 2026-02-08 | Each release |
+| TASK-053 | Verify Makefile and CI pipeline reflect current project state | done | 2026-02-08 | Each release |
+
+> **Note:** Documentation review tasks are marked `done` after each review pass
+> and reset to `pending` at the start of the next review cycle (before each
+> release or quarterly).
+
+---
+
 ## Summary
 
 | Phase | Stage | Tasks | Done | Pending | Deferred |
@@ -130,4 +153,5 @@ Referenced by [PROJECT_PLAN.md](PROJECT_PLAN.md).
 | 2 | 2.2 Comprehensive Tests | 7 | 7 | 0 | 0 |
 | 3 | 3.1 Production Hardening | 4 | 4 | 0 | 0 |
 | 3 | 3.2 Release v1.0.0 | 6 | 2 | 4 | 0 |
-| **Total** | | **44** | **39** | **4** | **1** |
+| -- | Doc Maintenance | 9 | 9 | 0 | 0 |
+| **Total** | | **53** | **48** | **4** | **1** |

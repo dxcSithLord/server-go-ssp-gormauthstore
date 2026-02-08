@@ -2,8 +2,8 @@
 ## SQRL GORM Authentication Store
 ## TOGAF-Aligned Architecture Views
 
-**Document Version:** 1.0
-**Date:** November 18, 2025
+**Document Version:** 2.0
+**Date:** November 18, 2025 (updated February 8, 2026)
 **Architecture Framework:** TOGAF 9.2
 **Modeling Language:** ArchiMate 3.1 (represented via Mermaid)
 
@@ -206,10 +206,11 @@ graph LR
     subgraph "AuthStore Component"
         direction TB
         AS_NEW[NewAuthStore]
-        AS_FIND[FindIdentity]
-        AS_SAVE[SaveIdentity]
-        AS_DEL[DeleteIdentity]
-        AS_MIG[AutoMigrate]
+        AS_FIND[FindIdentity<br/>FindIdentityWithContext]
+        AS_SAVE[SaveIdentity<br/>SaveIdentityWithContext]
+        AS_DEL[DeleteIdentity<br/>DeleteIdentityWithContext]
+        AS_MIG[AutoMigrate<br/>AutoMigrateWithContext]
+        AS_SEC[FindIdentitySecure<br/>FindIdentitySecureWithContext]
     end
 
     subgraph "Secure Memory Component"
@@ -379,7 +380,7 @@ flowchart TB
 ```mermaid
 graph TB
     subgraph "Runtime Layer"
-        GO[Go Runtime 1.23+]
+        GO[Go Runtime 1.24+]
     end
 
     subgraph "Application Framework"
@@ -394,19 +395,15 @@ graph TB
     subgraph "Database Drivers"
         DRV_PG[gorm.io/driver/postgres<br/>v1.5.9]
         DRV_MY[gorm.io/driver/mysql<br/>v1.5.7]
-        DRV_SQ[gorm.io/driver/sqlite<br/>v1.5.6]
+        DRV_SQ[gorm.io/driver/sqlite<br/>v1.6.0]
         DRV_MS[gorm.io/driver/sqlserver<br/>v1.5.3]
     end
 
     subgraph "Native Drivers"
         PQ[github.com/lib/pq<br/>v1.10.9]
         MY[github.com/go-sql-driver/mysql<br/>v1.9.3]
-        SQ3[github.com/mattn/go-sqlite3<br/>v1.14.32]
+        SQ3[github.com/mattn/go-sqlite3<br/>v1.14.33]
         MSSQL[github.com/denisenkom/go-mssqldb<br/>v0.12.3]
-    end
-
-    subgraph "Crypto Layer"
-        XCRY[golang.org/x/crypto<br/>v0.43.0]
     end
 
     subgraph "Database Management Systems"
@@ -421,7 +418,6 @@ graph TB
     SSP --> LIB
 
     LIB --> GORM2
-    LIB --> XCRY
 
     GORM2 --> DRV_PG
     GORM2 --> DRV_MY
@@ -456,7 +452,7 @@ graph LR
     subgraph "Target State (CURRENT)"
         NEW_GORM[gorm.io/gorm<br/>v1.31.1<br/>✅ LATEST]
         NEW_PQ[lib/pq<br/>v1.10.9<br/>✅ LATEST]
-        NEW_SQ[go-sqlite3<br/>v1.14.32<br/>✅ LATEST]
+        NEW_SQ[go-sqlite3<br/>v1.14.33<br/>✅ LATEST]
     end
 
     OLD_GORM -.BREAKING<br/>CHANGE.-> NEW_GORM
@@ -902,9 +898,8 @@ graph LR
 ---
 
 **Document Control:**
-- Version: 1.0
-- Last Updated: 2025-11-18
-- Next Review: 2026-02-18 (Quarterly)
-- Owner: Technical Architecture Team
+- Version: 2.0
+- Last Updated: 2026-02-08
+- Next Review: Before v1.0.0 release
 
 **END OF ARCHITECTURE DOCUMENTATION**

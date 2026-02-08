@@ -1,9 +1,9 @@
 # Requirements Specification
 ## SQRL GORM Authentication Store (Reverse Engineered)
 
-**Document Version:** 1.0
-**Analysis Date:** November 18, 2025
-**Project:** github.com/sqrldev/server-go-ssp-gormauthstore
+**Document Version:** 2.0
+**Analysis Date:** November 18, 2025 (updated February 8, 2026)
+**Project:** github.com/dxcSithLord/server-go-ssp-gormauthstore
 **Analysis Method:** Reverse engineering from existing implementation
 
 ---
@@ -34,7 +34,7 @@ This library provides persistent storage capabilities for SQRL (Secure QR Login)
 
 ### Key Stakeholders
 - **Primary Users:** Go developers implementing SQRL authentication
-- **Consumers:** `github.com/sqrldev/server-go-ssp` (SQRL protocol implementation)
+- **Consumers:** `github.com/dxcSithLord/server-go-ssp` (SQRL protocol implementation)
 - **End Users:** Web applications requiring passwordless authentication
 
 ---
@@ -168,6 +168,54 @@ Implement a database abstraction layer that stores SQRL cryptographic identities
 
 ---
 
+### FR-006: Context Support
+**Objective:** Enable timeout and cancellation control for database operations
+
+**Requirements:**
+- **FR-006.1:** All CRUD methods have `*WithContext(ctx)` variants
+- **FR-006.2:** Original methods delegate to WithContext with `context.Background()`
+- **FR-006.3:** Cancelled context returns error before database operation
+
+**Implementation:**
+- `FindIdentityWithContext(ctx, idk)`
+- `SaveIdentityWithContext(ctx, identity)`
+- `DeleteIdentityWithContext(ctx, idk)`
+- `FindIdentitySecureWithContext(ctx, idk)`
+- `AutoMigrateWithContext(ctx)`
+
+**Trace:** BO-005
+
+---
+
+### FR-007: Secure Identity Retrieval
+**Objective:** Provide RAII-style automatic cleanup of sensitive cryptographic material
+
+**Requirements:**
+- **FR-007.1:** Return identity wrapped in `SecureIdentityWrapper`
+- **FR-007.2:** `Destroy()` clears all sensitive fields
+- **FR-007.3:** Accessing destroyed wrapper returns `ErrWrappedIdentityDestroyed`
+
+**Implementation:** `FindIdentitySecure(idk)`, `FindIdentitySecureWithContext(ctx, idk)`
+
+**Trace:** BO-003
+
+---
+
+### FR-008: Input Validation
+**Objective:** Validate inputs before database operations
+
+**Requirements:**
+- **FR-008.1:** Reject empty identity keys (`ErrEmptyIdentityKey`)
+- **FR-008.2:** Reject keys exceeding 256 characters (`ErrIdentityKeyTooLong`)
+- **FR-008.3:** Reject keys with invalid characters (`ErrInvalidIdentityKeyFormat`)
+- **FR-008.4:** Reject nil identity on save (`ErrNilIdentity`)
+
+**Implementation:** `ValidateIdk()` called by all CRUD methods
+
+**Trace:** BO-003, SEC-002, SEC-003
+
+---
+
 ## Non-Functional Requirements
 
 ### NFR-001: Performance
@@ -233,7 +281,7 @@ Implement a database abstraction layer that stores SQRL cryptographic identities
 
 | Aspect | Requirement | Verification |
 |--------|-------------|--------------|
-| Go version | Go 1.23+ | CI/CD matrix |
+| Go version | Go 1.24+ | CI/CD matrix |
 | Databases | PostgreSQL 12+, MySQL 8+, SQLite 3.35+ | Integration tests |
 | Operating systems | Linux, Windows, macOS | CI/CD matrix |
 | Architectures | amd64, arm64 | Build verification |
@@ -443,7 +491,7 @@ type SqrlIdentity struct {
 
 ### Technical Constraints
 1. **CON-001:** Must use GORM v2+ (gorm.io/gorm)
-2. **CON-002:** Requires Go 1.23 or later
+2. **CON-002:** Requires Go 1.24 or later
 3. **CON-003:** Database must support transactions
 4. **CON-004:** Identity Keys assumed URL-safe base64 encoded
 
@@ -471,7 +519,7 @@ type SqrlIdentity struct {
 | BO-002 (Database agnostic) | FR-004, FR-005 |
 | BO-003 (Key security) | FR-002, FR-003, SEC-001, SEC-002 |
 | BO-004 (Simple integration) | FR-005, INT-001 |
-| BO-005 (Production grade) | NFR-001, NFR-002, SEC-003 |
+| BO-005 (Production grade) | NFR-001, NFR-002, SEC-003, FR-006 |
 
 ### Functional Requirements → Code Implementation
 
@@ -481,7 +529,10 @@ type SqrlIdentity struct {
 | FR-002 (Retrieval) | `FindIdentity()` | auth_store.go:24-34 |
 | FR-003 (Deletion) | `DeleteIdentity()` | auth_store.go:42-44 |
 | FR-004 (Schema) | `AutoMigrate()` | auth_store.go:19-21 |
-| FR-005 (Interface) | `type AuthStore` | auth_store.go:8-11 |
+| FR-005 (Interface) | `type AuthStore` | auth_store.go:72-74 |
+| FR-006 (Context) | `*WithContext()` methods | auth_store.go (5 methods) |
+| FR-007 (Secure) | `FindIdentitySecure()` | auth_store.go:150-171 |
+| FR-008 (Validation) | `ValidateIdk()` | secure_memory_common.go |
 
 ### Security Controls → Implementation
 
@@ -508,6 +559,7 @@ type SqrlIdentity struct {
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0 | 2025-11-18 | Automated Analysis | Initial reverse-engineered requirements |
+| 2.0 | 2026-02-08 | Review | Added FR-006/007/008, updated versions and paths |
 
 ---
 

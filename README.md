@@ -2,7 +2,7 @@
 
 ![Tests](https://img.shields.io/badge/tests-90%20passing-brightgreen)
 ![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
-![Tasks](https://img.shields.io/badge/tasks-39%2F44%20(89%25)-blue)
+![Tasks](https://img.shields.io/badge/tasks-48%2F53%20(91%25)-blue)
 ![Go Version](https://img.shields.io/badge/go-1.24%2B-00ADD8)
 ![GORM](https://img.shields.io/badge/gorm-v2-orange)
 
@@ -23,7 +23,7 @@ SQRL `ssp.AuthStore` implementation using the GORM ORM.
 
 ### Overall Progress
 
-**39 of 44 tasks complete (89%).** Phase 1 (foundation) and Phase 2
+**48 of 53 tasks complete (91%).** Phase 1 (foundation) and Phase 2
 (security/testing) done. Phase 3 production hardening done; release tasks
 remaining.
 

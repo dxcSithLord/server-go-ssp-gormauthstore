@@ -8,7 +8,7 @@ GOSEC := gosec
 GOVULNCHECK := govulncheck
 
 # Project parameters
-PACKAGE := github.com/sqrldev/server-go-ssp-gormauthstore
+PACKAGE := github.com/dxcSithLord/server-go-ssp-gormauthstore
 COVERAGE_FILE := coverage.out
 COVERAGE_HTML := coverage.html
 

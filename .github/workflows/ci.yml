@@ -232,10 +232,13 @@ jobs:
 
       - name: Check for deprecated dependencies
         run: |
-          # Check for known deprecated packages
+          # Verify GORM v2 migration complete (no deprecated jinzhu/gorm)
           if grep -q "github.com/jinzhu/gorm" go.mod; then
-            echo "WARNING: Using deprecated github.com/jinzhu/gorm"
-            echo "Consider migrating to gorm.io/gorm"
+            echo "ERROR: Using deprecated github.com/jinzhu/gorm"
+            echo "Migration to gorm.io/gorm is required"
+            exit 1
+          else
+            echo "OK: Using gorm.io/gorm (GORM v2)"
           fi
 
   # CodeQL Semantic Analysis

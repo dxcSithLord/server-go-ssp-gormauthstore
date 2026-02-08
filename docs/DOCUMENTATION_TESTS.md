@@ -26,7 +26,7 @@ Verifies that all critical documentation files exist:
 - docs/API_TESTS_SPEC.md
 - docs/DEPENDENCIES.md
 - docs/Notice_of_Decisions.md
-- docs/PHASE1_TASKS.md
+- docs/archive/PHASE1_TASKS.md
 
 **Test:** `TestArchiveDocumentationExists`
 
@@ -274,9 +274,8 @@ Potential future improvements:
 ---
 
 **Document Control:**
-- Version: 1.0
+- Version: 1.1
 - Created: 2026-02-05
-- Last Updated: 2026-02-05
-- Owner: Documentation Team
+- Last Updated: 2026-02-08
 
 **END OF DOCUMENTATION TEST SPECIFICATION**
