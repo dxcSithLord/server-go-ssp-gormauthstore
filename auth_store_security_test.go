@@ -273,9 +273,9 @@ func TestMemoryClearing_NilSafe(t *testing.T) {
 	ClearIdentity(nil)
 }
 
-// SEC-006: Unicode normalization attacks
+// SEC-006: Unicode normalisation attacks
 // Verifies that zero-width characters, BiDi overrides, and other invisible
-// Unicode code points are rejected, preventing homograph/normalization attacks.
+// Unicode code points are rejected, preventing homograph/normalisation attacks.
 func TestUnicodeNormalizationAttacks(t *testing.T) {
 	inputs := []struct {
 		name  string
@@ -303,7 +303,7 @@ func TestUnicodeNormalizationAttacks(t *testing.T) {
 	}
 }
 
-// SEC-007: FindIdentitySecure wrapper behavior
+// SEC-007: FindIdentitySecure wrapper behaviour
 // Verifies that FindIdentitySecure returns a valid wrapper that provides
 // access to the identity and properly cleans up on Destroy().
 func TestFindIdentitySecure_Success(t *testing.T) {
