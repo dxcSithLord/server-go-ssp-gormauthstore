@@ -15,9 +15,9 @@ SQRL `ssp.AuthStore` implementation using the GORM ORM.
 | **SQRL Protocol Compliance** | **COMPLIANT** | All required storage fields (Idk, Suk, Vuk) plus optional enhancements |
 | **GORM Version** | **CURRENT (v2 -- gorm.io/gorm v1.31.1)** | Migrated from deprecated jinzhu/gorm v1.9.16 |
 | **Go Version** | 1.24.7 | Module initialized with Go 1.24.7 toolchain |
-| **Test Coverage** | 100% | 90 tests passing, 10 benchmarks. Target: 70%+ |
+| **Test Coverage** | 100% | 100 tests (90 default + 10 integration), 10 benchmarks. Target: 70%+ |
 | **CI/CD Pipeline** | Configured | GitHub Actions workflow with lint, security scan, coverage gate, build matrix |
-| **Security Hardening** | Integrated | Secure memory clearing + ValidateIdk + FindIdentitySecure + 13 security tests |
+| **Security Hardening** | Integrated | Secure memory clearing + ValidateIdk + FindIdentitySecure + 14 security tests |
 | **Context Support** | Integrated | All methods have `*WithContext()` variants for timeout/cancellation |
 | **Documentation** | Comprehensive | 12 documents covering requirements, architecture, API, security, production, and upgrade |
 
@@ -100,7 +100,7 @@ defer gormauthstore.ClearIdentity(identity)
 ├── auth_store_test.go                  # Basic CRUD test
 ├── auth_store_comprehensive_test.go    # 27 unit tests (TC-001 to TC-027)
 ├── auth_store_context_test.go          # 13 context support tests (CTX-001 to CTX-013)
-├── auth_store_security_test.go         # 13 security tests (SEC-001 to SEC-013)
+├── auth_store_security_test.go         # 14 security tests (SEC-001 to SEC-014)
 ├── auth_store_integration_test.go      # 10 integration tests (build-tag gated)
 ├── auth_store_bench_test.go            # 6 benchmarks (PERF-001 to PERF-006)
 ├── secure_memory_test.go               # Secure memory + validation unit tests + benchmarks

@@ -44,7 +44,7 @@ replace github.com/dxcSithLord/server-go-ssp => ../server-go-ssp
 
 | Package | Version | Purpose |
 |---------|---------|---------|
-| `github.com/dxcSithLord/server-go-ssp` | v0.0.0-20260202110616 | SQRL SSP protocol (AuthStore interface) |
+| `github.com/dxcSithLord/server-go-ssp` | v0.0.0-20260202110616-66529f78b7f1 | SQRL SSP protocol (AuthStore interface) |
 | `gorm.io/driver/sqlite` | v1.6.0 | SQLite database driver (test dependency) |
 | `gorm.io/gorm` | v1.31.1 | GORM v2 ORM framework |
 

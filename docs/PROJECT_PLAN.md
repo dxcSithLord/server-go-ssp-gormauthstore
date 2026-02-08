@@ -14,8 +14,8 @@
 |--------|-------|-------|
 | **GORM Version** | v2 (gorm.io/gorm v1.31.1) | Migrated from deprecated jinzhu/gorm v1.9.16 |
 | **Go Version** | 1.24.7 | go.mod min 1.24.0, toolchain go1.24.7 |
-| **Test Coverage** | 100% | 90 tests, 10 benchmarks. Target: 70%+ |
-| **Security Scans** | CI/CD configured | gosec clean, golangci-lint v1.64.2, 13 security tests |
+| **Test Coverage** | 100% | 100 tests (90 default + 10 integration), 10 benchmarks. Target: 70%+ |
+| **Security Scans** | CI/CD configured | gosec clean, golangci-lint v1.64.2, 14 security tests |
 | **Secure Memory** | Implemented | ClearIdentity, WipeBytes, SecureIdentityWrapper available |
 | **Input Validation** | Integrated | ValidateIdk() called by FindIdentity, SaveIdentity, DeleteIdentity |
 

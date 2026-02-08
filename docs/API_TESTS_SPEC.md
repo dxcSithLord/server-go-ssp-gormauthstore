@@ -27,9 +27,9 @@
 graph TB
     subgraph "Test Pyramid"
         PERF[Performance Tests<br/>10 benchmarks]
-        SEC[Security Tests<br/>13 test cases]
+        SEC[Security Tests<br/>14 test cases]
         INT[Integration Tests<br/>10 test cases]
-        UNIT[Unit Tests<br/>67 test cases]
+        UNIT[Unit Tests<br/>76 test cases]
     end
 
     UNIT --> INT
@@ -1121,13 +1121,18 @@ jobs:
 |----------|-------|-------|
 | Unit Tests (TC-001 to TC-027) | 27 | `auth_store_comprehensive_test.go` |
 | Context Tests (CTX-001 to CTX-013) | 13 | `auth_store_context_test.go` |
-| Security Tests (SEC-001 to SEC-013) | 13 | `auth_store_security_test.go` |
-| Integration Tests (build-tag gated) | 10 | `auth_store_integration_test.go` |
-| Secure Memory Tests | 14 | `secure_memory_test.go` |
-| Documentation Tests | 14 | `docs_test.go` |
+| Security Tests (SEC-001 to SEC-014) | 14 | `auth_store_security_test.go` |
+| Integration Tests (build-tag gated)¹ | 10 | `auth_store_integration_test.go` |
+| Secure Memory Tests² | 18 | `secure_memory_test.go` |
+| Documentation Tests | 17 | `docs_test.go` |
 | Basic CRUD Test | 1 | `auth_store_test.go` |
-| Benchmarks (PERF-001 to PERF-006 + 4) | 10 | `auth_store_bench_test.go`, `secure_memory_test.go` |
-| **TOTAL** | **90 tests + 10 benchmarks** | **8 test files** |
+| Benchmarks (PERF-001 to PERF-006 + 4)² | 10 | `auth_store_bench_test.go`, `secure_memory_test.go` |
+| **TOTAL** | **100 tests + 10 benchmarks** | **8 test files** |
+
+¹ Integration tests require `go test -tags=integration ./...` and are excluded
+from the default `go test ./...` run (90 tests run by default).
+
+² `secure_memory_test.go` contains both 18 test functions and 4 benchmarks.
 
 ---
 

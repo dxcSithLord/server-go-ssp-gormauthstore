@@ -2,8 +2,9 @@
 
 ## Overview
 
-This project has 90 tests achieving 100% code coverage, plus 10 benchmarks,
-across 8 test files.
+This project has 100 tests achieving 100% code coverage, plus 10 benchmarks,
+across 8 test files. Of these, 90 tests run with `go test ./...` and 10
+integration tests require the `integration` build tag.
 
 ## Test Suites
 
@@ -30,7 +31,7 @@ validation, backward compatibility, and full CRUD round-trip.
 
 ### 4. Security Tests
 
-**File:** `auth_store_security_test.go` -- 13 tests (SEC-001 to SEC-013)
+**File:** `auth_store_security_test.go` -- 14 tests (SEC-001 to SEC-014)
 
 Covers SQL injection prevention, DoS protection, unicode handling,
 memory clearing, error message sanitization, and concurrent access safety.
@@ -45,14 +46,14 @@ Requires `TEST_DATABASE_URL` environment variable for PostgreSQL.
 
 ### 6. Secure Memory Tests
 
-**File:** `secure_memory_test.go` -- 14 tests + 4 benchmarks
+**File:** `secure_memory_test.go` -- 18 tests + 4 benchmarks
 
 Covers WipeBytes, ScrambleBytes, WipeString, ClearIdentity,
 SecureIdentityWrapper, ValidateIdk.
 
 ### 7. Documentation Tests
 
-**File:** `docs_test.go` -- 14 test functions
+**File:** `docs_test.go` -- 17 test functions
 
 Validates documentation file existence, link integrity, content structure,
 cross-document consistency, security (no hardcoded credentials), and

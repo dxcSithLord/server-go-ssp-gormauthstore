@@ -584,7 +584,10 @@ paths:
 | `ErrNilIdentity` | `gormauthstore.ErrNilIdentity` | 400 | Nil identity passed to SaveIdentity |
 | `ErrNilDatabase` | `gormauthstore.ErrNilDatabase` | 500 | Database connection is nil |
 | `ErrWrappedIdentityDestroyed` | `gormauthstore.ErrWrappedIdentityDestroyed` | 500 | SecureIdentityWrapper already destroyed |
-| `gorm.ErrRecordNotFound` | `gorm.ErrRecordNotFound` | 404 | Mapped to ssp.ErrNotFound internally |
+
+> **Note:** The underlying `gorm.ErrRecordNotFound` is mapped internally to
+> `ssp.ErrNotFound`. Callers should only check for `ssp.ErrNotFound` when
+> handling not-found responses.
 
 ### Error Handling Pattern
 
