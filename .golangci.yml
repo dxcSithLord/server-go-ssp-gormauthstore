@@ -174,4 +174,4 @@ output:
   formats:
     text:
       path: stdout
-      colored: true
+      colors: true
