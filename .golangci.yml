@@ -1,11 +1,13 @@
+version: "2"
+
 linters:
+  default: none
   enable:
     # Default linters
     - errcheck
-    - gosimple
     - govet
     - ineffassign
-    - staticcheck
+    - staticcheck  # includes gosimple and stylecheck in v2
     - unused
 
     # Security
@@ -13,7 +15,6 @@ linters:
 
     # Bug detection
     - bodyclose
-    - contextcheck
     - durationcheck
     - errorlint
     - forcetypeassert
@@ -30,24 +31,17 @@ linters:
     - gocritic
     - gocyclo
     - godot
-    - goprintffuncname
     - misspell
     - nakedret
     - nestif
     - prealloc
     - predeclared
     - revive
-    - stylecheck
     - thelper
-    - tparallel
     - unconvert
     - unparam
     - wastedassign
     - whitespace
-
-    # Formatting
-    - gofmt
-    - goimports
 
     # Performance
     - makezero
@@ -57,117 +51,117 @@ linters:
     - lll
     - nolintlint
 
-linters-settings:
-  gosec:
-    severity: "medium"
-    confidence: "medium"
-    config:
-      G101:
-        pattern: "(?i)password|secret|key|token"
-        ignore_entropy: false
-        entropy_threshold: "80.0"
-        per_char_threshold: "3.0"
-        truncate: "32"
+  settings:
+    gosec:
+      severity: "medium"
+      confidence: "medium"
+      config:
+        G101:
+          pattern: "(?i)password|secret|key|token"
+          ignore_entropy: false
+          entropy_threshold: "80.0"
+          per_char_threshold: "3.0"
+          truncate: "32"
 
-  cyclop:
-    max-complexity: 15
-    package-average: 10.0
-    skip-tests: true
+    cyclop:
+      max-complexity: 15
+      package-average: 10.0
 
-  gocognit:
-    min-complexity: 20
+    gocognit:
+      min-complexity: 20
 
-  goconst:
-    min-len: 3
-    min-occurrences: 3
-    ignore-tests: true
+    goconst:
+      min-len: 3
+      min-occurrences: 3
 
-  gocritic:
-    enabled-tags:
-      - diagnostic
-      - experimental
-      - opinionated
-      - performance
-      - style
-    disabled-checks:
-      - whyNoLint
-      - wrapperFunc
+    gocritic:
+      enabled-tags:
+        - diagnostic
+        - experimental
+        - opinionated
+        - performance
+        - style
+      disabled-checks:
+        - whyNoLint
+        - wrapperFunc
 
-  gocyclo:
-    min-complexity: 15
+    gocyclo:
+      min-complexity: 15
 
-  gofmt:
-    simplify: true
+    lll:
+      line-length: 140
+      tab-width: 4
 
-  goimports:
-    local-prefixes: github.com/sqrldev/server-go-ssp-gormauthstore
+    misspell:
+      locale: UK
 
-  lll:
-    line-length: 140
-    tab-width: 4
+    nestif:
+      min-complexity: 6
 
-  misspell:
-    locale: UK
+    revive:
+      severity: warning
+      rules:
+        - name: blank-imports
+        - name: context-as-argument
+        - name: context-keys-type
+        - name: dot-imports
+        - name: error-return
+        - name: error-strings
+        - name: error-naming
+        - name: exported
+        - name: if-return
+        - name: increment-decrement
+        - name: var-naming
+        - name: var-declaration
+        - name: package-comments
+        - name: range
+        - name: receiver-naming
+        - name: time-naming
+        - name: unexported-return
+        - name: indent-error-flow
+        - name: errorf
+        - name: empty-block
+        - name: superfluous-else
+        - name: unreachable-code
 
-  nestif:
-    min-complexity: 6
+    staticcheck:
+      checks: ["all", "-ST1000", "-ST1003", "-ST1016", "-ST1020", "-ST1021", "-ST1022"]
 
-  revive:
-    severity: warning
+  exclusions:
+    generated: lax
     rules:
-      - name: blank-imports
-      - name: context-as-argument
-      - name: context-keys-type
-      - name: dot-imports
-      - name: error-return
-      - name: error-strings
-      - name: error-naming
-      - name: exported
-      - name: if-return
-      - name: increment-decrement
-      - name: var-naming
-      - name: var-declaration
-      - name: package-comments
-      - name: range
-      - name: receiver-naming
-      - name: time-naming
-      - name: unexported-return
-      - name: indent-error-flow
-      - name: errorf
-      - name: empty-block
-      - name: superfluous-else
-      - name: unreachable-code
+      # Exclude some linters from running on tests files
+      - path: _test\.go
+        linters:
+          - gocyclo
+          - errcheck
+          - dupl
+          - gosec
+          - gocognit
+          - goconst
+          - forcetypeassert
+          - cyclop
 
-  stylecheck:
-    checks: ["all", "-ST1000", "-ST1003", "-ST1016", "-ST1020", "-ST1021", "-ST1022"]
+      # Exclude known false positives
+      - path: doc\.go
+        linters:
+          - lll
 
-issues:
-  exclude-rules:
-    # Exclude some linters from running on tests files
-    - path: _test\.go
-      linters:
-        - gocyclo
-        - errcheck
-        - dupl
-        - gosec
-        - gocognit
-        - forcetypeassert
-        - cyclop
+      # Allow long lines in comments
+      - linters:
+          - lll
+        source: "^//|^\\s+//"
 
-    # Exclude known false positives
-    - path: doc\.go
-      linters:
-        - lll
-
-    # Allow long lines in comments
-    - linters:
-        - lll
-      source: "^//|^\\s+//"
-
-  exclude-use-default: false
-  max-issues-per-linter: 50
-  max-same-issues: 10
-  new: false
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    gofmt:
+      simplify: true
+    goimports:
+      local-prefixes:
+        - github.com/sqrldev/server-go-ssp-gormauthstore
 
 run:
   timeout: 5m
@@ -178,8 +172,6 @@ run:
 
 output:
   formats:
-    - format: colored-line-number
+    text:
       path: stdout
-  print-issued-lines: true
-  print-linter-name: true
-  sort-results: true
+      colors: true

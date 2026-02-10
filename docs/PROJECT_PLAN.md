@@ -13,9 +13,9 @@
 | Metric | Value | Notes |
 |--------|-------|-------|
 | **GORM Version** | v2 (gorm.io/gorm v1.31.1) | Migrated from deprecated jinzhu/gorm v1.9.16 |
-| **Go Version** | 1.24.7 | go.mod min 1.24.0, toolchain go1.24.7 |
+| **Go Version** | 1.25.7 | go.mod min 1.25.0, toolchain go1.25.7 |
 | **Test Coverage** | 100% | 100 tests (90 default + 10 integration), 10 benchmarks. Target: 70%+ |
-| **Security Scans** | CI/CD configured | gosec clean, golangci-lint v1.64.2, 14 security tests |
+| **Security Scans** | CI/CD configured | gosec clean, golangci-lint v2.8.0, 14 security tests |
 | **Secure Memory** | Implemented | ClearIdentity, WipeBytes, SecureIdentityWrapper available |
 | **Input Validation** | Integrated | ValidateIdk() called by FindIdentity, SaveIdentity, DeleteIdentity |
 
@@ -288,8 +288,8 @@ psql -U postgres sqrl_db < backup_YYYYMMDD_HHMMSS.sql
    These should be addressed as part of TASK-033 or as follow-up.
 
 4. **Go version divergence:** Plan was written targeting Go 1.23+. The
-   `go.mod` now specifies Go 1.24. Not a problem, but dependency
-   compatibility should be verified against 1.24.
+   `go.mod` now specifies Go 1.25 (upgraded from 1.24 on 2026-02-08).
+   Dependency compatibility verified against 1.25.
 
 5. **Missing pre-upgrade tag:** The plan assumes a `v0.1.0-pre-upgrade` tag
    exists as rollback baseline. This should be created before Stage 1.1

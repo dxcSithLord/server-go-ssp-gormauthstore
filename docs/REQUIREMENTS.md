@@ -281,7 +281,7 @@ Implement a database abstraction layer that stores SQRL cryptographic identities
 
 | Aspect | Requirement | Verification |
 |--------|-------------|--------------|
-| Go version | Go 1.24+ | CI/CD matrix |
+| Go version | Go 1.25+ | CI/CD matrix |
 | Databases | PostgreSQL 12+, MySQL 8+, SQLite 3.35+ | Integration tests |
 | Operating systems | Linux, Windows, macOS | CI/CD matrix |
 | Architectures | amd64, arm64 | Build verification |
@@ -491,7 +491,7 @@ type SqrlIdentity struct {
 
 ### Technical Constraints
 1. **CON-001:** Must use GORM v2+ (gorm.io/gorm)
-2. **CON-002:** Requires Go 1.24 or later
+2. **CON-002:** Requires Go 1.25 or later
 3. **CON-003:** Database must support transactions
 4. **CON-004:** Identity Keys assumed URL-safe base64 encoded
 

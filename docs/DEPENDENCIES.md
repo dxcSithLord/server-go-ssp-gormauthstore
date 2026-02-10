@@ -120,7 +120,7 @@ replace github.com/dxcSithLord/server-go-ssp => ../server-go-ssp
 Create `go.work` in parent directory:
 
 ```go
-go 1.24
+go 1.25
 
 use (
     ./server-go-ssp

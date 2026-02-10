@@ -39,7 +39,7 @@ interface for persisting SQRL authentication identities via the GORM ORM.
 
 - **Module:** `github.com/dxcSithLord/server-go-ssp-gormauthstore`
 - **Upstream:** `github.com/sqrldev/server-go-ssp-gormauthstore`
-- **Go version:** 1.24+
+- **Go version:** 1.25+
 - **Build:** `make ci` (lint + security + test + build)
 
 ## Build and Test Commands

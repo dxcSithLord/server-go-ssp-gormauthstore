@@ -530,11 +530,11 @@ func TestDocumentationConsistency(t *testing.T) {
 
 	// Verify consistent Go version
 	t.Run("GoVersion", func(t *testing.T) {
-		if !strings.Contains(claudeStr, "1.24") {
-			t.Error("CLAUDE.md missing Go version 1.24 reference")
+		if !strings.Contains(claudeStr, "1.25") {
+			t.Error("CLAUDE.md missing Go version 1.25 reference")
 		}
-		if !strings.Contains(readmeStr, "1.24") {
-			t.Error("README.md missing Go version 1.24 reference")
+		if !strings.Contains(readmeStr, "1.25") {
+			t.Error("README.md missing Go version 1.25 reference")
 		}
 	})
 

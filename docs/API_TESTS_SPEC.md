@@ -997,7 +997,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.24'
+          go-version: '1.25'
 
       - name: Run unit tests
         run: go test -v -race -coverprofile=coverage.out ./...
@@ -1049,7 +1049,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.24'
+          go-version: '1.25'
 
       - name: Run integration tests
         env:
@@ -1063,7 +1063,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.24'
+          go-version: '1.25'
 
       - name: Run gosec
         run: |
@@ -1086,7 +1086,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.24'
+          go-version: '1.25'
 
       - name: Run benchmarks
         run: go test -bench=. -benchmem -run=^$ ./... | tee benchmark.txt

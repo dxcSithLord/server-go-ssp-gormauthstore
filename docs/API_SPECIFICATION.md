@@ -838,7 +838,7 @@ See the separate API test file: `API_TESTS.md`
 | Version | Status | Go Import Path | Breaking Changes |
 |---------|--------|---------------|------------------|
 | v0.1.0 | Released | github.com/sqrldev/... | N/A (initial) |
-| v0.2.0 | Released | github.com/dxcSithLord/... | GORM v1 → v2, Go 1.24+ |
+| v0.2.0 | Released | github.com/dxcSithLord/... | GORM v1 → v2, Go 1.25+ |
 | v0.3.0-rc1 | Released | github.com/dxcSithLord/... | None (test + security) |
 | v1.0.0 | Pending | github.com/sqrldev/... | Module path revert |
 

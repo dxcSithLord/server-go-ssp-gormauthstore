@@ -2,8 +2,8 @@
 
 ![Tests](https://img.shields.io/badge/tests-90%20passing-brightgreen)
 ![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
-![Tasks](https://img.shields.io/badge/tasks-48%2F53%20(91%25)-blue)
-![Go Version](https://img.shields.io/badge/go-1.24%2B-00ADD8)
+![Tasks](https://img.shields.io/badge/tasks-50%2F54%20(93%25)-blue)
+![Go Version](https://img.shields.io/badge/go-1.25%2B-00ADD8)
 ![GORM](https://img.shields.io/badge/gorm-v2-orange)
 
 SQRL `ssp.AuthStore` implementation using the GORM ORM.
@@ -14,7 +14,7 @@ SQRL `ssp.AuthStore` implementation using the GORM ORM.
 |------|--------|--------|
 | **SQRL Protocol Compliance** | **COMPLIANT** | All required storage fields (Idk, Suk, Vuk) plus optional enhancements |
 | **GORM Version** | **CURRENT (v2 -- gorm.io/gorm v1.31.1)** | Migrated from deprecated jinzhu/gorm v1.9.16 |
-| **Go Version** | 1.24.7 | Module initialized with Go 1.24.7 toolchain |
+| **Go Version** | 1.25.7 | Module requires Go 1.25+, toolchain go1.25.7 |
 | **Test Coverage** | 100% | 100 tests (90 default + 10 integration), 10 benchmarks. Target: 70%+ |
 | **CI/CD Pipeline** | Configured | GitHub Actions workflow with lint, security scan, coverage gate, build matrix |
 | **Security Hardening** | Integrated | Secure memory clearing + ValidateIdk + FindIdentitySecure + 14 security tests |
@@ -23,11 +23,11 @@ SQRL `ssp.AuthStore` implementation using the GORM ORM.
 
 ### Overall Progress
 
-**48 of 53 tasks complete (91%).** Phase 1 (foundation) and Phase 2
-(security/testing) done. Phase 3 production hardening done; release tasks
-remaining.
+**50 of 54 tasks complete (93%).** Phase 1 (foundation) and Phase 2
+(security/testing) done. Phase 3 production hardening done; v1.0.0 tagged.
+TASK-043/044 on hold pending server-go-ssp updates.
 
-> **Next milestone:** Tag `v1.0.0` (TASK-041).
+> **Latest milestone:** Tag `v1.0.0` (TASK-041, completed 2026-02-08).
 >
 > Authoritative task status: [docs/TASKS.md](docs/TASKS.md) |
 > Full plan: [docs/PROJECT_PLAN.md](docs/PROJECT_PLAN.md)

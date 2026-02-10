@@ -33,7 +33,7 @@ SQL Server)`"]
 
 ## Prerequisites
 
-- **Go:** 1.24 or later
+- **Go:** 1.25 or later
 - **Database:** One of the following:
   - PostgreSQL 12+ (recommended for production)
   - MySQL 8+
